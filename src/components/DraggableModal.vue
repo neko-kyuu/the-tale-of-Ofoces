@@ -43,7 +43,7 @@
 <style scoped>
 .modal-window {
   position: fixed;
-  background: var(--color-background);
+  background: var(--color-background-soft);
   border-radius: 8px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -75,7 +75,8 @@
 }
 
 .control-button {
-  background: none;
+  background: var(--color-danger-bg);
+  color: var(--vt-c-white);
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
@@ -87,11 +88,11 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  box-shadow: inset 0 -2px var(--color-background-mute);
 }
 
 .control-button:hover {
   background-color: var(--color-danger-bg);
-  color: var(--color-danger);
 }
 
 .control-button i {
@@ -136,7 +137,7 @@
     height: 100% !important;
     transform: none !important;
     border-radius: 0;
-    background: var(--color-background);
+    background: var(--color-background-soft);
   }
 
   .modal-window.mobile.modal-closing {

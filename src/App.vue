@@ -235,6 +235,7 @@ onMounted(() => {
   margin-left: var(--vt-rem-xlarge);
   transition: all 0.3s ease;
   width: calc(100% - var(--vt-rem-xlarge));
+  overflow-x: hidden;
 }
 
 .dice-section {

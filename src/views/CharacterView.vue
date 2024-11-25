@@ -11,32 +11,38 @@
         class="character-list"
         :class="{ 'view-active': viewMode === 'list' }"
       >
-        <div 
-          v-for="group in characterGroups" 
-          :key="group.id"
-          class="character-group"
-        >
-          <h2 class="group-title">{{ group.name }}</h2>
-          <div class="group-content">
-            <div 
-              v-for="char in getCharactersByGroup(group.id)" 
-              :key="`${group.id}-${char.id}`"
-              class="character-card"
-              @click="showCharacterDetail(char)"
-            >
-              <div class="card-image">
-                <img :src="char.avatar" :alt="char.name">
-              </div>
-              <div class="card-content">
-                <div class="card-title">{{ char.name }}</div>
-                <div class="character-tags">
-                  <span 
-                    v-for="tag in char.tags" 
-                    :key="tag" 
-                    class="tag"
-                  >{{ tag }}</span>
+      <div class="character-groups">
+          <!-- 按 realm 分组 -->
+          <div 
+            v-for="realm in realms" 
+            :key="realm.id"
+            class="realm-group"
+          >
+            <h2 class="realm-title">{{ realm.name }}</h2>
+            <div class="race-groups-container">
+              <!-- 按 race 分组 -->
+              <div 
+                v-for="race in getRacesByRealm(realm.id)" 
+                :key="`${realm.id}-${race.id}`"
+                class="race-group"
+                :class="{ 'inline-group': shouldBeInline(getCharactersByRealmAndRace(realm.id, race.id)) }"
+              >
+                <div class="race-name">{{ race.name }}</div>
+                <div class="group-content">
+                  <div 
+                    v-for="char in getCharactersByRealmAndRace(realm.id, race.id)" 
+                    :key="`${realm.id}-${race.id}-${char.id}`"
+                    class="character-card"
+                    @click="showCharacterDetail(char)"
+                  >
+                    <div class="card-image">
+                      <img :src="char.avatar" :alt="char.name">
+                    </div>
+                    <div class="card-content">
+                      <p class="card-title">{{ char.name }}</p>
+                    </div>
+                  </div>
                 </div>
-                <p class="character-desc">{{ char.description || 'No description available.' }}</p>
               </div>
             </div>
           </div>
@@ -57,7 +63,6 @@
       class="character-detail"
       :class="{ 
         'character-detail--open': true,
-        'character-detail--fullscreen': isFullscreen
       }"
     >
       <div class="detail-header">
@@ -84,13 +89,6 @@
           </div>
         </div>
         <div class="detail-controls">
-          <!-- <button 
-            class="control-button"
-            @click="toggleFullscreen"
-            :title="isFullscreen ? '退出全屏' : '全屏'"
-          >
-            <i class="fi fi-rr-expand"></i>
-          </button> -->
           <button 
             class="control-button"
             @click="closeCharacterDetail"
@@ -163,17 +161,36 @@
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Network } from 'vis-network'
-import { characters, edges } from '@/constants/characters'
+import { realms, races, characters, edges } from '@/constants/characters'
 import { mdFiles } from '@/constants/mdFiles'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import { ModalManager } from '@/utils/ModalManager'
 import { h } from 'vue'
 
+// 获取某个 realm 下的所有 races
+const getRacesByRealm = (realmId) => {
+  const realmCharacters = characters.filter(char => char.realm === realmId)
+  const raceIds = [...new Set(realmCharacters.map(char => char.race))]
+  return races.filter(race => raceIds.includes(race.id))
+}
+
+// 获取特定 realm 和 race 的角色
+const getCharactersByRealmAndRace = (realmId, raceId) => {
+  return characters.filter(char => char.realm === realmId && char.race === raceId)
+}
+
+// 判断是否应该内联显示（不足一行的情况）
+const shouldBeInline = (chars) => {
+  const CARD_WIDTH = 280 // 假设每个卡片宽度为 280px
+  const CONTAINER_WIDTH = 1200 // 假设容器宽度为 1200px
+  const cardsPerRow = Math.floor(CONTAINER_WIDTH / CARD_WIDTH)
+  return chars.length <= cardsPerRow
+}
+
 const route = useRoute()
 const viewMode = computed(() => route.params.mode)
 let network = null
 const selectedChar = ref(null)
-const isFullscreen = ref(false)
 const currentFile = ref(null)
 
 // 准备节点和边的数据
@@ -292,27 +309,6 @@ const showCharacterDetail = (char) => {
 
 const closeCharacterDetail = () => {
   selectedChar.value = null
-}
-
-const toggleFullscreen = () => {
-  isFullscreen.value = !isFullscreen.value
-}
-
-// 从角色标签中取所有分组
-const characterGroups = computed(() => {
-  const groups = new Set()
-  characters.forEach(char => {
-    char.tags.forEach(tag => groups.add(tag))
-  })
-  return Array.from(groups).map(tag => ({
-    id: tag,
-    name: tag
-  }))
-})
-
-// 根据标签获取角色
-const getCharactersByGroup = (groupId) => {
-  return characters.filter(char => char.tags.includes(groupId))
 }
 
 // 获取角色相关文件
@@ -476,24 +472,6 @@ const getCharacterById = (id) => {
   }
 }
 
-/* 全屏模式样式 */
-.character-detail--fullscreen {
-  width: calc(100vw - 2rem);
-  height: calc(100vh - 2rem);
-  left: 1rem;
-  transform: none !important;
-}
-
-@media (max-width: 768px) {
-  .character-detail--fullscreen {
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-  }
-}
-
 .character-list,
 .network-view {
   position: absolute;
@@ -520,8 +498,9 @@ const getCharacterById = (id) => {
   overflow-y: auto;
 }
 
-.character-group {
-  margin-bottom: 3rem;
+.character-groups {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .group-title {
@@ -532,23 +511,63 @@ const getCharacterById = (id) => {
 }
 
 .group-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
 }
 
-/* 调整网络视图的样式 */
-.network-view {
-  height: calc(100vh - 2rem);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  overflow: hidden;
+.realm-group {
+  margin-bottom: 2rem;
+}
+
+.realm-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-heading);
+}
+
+.race-groups-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  width: 100%;
+}
+
+.race-group {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.race-group.inline-group {
+  flex: 0 1 auto;
+}
+
+.race-title {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.group-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  background: var(--color-background-highlight);
+  padding: 0.5rem;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 .character-card {
+  flex: 0 0 100px;
+  max-width: 100px;
+  min-width: 100px;
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
   border-radius: 8px;
   cursor: pointer;
   background: var(--color-background-soft);
@@ -589,7 +608,7 @@ const getCharacterById = (id) => {
 .character-card:hover .card-image {
   width: 100px;
   height: 100px;
-  transform: translate(-10px, -10px);
+  transform: translate(0, -20px);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -599,37 +618,36 @@ const getCharacterById = (id) => {
 }
 
 /* 内容样式 */
-.card-content .card-title {
-  margin: 0;
-  font-size: 1.2rem;
-  margin-left: 100px;
-  margin-bottom: 20px;
-  height: 60px;
-  display: grid;
-  align-items: end;
-}
-
 .character-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
-.tag {
-  background: var(--color-background-mute);
+.race-name {
+  background: var(--color-background-highlight);
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   font-size: 0.75rem;
+  text-align: center;
+  max-width: 60px;
 }
 
-.character-desc {
+.card-title {
   font-size: 0.875rem;
-  margin-top: 0.5rem;
-  overflow: hidden;
+  margin-top: 60px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   opacity: 0.8;
+}
+
+/* 调整网络视图的样式 */
+.network-view {
+  height: calc(100vh - 2rem);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 #network {
@@ -687,6 +705,7 @@ const getCharacterById = (id) => {
 
 .control-button i {
   font-size: 1rem;
+  height: 1rem;
 }
 
 .detail-content {
