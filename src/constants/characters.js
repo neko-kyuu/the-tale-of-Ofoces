@@ -1,7 +1,7 @@
 export const characters = [
   {
     id: 1,
-    name: "角色A",
+    name: "Mja",
     tags: ["天使", "调查员"],
     avatar: "/static/token/2024-06-03 215556.png",
     description:'aaa'

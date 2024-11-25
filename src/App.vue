@@ -186,6 +186,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background-color: var(--color-background-dark);
+  z-index: 1000;
 }
 
 .tool-section {
@@ -366,4 +367,64 @@ onMounted(() => {
     display: none;
   }
 }
+
+/* 移动端样式 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: var(--vt-rem-xlarge);
+    width: 100%;
+    bottom: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+
+  .nav-section {
+    display: flex;
+    align-items: center;
+  }
+
+  .tool-section {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: none;
+    border: none;
+    margin-bottom: 0;
+    border-left:1px solid var(--color-border);
+    border-bottom-left-radius: 8px;
+  }
+
+  .nav-link {
+    width: auto;
+    padding: 0.5rem;
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-top: var(--vt-rem-xlarge);
+    width: 100%;
+  }
+
+  .dice-result {
+    left: 1rem;
+    bottom: 1rem;
+  }
+
+  .nav-link.router-link-active {
+    box-shadow: inset 0 -2px var(--color-background-highlight); 
+    transform: none;
+    border: none;
+  }
+
+  .theme-toggle {
+    padding: 0.5rem;
+    margin: 0;
+  }
+}
+
 </style>

@@ -64,8 +64,22 @@
         <div class="character-info">
           <div class="character-meta">
             <h2>{{ currentChar.name }}</h2>
-            <div class="character-tags">
-              <span v-for="tag in currentChar.tags" :key="tag" class="tag">{{ tag }}</span>
+            <div class="related-characters">
+              <div 
+                v-for="relation in getRelatedCharacters(currentChar.id)" 
+                :key="relation.to"
+                class="relation-item"
+                @click="showCharacterDetail(getCharacterById(relation.to))"
+              >
+                <img 
+                  :src="getCharacterById(relation.to).avatar" 
+                  :alt="getCharacterById(relation.to).name"
+                  class="relation-avatar"
+                >
+                <div class="relation-tooltip">
+                  <div class="relation-label">{{ getCharacterById(relation.to).name }} · {{ relation.label }}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -152,6 +166,8 @@ import { Network } from 'vis-network'
 import { characters, edges } from '@/constants/characters'
 import { mdFiles } from '@/constants/mdFiles'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
+import { ModalManager } from '@/utils/ModalManager'
+import { h } from 'vue'
 
 const route = useRoute()
 const viewMode = computed(() => route.params.mode)
@@ -312,7 +328,22 @@ const getCharacterFiles = (characterId) => {
 
 // 打开文件
 const openFile = (file) => {
-  currentFile.value = file
+  if (isMobile.value) {
+    currentFile.value = file
+  } else {
+    ModalManager.getInstance().create(`file-${file.id}`, {
+      title: file.name,
+      content: h(MarkdownPreview, { filePath: file.path }),
+      props: {
+        initialWidth: 800,
+        initialHeight: 600,
+        initialPosition: { 
+          x: 0.6, 
+          y: 0.3
+        }
+      }
+    })
+  }
 }
 
 // 返回角色详情
@@ -349,6 +380,16 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
+
+// 获取关联角色
+const getRelatedCharacters = (characterId) => {
+  return edges.filter(edge => edge.from === characterId)
+}
+
+// 根据ID获取角色信息
+const getCharacterById = (id) => {
+  return characters.find(char => char.id === id)
+}
 </script>
 
 <style scoped>
@@ -899,5 +940,82 @@ onUnmounted(() => {
 
 .control-button:hover {
   background: var(--color-background-mute);
+}
+
+.related-characters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.relation-item {
+  position: relative;
+  cursor: pointer;
+}
+
+.relation-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-background-soft);
+  transition: all 0.2s ease;
+}
+
+.relation-item:hover .relation-avatar {
+  transform: scale(1.1);
+  border-color: var(--color-background-highlight);
+}
+
+.relation-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.relation-item:hover .relation-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.relation-label {
+  color: var(--color-text-light);
+  font-size: 0.7rem;
+}
+
+/* 添加小箭头 */
+.relation-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--color-border);
+}
+
+.relation-tooltip::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-background);
+  z-index: 1;
 }
 </style> 
