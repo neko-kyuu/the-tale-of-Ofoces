@@ -1,12 +1,47 @@
-// realm 1 神祁; 2 天界生物; 3 主位面生物 
-// race 1 天使; 2 魔鬼; 3 精灵; 4 人类; 5 提夫林; 6 阿斯莫; 7 半精灵; 8 荒神; 9 羽蛇; 10 神侍; 11 至高天 
-// background 1 调查员; 2 贵族; 3 剧团; 4 公会; 5 教堂圣职者; 6 侍从
-export const realms = [
+// 首先定义类型接口
+export interface Realm {
+  id: number;
+  name: string;
+}
+
+export interface Race {
+  id: number;
+  name: string;
+}
+
+export interface Background {
+  id: number;
+  name: string;
+}
+
+export interface Character {
+  id: number;
+  name: string;
+  realm: number;
+  race: number;
+  background?: number;
+  avatar: string;
+  description: string;
+}
+
+export interface Edge {
+  from: number;
+  to: number;
+  arrows: string;
+  label: string;
+  color: {
+    color: string;
+  };
+}
+
+// 导出常量，添加类型注解
+export const realms: Realm[] = [
   { id: 1, name: '神祁' },
   { id: 2, name: '天界生物' },
   { id: 3, name: '主位面生物' }
-] 
-export const races = [
+]
+
+export const races: Race[] = [
   { id: 1, name: '天使' },
   { id: 2, name: '魔鬼' },
   { id: 3, name: '精灵' } ,
@@ -19,15 +54,17 @@ export const races = [
   { id: 10, name: '神侍' },
   { id: 11, name: '至高天' },
 ]
-export const backgrounds = [
+
+export const backgrounds: Background[] = [
   { id: 1, name: '调查员' },
   { id: 2, name: '贵族' },
   { id: 3, name: '剧团' },
   { id: 4, name: '公会' },
   { id: 5, name: '教堂圣职者' },
   { id: 6, name: '侍从' },
-] 
-export const characters = [
+]
+
+export const characters: Character[] = [
   {
     id: 1,
     name: "Mja",
@@ -212,7 +249,7 @@ export const characters = [
   // ... 更多角色
 ] 
 
-export const edges = [
+export const edges: Edge[] = [
     { 
       from: 1, 
       to: 2, 

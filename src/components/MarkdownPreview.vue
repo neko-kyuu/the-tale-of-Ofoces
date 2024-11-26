@@ -40,6 +40,9 @@ watch(() => props.filePath, () => {
   font-size: 1rem;
   line-height: 1.6;
   color: var(--color-text);
+  width: 100%;
+  background-color: var(--color-background-soft);
+  padding: 1rem;
 }
 
 .markdown-preview :deep(h1) {
@@ -58,10 +61,6 @@ watch(() => props.filePath, () => {
   font-size: 1.25em;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
-}
-
-.markdown-preview :deep(p) {
-  margin: 1em 0;
 }
 
 .markdown-preview :deep(ul), 

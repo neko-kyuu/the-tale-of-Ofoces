@@ -4,7 +4,11 @@
       v-if="visible"
       ref="modalRef"
       class="modal-window"
-      :class="{ 'mobile': isMobile, 'modal-closing': isClosing }"
+      :class="{ 
+        'mobile': isMobile, 
+        'modal-closing': isClosing,
+        'modal-collapsed': isCollapsed 
+      }"
       :style="{
         ...modalStyle,
         zIndex: currentZIndex
@@ -12,7 +16,10 @@
       @mousedown="handleMouseDown"
     >
       <!-- 拖拽手柄 -->
-      <div class="modal-handle">
+      <div 
+        class="modal-handle"
+        @dblclick="toggleCollapse"
+      >
         <div class="modal-title">{{ title }}</div>
         <div class="modal-controls">
           <button 
@@ -26,13 +33,16 @@
       </div>
 
       <!-- 内容区域 -->
-      <div class="modal-content">
+      <div 
+        class="modal-content"
+        :style="{ display: isCollapsed ? 'none' : '' }"
+      >
         <slot></slot>
       </div>
 
       <!-- 调整大小的手柄 -->
       <div 
-        v-if="!isMobile"
+        v-if="!isMobile && !isCollapsed"
         class="resize-handle"
         @mousedown.stop="startResize"
       ></div>
@@ -43,20 +53,21 @@
 <style scoped>
 .modal-window {
   position: fixed;
-  background: var(--color-background-soft);
+  background: rgba(var(--color-background-soft-rgb), 0.7);
+  backdrop-filter: blur(8px);
   border-radius: 8px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 24px rgba(var(--color-background-highlight-rgb), 0.2);
   display: flex;
   flex-direction: column;
   max-width: calc(100vw - 40px);
   max-height: calc(100vh - 40px);
   z-index: 2000;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.3s ease;
   transform-origin: center center;
 }
 
 .modal-handle {
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -82,8 +93,8 @@
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,13 +107,12 @@
 }
 
 .control-button i {
-  font-size: 16px;
+  font-size: 0.6rem;
 }
 
 .modal-content {
   flex: 1;
   overflow: auto;
-  padding: 1rem;
 }
 
 .resize-handle {
@@ -151,6 +161,20 @@
   opacity: 0;
   transform: scale(0.95);
   transition: all 0.2s ease-in-out;
+}
+
+.modal-collapsed {
+  min-height: 44px !important;
+  resize: none !important;
+}
+
+.modal-collapsed .modal-handle {
+  border-bottom: none;
+}
+
+/* 添加过渡动画 */
+.modal-window {
+  transition: height 0.3s ease;
 }
 </style>
 
@@ -349,4 +373,21 @@ const handleKeyDown = (e) => {
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeyDown)
 })
+
+// 添加收起/展开状态
+const isCollapsed = ref(false)
+const originalHeight = ref(null)
+
+// 切换收起/展开状态
+const toggleCollapse = () => {
+  if (!isCollapsed.value) {
+    // 收起前保存原始高度
+    originalHeight.value = size.value.height
+    size.value.height = 44 // 只保留标题栏高度
+  } else {
+    // 恢复原始高度
+    size.value.height = originalHeight.value
+  }
+  isCollapsed.value = !isCollapsed.value
+}
 </script> 

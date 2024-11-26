@@ -72,6 +72,7 @@
 
       <main class="main-content">
         <RouterView />
+        <CharacterDetail />
       </main>
 
       <!-- 骰子结果显示窗口 -->
@@ -92,6 +93,7 @@
 <script setup>
 import { ref, provide, onMounted, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import CharacterDetail from '@/components/CharacterDetail.vue'
 
 const diceResult = ref(null)
 const modifier = ref(0)
@@ -121,18 +123,22 @@ const updateThemeColors = () => {
   if (isDarkMode.value) {
     root.style.setProperty('--color-background', '#1a1a1a')
     root.style.setProperty('--color-background-soft', '#242424')
+    root.style.setProperty('--color-background-soft-rgb', '36, 36, 36')
     root.style.setProperty('--color-background-mute', '#2f2f2f')
     root.style.setProperty('--color-background-dark', '#2f2f2f')
-    root.style.setProperty('--color-background-highlight', '#2f2f2f')
+    root.style.setProperty('--color-background-highlight', '#de6193')
+    root.style.setProperty('--color-background-highlight-rgb', '222, 97, 147')
     root.style.setProperty('--color-border', '#3f3f3f')
     root.style.setProperty('--color-text', '#ffffff')
   } else {
-    root.style.setProperty('--color-background', '#F3EED9');
-    root.style.setProperty('--color-background-soft', '#F8F5F1');
-    root.style.setProperty('--color-background-mute', '#C2C1C0');
-    root.style.setProperty('--color-background-dark', '#EEE7DD');
-    root.style.setProperty('--color-background-highlight', '#FFB02E');
-    root.style.setProperty('--color-border', ' #CEC8BF')
+    root.style.setProperty('--color-background', '#F3EED9')
+    root.style.setProperty('--color-background-soft', '#F8F5F1')
+    root.style.setProperty('--color-background-soft-rgb', '248, 245, 241')
+    root.style.setProperty('--color-background-mute', '#C2C1C0')
+    root.style.setProperty('--color-background-dark', '#EEE7DD')
+    root.style.setProperty('--color-background-highlight', '#FFB02E')
+    root.style.setProperty('--color-background-highlight-rgb', '255, 176, 46')
+    root.style.setProperty('--color-border', '#CEC8BF')
     root.style.setProperty('--color-text', '#213547')
   }
 }
