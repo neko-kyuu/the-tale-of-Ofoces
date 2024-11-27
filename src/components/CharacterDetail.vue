@@ -52,7 +52,7 @@
                         @click="showCharacterDetail(getCharacterById(relation.to))"
                     >
                         <img 
-                        :src="getCharacterById(relation.to).avatar" 
+                        :src="getCharacterById(relation.to).path" 
                         :alt="getCharacterById(relation.to).name"
                         class="relation-avatar"
                         >
@@ -125,7 +125,8 @@ import { ref, onMounted, onUnmounted, computed, h } from 'vue'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import { mdFiles } from '@/constants/mdFiles'
-import { edges, characters } from '@/constants/characters'
+import { realms, races, characters, edges } from '@/constants/entities'
+
 import ContentFilter from '@/components/ContentFilter.vue'
 
 const store = useCharacterDetailStore()

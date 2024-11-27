@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia'
-import type { Character } from '@/constants/characters'
 
 export const useCharacterDetailStore = defineStore('characterDetail', {
   state: () => ({
-    currentChar: null as Character | null,
+    currentChar: null as any | null,
     currentFile: null as any | null,
   }),
   
   actions: {
-    showCharacter(char: Character) {
+    showCharacter(char) {
       this.currentChar = char
       console.log(this.currentChar)
     },

@@ -36,7 +36,7 @@
                     @click="showCharacterDetail(char)"
                   >
                     <div class="card-image">
-                      <img :src="char.avatar" :alt="char.name">
+                      <img :src="char.path" :alt="char.name">
                     </div>
                     <div class="card-content">
                       <p class="card-title">{{ char.name }}</p>
@@ -64,7 +64,7 @@
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Network } from 'vis-network'
-import { realms, races, characters, edges } from '@/constants/characters'
+import { realms, races, characters, edges } from '@/constants/entities'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 
 const store = useCharacterDetailStore()
@@ -101,7 +101,7 @@ let network = null
 const nodes = characters.map(char => ({
   id: char.id,
   label: char.name,
-  image: char.avatar,
+  image: char.path,
   shape: 'circularImage',
   size: 30,
 }))
