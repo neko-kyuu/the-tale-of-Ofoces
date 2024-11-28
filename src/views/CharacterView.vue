@@ -14,7 +14,7 @@
       <div class="character-groups">
           <!-- 按 realm 分组 -->
           <div 
-            v-for="realm in realms" 
+            v-for="realm in REALMS" 
             :key="realm.id"
             class="realm-group"
           >
@@ -64,7 +64,8 @@
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Network } from 'vis-network'
-import { realms, races, characters, edges } from '@/constants/entities'
+import {  characters } from '@/constants/entities'
+import { RACES, REALMS } from '@/constants/types'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 
 const store = useCharacterDetailStore()
@@ -73,7 +74,7 @@ const store = useCharacterDetailStore()
 const getRacesByRealm = (realmId) => {
   const realmCharacters = characters.filter(char => char.realm === realmId)
   const raceIds = [...new Set(realmCharacters.map(char => char.race))]
-  return races.filter(race => raceIds.includes(race.id))
+  return RACES.filter(race => raceIds.includes(race.id))
 }
 
 // 获取特定 realm 和 race 的角色
@@ -104,6 +105,30 @@ const nodes = characters.map(char => ({
   image: char.path,
   shape: 'circularImage',
   size: 30,
+  imageSize: 30,
+  imagePadding: 0,
+  color: {
+    border: '#848484',
+    background: '#ffffff',
+    highlight: {
+      border: '#2B7CE9',
+      background: '#ffffff'
+    },
+    hover: {
+      border: '#2B7CE9',
+      background: '#ffffff'
+    }
+  }
+}))
+// 使用全局关系数据
+const edges = window.$characterRelationships.map(edge => ({
+  ...edge,
+  color: {
+    color: edge.color?.color || '#848484',
+    highlight: edge.color?.color || '#848484',
+    hover: edge.color?.color || '#848484',
+    opacity: 0.8
+  }
 }))
 
 // 网络图配置
@@ -111,61 +136,129 @@ const options = {
   nodes: {
     borderWidth: 2,
     borderWidthSelected: 3,
+    size: 30, // 默认大小
+    shape: 'circularImage',
     brokenImage: undefined,
+    imagePadding: 0,
     chosen: {
       node: (values, id, selected, hovering) => {
         if (hovering) {
+          values.size = 30; // 悬浮时放大节点
+          values.borderWidth = 3;
           values.shadow = true;
           values.shadowColor = 'rgba(0,0,0,0.3)';
           values.shadowSize = 10;
-          values.size = 35; // 悬浮时放大
+          values.shadowX = 0;
+          values.shadowY = 0;
+          
+          values.imageSize = 45;
+          values.imagePadding = 0;
+        } else {
+          values.size = 30;
+          values.imageSize = 30;
+          values.imagePadding = 0;
+        }
+      },
+      label: (values, id, selected, hovering) => {
+        if (hovering) {
+          // values.size = 16;
+          values.color = getComputedStyle(document.documentElement)
+            .getPropertyValue('--color-text').trim();
         }
       }
     },
-    font: { color: '#343434', size: 14 },
-    shadow: { 
-      enabled: false,
-      size: 10,
-      x: 0,
-      y: 0
+    font: { 
+      color: '#343434',
+      size: 14,
+      face: 'Arial'
+    },
+    shadow: {
+      enabled: false
     },
     shapeProperties: {
-      useBorderWithImage: true
+      useBorderWithImage: true,
+      interpolation: true // 启用图片平滑缩放
+    },
+    scaling: {
+      min: 30,
+      max: 45,
+      label: {
+        enabled: true,
+        min: 14,
+        max: 16
+      }
     },
     transition: {
-      duration: 200 // 动画过渡时间
+      duration: 200, // 动画过渡时间
+      easing: 'easeInOutQuad' // 过渡效果
     }
   },
   edges: {
-    font: {
-      size: 12,
-      align: 'middle'
-    },
     width: 2,
-    shadow: { enabled: false },
-    chosen: {
-      edge: (values, id, selected, hovering) => {
-        if (hovering) {
-          values.shadow = true;
-          values.shadowColor = 'rgba(0,0,0,0.2)';
-          values.width = 4;
-        }
-      }
+    color: {
+      color: '#848484', // 设置默认颜色
+      highlight: '#848484',
+      hover: '#848484',
+      inherit: false, // 不从节点继承颜色
+      opacity: 0.8
     },
     smooth: {
       type: 'continuous',
       roundness: 0.5
     },
-    transition: {
-      duration: 200
+    font: {
+      size: 12,
+      align: 'middle',
+      strokeWidth: 2,
+      strokeColor: '#ffffff'
+    },
+    chosen: {
+      edge: function(values, id, selected, hovering) {
+        if (hovering) {
+          values.width = 4;
+          values.opacity = 1;
+          values.shadow = true;
+          values.shadowColor = 'rgba(0,0,0,0.2)';
+        }
+      }
+    },
+    hoverWidth: 2,
+    selectionWidth: 2,
+    arrows: {
+      to: {
+        enabled: true,
+        scaleFactor: 0.5
+      }
     }
   },
   physics: {
-    enabled: false
+    enabled: true,
+    barnesHut: {
+      gravitationalConstant: -2000,
+      centralGravity: 0.3,
+      springLength: 200,
+      springConstant: 0.04,
+      damping: 0.09
+    },
+    stabilization: {
+      enabled: true,
+      iterations: 1000,
+      updateInterval: 100,
+      fit: true
+    }
   },
   interaction: {
     hover: true,
-    hoverConnectedEdges: true
+    hoverConnectedEdges: true,
+    selectable: true,
+    selectConnectedEdges: true,
+    multiselect: true,
+    navigationButtons: true,
+    keyboard: {
+      enabled: true,
+      bindToWindow: false
+    },
+    zoomView: true
   }
 }
 
@@ -317,6 +410,16 @@ onUnmounted(() => {
   min-width: 0;
 }
 
+@media (max-width: 768px) {
+  .race-groups-container{
+    gap: 0;
+  }
+
+  .race-group {
+    flex: 0 1 auto;
+  }
+}
+
 .race-group.inline-group {
   flex: 0 1 auto;
 }
@@ -332,7 +435,6 @@ onUnmounted(() => {
   flex-wrap: wrap;
   gap: 1rem;
   width: 100%;
-  background: var(--color-background-highlight);
   padding: 0.5rem;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -407,6 +509,7 @@ onUnmounted(() => {
   padding: 0.25rem 0.5rem;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
   font-size: 0.75rem;
   text-align: center;
   max-width: 60px;

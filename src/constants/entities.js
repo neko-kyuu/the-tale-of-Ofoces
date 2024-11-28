@@ -1,47 +1,21 @@
 import { CONTENT_TYPES } from "@/constants/types"
-// 导出常量，添加类型注解
-export const realms = [
-    { id: 1, name: '神祁' },
-    { id: 2, name: '天界生物' },
-    { id: 3, name: '主位面生物' }
-]
 
-export const races = [
-    { id: 1, name: '天使' },
-    { id: 2, name: '魔鬼' },
-    { id: 3, name: '精灵' } ,
-    { id: 4, name: '人类' },
-    { id: 5, name: '提夫林' },
-    { id: 6, name: '阿斯莫' },
-    { id: 7, name: '半精灵' },
-    { id: 8, name: '荒神' },
-    { id: 9, name: '羽蛇' },
-    { id: 10, name: '神侍' },
-    { id: 11, name: '至高天' },
-]
-
-export const backgrounds = [
-    { id: 1, name: '调查员' },
-    { id: 2, name: '贵族' },
-    { id: 3, name: '剧团' },
-    { id: 4, name: '公会' },
-    { id: 5, name: '教堂圣职者' },
-    { id: 6, name: '侍从' },
-]
 export const edges = [
     { 
       from: 1, 
-      to: 2, 
-      arrows: 'to',
+      to: 2,
+      type: 1, 
+      arrows: 'to;from',
       label: '结婚',
       color: { color: '#2B7CE9' }
     },
     { 
       from: 2, 
-      to: 1, 
-      arrows: 'to',
-      label: '结婚',
-      color: { color: '#E91E63' }
+      to: 5,
+      type: 3, 
+      arrows: 'to;from',
+      label: '养父子',
+      color: { color: '#2B7CE9' }
     },
     // ... 更多关系
   ]
@@ -55,11 +29,22 @@ export const characters = [
       background: 1,
       path: "/static/token/mja.png",
       references: {
+          characters: [
+            { id: 2, label: '结婚', edgeType: 1 },
+            { id: 7, label: '同事', edgeType: 2 },
+            { id: 18, label: '友人', edgeType: 2 },
+            { id: 11, label: '父神', edgeType: 4 },
+          ],
           // 引用其他内容的ID列表
-          documents: ['doc_1', 'doc_2'],
           // ...其他引用
       },
       referencedBy: {
+          characters: [
+            { id: 2, label: '结婚', edgeType: 1 },
+            { id: 7, label: '同事', edgeType: 2 },
+            { id: 18, label: '友人', edgeType: 2 },
+            { id: 11, label: '造物', edgeType: 4 },
+          ],
           // 被其他内容引用的ID列表
           // ...其他引用
       }
@@ -72,6 +57,20 @@ export const characters = [
       race: 3,
       background: 2,
       path: "/static/token/mja.png",
+      references: {
+        characters: [
+          { id: 1, label: '结婚', edgeType: 1 },
+          { id: 5, label: '养父', edgeType: 3 },
+          { id: 3, label: '初恋', edgeType: 1 },
+        ],
+      },
+      referencedBy: {
+        characters: [
+          { id: 1, label: '结婚', edgeType: 1 },
+          { id: 5, label: '养子', edgeType: 3 },
+          { id: 3, label: '初恋', edgeType: 1 },
+        ],
+      }
   },
   {
       id: 3,
@@ -81,6 +80,20 @@ export const characters = [
       race: 3,
       background: 6,
       path: "/static/token/mja.png",
+      references: {
+        characters: [
+          { id: 2, label: '初恋', edgeType: 1 },
+          { id: 4, label: '胞弟', edgeType: 3 },
+          { id: 5, label: '家主', edgeType: 4 },
+        ],
+      },
+      referencedBy: {
+        characters: [
+          { id: 2, label: '初恋', edgeType: 1 },
+          { id: 4, label: '胞兄', edgeType: 3 },
+          { id: 5, label: '庇护', edgeType: 4 },
+        ],
+      }
   },
   {
       id: 4,
@@ -90,6 +103,18 @@ export const characters = [
       race: 3,
       background: 6,
       path: "/static/token/mja.png",
+      references: {
+        characters: [
+          { id: 3, label: '胞兄', edgeType: 3 },
+          { id: 5, label: '家主', edgeType: 4 },
+        ],
+      },
+      referencedBy: {
+        characters: [
+          { id: 3, label: '胞弟', edgeType: 3 },
+          { id: 5, label: '庇护', edgeType: 4 },
+        ],
+      }
   },
   {
       id: 5,
@@ -99,6 +124,20 @@ export const characters = [
       race: 3,
       background: 2,
       path: "/static/token/mja.png",
+      references: {
+        characters: [
+          { id: 2, label: '养子', edgeType: 3 },
+          { id: 3, label: '庇护', edgeType: 4 },
+          { id: 4, label: '庇护', edgeType: 4 },
+        ],
+      },
+      referencedBy: {
+        characters: [
+          { id: 2, label: '养父', edgeType: 3 },
+          { id: 3, label: '家主', edgeType: 4 },
+          { id: 4, label: '家主', edgeType: 4 },
+        ],
+      }
   },
   {
       id: 6,
@@ -108,6 +147,16 @@ export const characters = [
       race: 6,  
       background: 5,
       path: "/static/token/mja.png",
+      references: {
+        characters: [
+          { id: 7, label: '未满', edgeType: 1 },
+        ],
+      },
+      referencedBy: {
+        characters: [
+          { id: 7, label: '未满', edgeType: 1 },
+        ],
+      }
   },
   {
       id: 7,
@@ -117,6 +166,20 @@ export const characters = [
       race: 5,
       background: 1,
       path: "/static/token/mja.png",
+      references: {
+        characters: [
+          { id: 6, label: '未满', edgeType: 1 },
+          { id: 1, label: '同事', edgeType: 2 },
+          { id: 8, label: '姊姊', edgeType: 3 },
+        ],
+      },
+      referencedBy: {
+        characters: [
+          { id: 6, label: '未满', edgeType: 1 },
+          { id: 1, label: '同事', edgeType: 2 },
+          { id: 8, label: '妹妹', edgeType: 3 },
+        ],
+      }
   },
   {
     id: 8,
@@ -126,6 +189,18 @@ export const characters = [
     race: 5,
     background: 3,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 7, label: '妹妹', edgeType: 3 },
+          { id: 9, label: '同事', edgeType: 2 },
+        ],
+    },
+    referencedBy: {
+        characters: [
+          { id: 7, label: '姊姊', edgeType: 3 },
+          { id: 9, label: '同事', edgeType: 2 },
+        ],
+    }
   },
   {
     id: 9,
@@ -135,6 +210,18 @@ export const characters = [
     race: 4,
     background: 3,
     path: "/static/token/mja.png",
+    references:{
+        characters: [
+          { id: 8, label: '同事', edgeType: 2 },
+          { id: 10, label: '未满', edgeType: 1 }
+        ],
+    },
+    referencedBy: {
+        characters: [
+          { id: 8, label: '同事', edgeType: 2 },
+          { id: 10, label: '未满', edgeType: 1 }
+        ],
+    }
   },
   {
     id: 10,
@@ -144,6 +231,16 @@ export const characters = [
     race: 7,
     background: 4,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 9, label: '未满', edgeType: 1 },
+        ],
+    },
+    referencedBy: {
+        characters: [
+          { id: 9, label: '未满', edgeType: 1 },
+        ],
+    }
   },
   {
     id: 11,
@@ -153,6 +250,25 @@ export const characters = [
     race: 8,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 12, label: '远古纯爱', edgeType: 1 },
+          { id: 13, label: '从神', edgeType: 3 },
+          { id: 14, label: '神侍', edgeType: 4 },
+          { id: 1, label: '造物', edgeType: 4 },
+          { id: 15, label: '造物', edgeType: 4 },
+        ],
+    },
+    referencedBy: {
+        characters: [
+          { id: 12, label: '远古纯爱', edgeType: 1 },
+          { id: 13, label: '从神', edgeType: 3 },
+          { id: 14, label: '主神', edgeType: 4 },
+          { id: 1, label: '父神', edgeType: 4 },
+          { id: 15, label: '父神', edgeType: 4 },
+         
+        ],
+    }
   },
   {
     id: 12,
@@ -162,6 +278,16 @@ export const characters = [
     race: 9,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 11, label: '远古纯爱', edgeType: 1 },
+        ],
+    },
+    referencedBy: {
+        characters: [
+          { id: 11, label: '远古纯爱', edgeType: 1 },
+        ]
+    }
   },
   {
     id: 13,
@@ -170,7 +296,21 @@ export const characters = [
     realm: 1, 
     race: 8,
     background: 1,
-    path: "/static/token/mja.png",  
+    path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 11, label: '主神', edgeType: 3 },
+          { id: 16, label: '幺子', edgeType: 3 },
+          { id: 17, label: '造物', edgeType: 4 },
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 11, label: '从神', edgeType: 3 },
+          { id: 16, label: '母神', edgeType: 3 },
+          { id: 17, label: '母神', edgeType: 4 },
+        ]
+    }
   },
   {
     id: 14,
@@ -180,6 +320,16 @@ export const characters = [
     race: 10,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 11, label: '主神', edgeType: 4 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 11, label: '神侍', edgeType: 4 }
+        ]
+    }
   },
   {
     id: 15,
@@ -189,6 +339,16 @@ export const characters = [
     race: 1,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+            { id: 11, label: '父神', edgeType: 4 },
+        ]
+    },
+    referencedBy: {
+        characters: [
+            { id: 11, label: '造物', edgeType: 4 },
+        ]
+    }
   },
   {
     id: 16,
@@ -198,6 +358,18 @@ export const characters = [
     race: 11,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 13, label: '母神', edgeType: 3 },
+          { id: 17, label: '??', edgeType: 1 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 13, label: '幺子', edgeType: 3 },
+          { id: 17, label: '??', edgeType: 1 }
+        ]
+    }
   },
   {
     id: 17,
@@ -207,6 +379,18 @@ export const characters = [
     race: 1,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 13, label: '母神', edgeType: 4 },
+          { id: 16, label: '??', edgeType: 1 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 13, label: '造物', edgeType: 4 },
+          { id: 16, label: '??', edgeType: 1 }
+        ]
+    }
   },
   {
     id: 18,
@@ -216,6 +400,16 @@ export const characters = [
     race: 3,
     background: 1,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 1, label: '友人', edgeType: 2 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 1, label: '友人', edgeType: 2 }
+        ]
+    }
   },
   {
     id: 19,
@@ -225,6 +419,16 @@ export const characters = [
     race: 3,
     background: 6,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 5, label: '家主', edgeType: 4 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 5, label: '侍从', edgeType: 4 }
+        ]
+    }
   },
   {
     id: 20,
@@ -234,6 +438,16 @@ export const characters = [
     race: 3,
     background: 6,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 5, label: '家主', edgeType: 4 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 5, label: '侍从', edgeType: 4 }
+        ]
+    }
   },
   {
     id: 21,
@@ -243,23 +457,311 @@ export const characters = [
     race: 3,
     background: 6,
     path: "/static/token/mja.png",
+    references: {
+        characters: [
+          { id: 5, label: '家主', edgeType: 4 }
+        ]
+    },
+    referencedBy: {
+        characters: [
+          { id: 5, label: '侍从', edgeType: 4 }
+        ]
+    }
   }    
   // ...其他角色
 ]
 
-export const mdFiles = [
+export const documents = [
   {
-    id: 'doc_1',
+    id: 1,
     type: CONTENT_TYPES.DOCUMENT,
     title: '设定与世界观',
+    tags: ['dndoc','设定'],
     path: '/static/md/设定与世界观.md',
     references: {
-      characters: ['char_1'],
+      characters: [ 1,2 ]
       // ...其他引用
     },
     referencedBy: {
       // ...被引用
     }
+  },
+  {
+    id: 2,
+    type: CONTENT_TYPES.DOCUMENT,
+    title: '角色A',
+    tags: ['dndoc'],
+    path: '/static/md/character-a.md',
+    references: {
+      characters: [ 1 ]
+    }
   }
   // ...其他文档
+]
+
+export const gallery = [
+    {
+        id: 1,
+        path: "/static/gallery/2024-03-27 155647.jpg",
+        tags: ['tag1'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 2,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 3,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 4,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 5,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 6,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 7,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 8,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 9,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 10,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 11,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 12,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 13,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 14,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 15,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 16,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 9,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 10,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 11,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 12,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 13,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 14,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 15,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    },
+    {
+        id: 16,
+        path: "/static/token/mja.png",
+        tags: ['tag1', 'tag2'],
+        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
+        version: (Math.random() * 5).toFixed(1),
+        references: [
+            { id: `${0 % 10}`, type: 'character' },
+            { id: `${0 % 5}`, type: 'location' },
+        ]
+    }
 ]

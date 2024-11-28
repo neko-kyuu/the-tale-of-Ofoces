@@ -11,21 +11,29 @@
           </RouterLink>
           <!-- 视图模式 -->
           <RouterLink 
-              to="/characters/list" 
-              class="nav-link view-mode-button" 
-              :class="{ active: $route.path === '/characters/list' }"
-              title="列表视图"
-            >
-              <i class="fi fi-rr-radio-button"></i>
-            </RouterLink>
-            <RouterLink 
-              to="/characters/network" 
-              class="nav-link view-mode-button" 
-              :class="{ active: $route.path === '/characters/network' }"
-              title="关系图"
-            >
-              <i class="fi fi-rr-dot-circle"></i>
-            </RouterLink>
+            to="/characters/list" 
+            class="nav-link view-mode-button" 
+            :class="{ active: $route.path === '/characters/list' }"
+            title="列表视图"
+          >
+            <i class="fi fi-rr-radio-button"></i>
+          </RouterLink>
+          <RouterLink 
+            to="/characters/network" 
+            class="nav-link view-mode-button" 
+            :class="{ active: $route.path === '/characters/network' }"
+            title="关系图"
+          >
+            <i class="fi fi-rr-dot-circle"></i>
+          </RouterLink>
+          <RouterLink 
+            to="/gallery" 
+            class="nav-link view-mode-button" 
+            :class="{ active: $route.path === '/gallery' }"
+            title="画廊"
+          >
+            <i class="fi fi-rr-dot-circle"></i>
+          </RouterLink>
         </div>
         
         
@@ -72,7 +80,7 @@
 
       <main class="main-content">
         <RouterView />
-        <CharacterDetail />
+        <SlideDetails />
       </main>
 
       <!-- 骰子结果显示窗口 -->
@@ -93,12 +101,12 @@
 <script setup>
 import { ref, provide, onMounted, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
-import CharacterDetail from '@/components/CharacterDetail.vue'
+import SlideDetails from '@/components/SlideDetail.vue'
 
 const diceResult = ref(null)
 const modifier = ref(0)
 const currentDice = ref(null)
-const isDarkMode = ref(localStorage.getItem('theme') === 'dark')
+const isDarkMode = ref(true)
 
 const rollDice = (faces) => {
   currentDice.value = faces
@@ -113,7 +121,6 @@ const clearResult = () => {
 // 切换主题
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value
-  localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'light')
   updateThemeColors()
 }
 
