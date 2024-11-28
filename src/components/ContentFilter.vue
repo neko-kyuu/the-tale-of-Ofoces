@@ -10,14 +10,14 @@
         </select>
       </template>
 
-      <template v-if="currentTool === 'images'">
-        <select v-model="filters.images.type" class="filter-select" @change="emitFilterChange">
+      <template v-if="currentTool === 'gallerys'">
+        <select v-model="filters.gallerys.type" class="filter-select" @change="emitFilterChange">
           <option value="all">全部图片</option>
           <option value="portrait">肖像</option>
           <option value="scene">场景</option>
           <option value="item">物品</option>
         </select>
-        <select v-model="filters.images.time" class="filter-select" @change="emitFilterChange">
+        <select v-model="filters.gallerys.time" class="filter-select" @change="emitFilterChange">
           <option value="all">全部时间</option>
           <option value="recent">最近添加</option>
           <option value="oldest">最早添加</option>
@@ -59,7 +59,7 @@ const filters = reactive({
   overview: {
     sort: 'name'
   },
-  images: {
+  gallerys: {
     type: 'all',
     time: 'all'
   },
@@ -88,7 +88,7 @@ const searchQuery = ref('')
 const getSearchPlaceholder = computed(() => {
   const placeholders = {
     overview: '搜索所有内容...',
-    images: '搜索图片...',
+    gallerys: '搜索图片...',
     documents: '搜索文档...',
     events: '搜索事件...',
     footprints: '搜索地点...',

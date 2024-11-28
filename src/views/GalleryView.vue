@@ -21,8 +21,7 @@
           :class="{ active: showFilters }"
           @click="toggleFilters"
         >
-          <i class="ri-filter-3-line"></i>
-          筛选
+          <i class="fi fi-rr-filter-list"></i>
         </button>
       </div>
     </div>
@@ -39,6 +38,8 @@
         :column-width="280"
         :gap="16"
         :min-column-count="2"
+        @select-character="handleSelectEntity"
+        @open-file="handleOpenFile"
       >
         <template #item="{ item }">
           <div class="gallery-item">
@@ -50,18 +51,12 @@
             </div>
             <div class="item-info">
               <div class="item-metadata">
-                <span class="item-date">{{ formatDate(item.finishedDate) }}</span>
-                <span class="item-version">v{{ item.version }}</span>
+                <span class="item-date">{{ item.finishedDate }}</span>
+                <span class="item-version" v-if="item.version > 1" >version · {{ item.version }}</span>
               </div>
               <div class="item-tags">
                 <span v-for="tag in item.tags" :key="tag" class="tag">
                   {{ tag }}
-                </span>
-              </div>
-              <div class="item-references" v-if="item.references.length">
-                <span>关联：</span>
-                <span v-for="ref in item.references" :key="ref.id" class="reference">
-                  {{ ref.type }}
                 </span>
               </div>
             </div>
@@ -73,10 +68,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, h, onUnmounted } from 'vue'
 import VirtualWaterfall from '@/components/VirtualWaterfall.vue'
 import FilterPanel from '@/components/FilterPanel.vue'
-import { gallery } from '@/constants/entities'
+import { gallerys } from '@/constants/entities'
+import { useCharacterDetailStore } from '@/stores/characterDetail'
+import { ModalManager } from '@/utils/ModalManager'
+import MarkdownPreview from '@/components/MarkdownPreview.vue'
+
+const store = useCharacterDetailStore()
+const isMobile = ref(false)
+
+const currentFile = computed(() => store.currentFile)
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
 
 // 视图模式
 const viewMode = ref('waterfall')
@@ -87,7 +103,7 @@ const filterGroups = computed(() => {
   
   // 获取所有标签
   const tags = new Set<string>()
-  gallery.forEach(item => {
+  gallerys.forEach(item => {
     item.tags.forEach(tag => tags.add(tag))
   })
   
@@ -95,11 +111,6 @@ const filterGroups = computed(() => {
     label: '标签',
     type: 'select',
     options: Array.from(tags)
-  }
-  
-  groups.finishedDate = {
-    label: '完成日期',
-    type: 'date'
   }
   
   return groups
@@ -118,7 +129,7 @@ const handleFilter = (filters: Record<string, any>) => {
 
 // 筛选后的项目
 const filteredItems = computed(() => {
-  return gallery.filter(item => {
+  return gallerys.filter(item => {
     // 标签筛选
     const selectedTags = currentFilters.value.tags || []
     const matchesTags = selectedTags.length === 0 || 
@@ -141,10 +152,33 @@ const toggleFilters = () => {
   showFilters.value = !showFilters.value
 }
 
-// 格式化日期
-const formatDate = (date: Date) => {
-  return date.toISOString().split('T')[0]
+// 处理实体选择
+const handleSelectEntity = (char: any) => {
+  store.showCharacter(char)
 }
+
+// 处理文件打开
+const handleOpenFile = (file: any) => {
+  if (isMobile.value) {
+    store.showFile(file)
+  } else {
+    console.log('open modal manager',file.title)
+    ModalManager.getInstance().create(`file-${file.id}`, {
+      title: file.title,
+      content: h(MarkdownPreview, { filePath: file.path }),
+      props: {
+        minWidth: 200,
+        initialWidth: 800,
+        initialHeight: 600,
+        initialPosition: { 
+          x: 0.6, 
+          y: 0.3
+        }
+      }
+    })
+  }
+}
+
 </script>
 
 <style scoped>
@@ -182,6 +216,7 @@ const formatDate = (date: Date) => {
 }
 .view-mode button.active {
   background: var(--color-background-mute);
+  border: 1px solid var(--color-background-highlight);
 }
 
 .filter-button {

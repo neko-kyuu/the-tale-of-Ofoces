@@ -43,9 +43,16 @@
               @filter-change="handleFilterChange"
               @search-change="handleSearchChange"
             />
-            <ContentArea
+            <!-- <ContentArea
               :current-tool="currentTool"
               :character-id="currentChar.id"
+              @select-character="showCharacterDetail"
+              @open-file="openFile"
+            /> -->
+            <RelatedResources
+              :entity-id="currentChar.id"
+              :entity-type="currentChar.type"
+              :current-tool="currentTool"
               @select-character="showCharacterDetail"
               @open-file="openFile"
             />
@@ -93,9 +100,8 @@ import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ref, onMounted, onUnmounted, computed, h } from 'vue'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
-
 import ContentFilter from '@/components/ContentFilter.vue'
-import ContentArea from '@/components/ContentArea.vue'
+import RelatedResources from '@/components/RelatedResources.vue'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -143,7 +149,7 @@ const openFile = (file) => {
     store.showFile(file)
   } else {
     ModalManager.getInstance().create(`file-${file.id}`, {
-      title: file.name,
+      title: file.title,
       content: h(MarkdownPreview, { filePath: file.path }),
       props: {
         minWidth: 200,
@@ -161,7 +167,7 @@ const openFile = (file) => {
 // 定义工具栏选项
 const tools = [
   { id: 'overview', label: '总览', icon: 'fi fi-rr-apps' },
-  { id: 'images', label: '图片', icon: 'fi fi-rr-picture' },
+  { id: 'gallerys', label: '图片', icon: 'fi fi-rr-picture' },
   { id: 'documents', label: '文档', icon: 'fi fi-rr-document' },
   { id: 'events', label: '事件', icon: 'fi fi-rr-calendar' },
   { id: 'footprints', label: '足迹', icon: 'fi fi-rr-map-marker' },
@@ -210,7 +216,7 @@ const handleSearchChange = (query: string) => {
 
 .slide-detail--open {
   right: 1rem;
-  opacity: 1;
+  opacity: 0.9;
   transform: translateX(0);
 }
 

@@ -1,3 +1,4 @@
+<!-- abandoned -->
 <template>
   <div class="content-area">
     <div class="related-characters" v-if="props.currentTool === 'overview'">

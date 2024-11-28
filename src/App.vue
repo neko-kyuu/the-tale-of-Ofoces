@@ -32,7 +32,7 @@
             :class="{ active: $route.path === '/gallery' }"
             title="画廊"
           >
-            <i class="fi fi-rr-dot-circle"></i>
+            <i class="fi fi-sr-layout-fluid"></i>
           </RouterLink>
         </div>
         

@@ -8,7 +8,7 @@
       :key="key"
       class="filter-group"
     >
-      <div class="filter-label">{{ filter.label }}</div>
+      <!-- <div class="filter-label">{{ filter.label }}</div> -->
       
       <!-- 标签类型的筛选 -->
       <div v-if="filter.type === 'select'" class="filter-select">
@@ -117,14 +117,16 @@ const resetFilters = () => {
 .filter-panel {
   background: var(--color-background-soft);
   border-radius: 8px;
-  padding: 16px;
+  padding: 0.5rem;
   margin-bottom: 16px;
   display: none;
+  font-size: 0.8rem;
 }
 
 .filter-panel-show {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .filter-group {

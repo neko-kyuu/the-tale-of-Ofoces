@@ -7,7 +7,6 @@
       <div 
         class="waterfall-content"
         :style="{ 
-          height: `${totalHeight}px`,
           columnCount: columnCount,
           columnGap: `${gap}px`
         }"
@@ -18,7 +17,20 @@
           :key="item.id"
           :style="{ marginBottom: `${gap}px` }"
         >
-          <slot name="item" :item="item" />
+          <div class="gallery-item-wrapper">
+            <slot name="item" :item="item" />
+            <div class="item-overlay">
+              <div class="overlay-content">
+                <RelatedResources
+                  current-tool="overview"
+                  :entity-id="item.id"
+                  entity-type="gallery"
+                  @select-character="handleSelectEntity"
+                  @open-file="handleOpenFile"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -27,18 +39,20 @@
   <script setup lang="ts">
   import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
   import { useElementSize } from '@vueuse/core'
+  import RelatedResources from '@/components/RelatedResources.vue'
   
   interface GalleryItem {
     id: number
     path: string
     tags: string[]
-    finishedDate: Date
-    version: string
-    references: Array<{
-        id: string
-        type: string
-    }>
+    finishedDate: string
+    version: number
+    references: {
+      characters?:number[],
+      documents?:number[]
     }
+    
+  }
 
     const props = defineProps<{
     items: GalleryItem[]
@@ -90,6 +104,26 @@
   
   // 监听数据变化
   watch(() => props.items, handleScroll, { deep: true })
+  
+  const emit = defineEmits<{
+    (e: 'select-character', entity: any): void
+    (e: 'open-file', file: any): void
+  }>()
+  
+  // 处理实体选择
+  const handleSelectEntity = (char: any) => {
+    emit('select-character', char)
+  }
+  
+  // 处理文件打开
+  const handleOpenFile = (file: any) => {
+    emit('open-file', file)
+  }
+  
+  // 格式化日期
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('zh-CN')
+  }
   </script>
   
   <style scoped>
@@ -102,10 +136,60 @@
   .waterfall-content {
     position: relative;
     margin: 0 auto;
-    column-fill: auto;
+    /* column-fill: auto; */
   }
   
   .waterfall-item {
     break-inside: avoid;
+  }
+  
+  .gallery-item-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .item-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .gallery-item-wrapper:hover .item-overlay {
+    opacity: 1;
+  }
+  
+  .overlay-content {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1rem;
+  }
+  
+  /* 自定义滚动条样式 */
+  .overlay-content::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .overlay-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .overlay-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
   }
   </style>

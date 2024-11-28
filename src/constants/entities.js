@@ -79,7 +79,7 @@ export const characters = [
       realm: 3, 
       race: 3,
       background: 6,
-      path: "/static/token/mja.png",
+      path: "/static/token/lewenhart.png",
       references: {
         characters: [
           { id: 2, label: '初恋', edgeType: 1 },
@@ -479,289 +479,192 @@ export const documents = [
     tags: ['dndoc','设定'],
     path: '/static/md/设定与世界观.md',
     references: {
-      characters: [ 1,2 ]
+      characters: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 ]
       // ...其他引用
-    },
-    referencedBy: {
-      // ...被引用
     }
   },
   {
     id: 2,
     type: CONTENT_TYPES.DOCUMENT,
-    title: '角色A',
-    tags: ['dndoc'],
-    path: '/static/md/character-a.md',
+    title: '天使是否有味觉，是否有胃？',
+    tags: ['dndoc','设定','秘典之页独家报道'],
+    path: '/static/md/天使是否有味觉，是否有胃？.md',
     references: {
-      characters: [ 1 ]
+      characters: [ 1,15,17 ]
+    }
+  },
+  {
+    id: 3,
+    type: CONTENT_TYPES.DOCUMENT,
+    title: '祷告与魔法',
+    tags: ['dndoc','设定','环设定'],
+    path: '/static/md/祷告与魔法.md',
+    references: {
+      characters: [ 1,2,5,4 ]
+    }
+  },
+  {
+    id: 4,
+    type: CONTENT_TYPES.DOCUMENT,
+    title: '当我起名时我在想什么',
+    tags: ['dndoc','设定'],
+    path: '/static/md/当我起名时我在想什么.md',
+    references: {
+      characters: [  ]
     }
   }
   // ...其他文档
 ]
 
-export const gallery = [
+export const gallerys = [
     {
         id: 1,
         path: "/static/gallery/2024-03-27 155647.jpg",
-        tags: ['tag1'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+        tags: [],
+        finishedDate: '2024-03-27',
+        version: 1,
+        references: {
+           characters: [1]
+        }
     },
     {
         id: 2,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+        path: "/static/gallery/2024-05-23 112745.jpg",
+        tags: [],
+        finishedDate: '2024-05-23',
+        version: 1,
+        references: {
+           characters: [2]
+        }
     },
     {
         id: 3,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+        path: "/static/gallery/2024-01-01 150432.png",
+        tags: [],
+        finishedDate: '2024-01-01',
+        version: 1,
+        references: {
+          characters: [1,2]
+        }
     },
     {
-        id: 4,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 4,
+      path: "/static/gallery/2024-04-21 202906.png",
+      tags: [],
+      finishedDate: '2024-04-21',
+      version: 1,
+      references: {
+        characters: [5]
+      }
     },
     {
-        id: 5,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 5,
+      path: "/static/gallery/2024-02-14 143044.jpg",
+      tags: [],
+      finishedDate: '2024-02-14',
+      version: 1,
+      references: {
+        characters: [3]
+      }
     },
     {
-        id: 6,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 6,
+      path: "/static/gallery/2024-01-20 171732.png",
+      tags: [],
+      finishedDate: '2024-01-20',
+      version: 1,
+      references: {
+        characters: [2,3]
+      }
     },
     {
-        id: 7,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 7,
+      path: "/static/gallery/2024-02-03 021848.png",
+      tags: [],
+      finishedDate: '2024-02-03',
+      version: 1,
+      references: {
+        characters: [1]
+      }
     },
     {
-        id: 8,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 8,
+      path: "/static/gallery/2024-02-10 222638.png",
+      tags: [],
+      finishedDate: '2024-02-10',
+      version: 1,
+      references: {
+        characters: [4]
+      }
     },
     {
-        id: 9,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 9,
+      path: "/static/gallery/2024-08-18 223617.png",
+      tags: [],
+      finishedDate: '2024-08-18',
+      version: 1,
+      references: {
+        characters: [3,4]
+      }
     },
     {
-        id: 10,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 10,
+      path: "/static/gallery/2024-06-24 232111.png",
+      tags: [],
+      finishedDate: '2024-06-24',
+      version: 1,
+      references: {
+        characters: [1,2]
+      }
     },
     {
-        id: 11,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 11,
+      path: "/static/gallery/2024-03-25 012428.jpg",
+      tags: [],
+      finishedDate: '2024-03-25',
+      version: 1,
+      references: {
+        characters: [1]
+      }
     },
     {
-        id: 12,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 12,
+      path: "/static/gallery/2024-02-16 171658.jpg",
+      tags: [],
+      finishedDate: '2024-02-16',
+      version: 1,
+      references: {
+        characters: [2]
+      }
     },
     {
-        id: 13,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 13,
+      path: "/static/gallery/2024-02-27 022625.png",
+      tags: [],
+      finishedDate: '2024-02-27',
+      version: 1,
+      references: {
+        characters: [3,4]
+      }
     },
     {
-        id: 14,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
+      id: 14,
+      path: "/static/gallery/2024-06-07 204215.png",
+      tags: [],
+      finishedDate: '2024-06-07',
+      version: 1,
+      references: {
+        characters: [2,3]
+      }
     },
     {
-        id: 15,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 16,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 9,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 10,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 11,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 12,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 13,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 14,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 15,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    },
-    {
-        id: 16,
-        path: "/static/token/mja.png",
-        tags: ['tag1', 'tag2'],
-        finishedDate: new Date(Date.now() - Math.random() * 10000000000),
-        version: (Math.random() * 5).toFixed(1),
-        references: [
-            { id: `${0 % 10}`, type: 'character' },
-            { id: `${0 % 5}`, type: 'location' },
-        ]
-    }
+      id: 15,
+      path: "/static/gallery/2024-05-18 230555.jpg",
+      tags: [],
+      finishedDate: '2024-05-18',
+      version: 1,
+      references: {
+        characters: [20,21]
+      }
+    } 
 ]
