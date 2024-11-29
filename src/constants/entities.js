@@ -510,7 +510,7 @@ export const documents = [
     tags: ['dndoc','设定'],
     path: '/static/md/当我起名时我在想什么.md',
     references: {
-      characters: [  ]
+      characters:  [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 ]
     }
   }
   // ...其他文档
@@ -667,4 +667,16 @@ export const gallerys = [
         characters: [20,21]
       }
     } 
+]
+export const ebooks = [
+  {
+    id: 1,
+    folderPath: "static/archive/2024-Anniv",
+    tags: [],
+    finishedDate: '2024-03-27',
+    version: 1,
+    references: {
+       documents: [1]
+    }
+  },
 ]

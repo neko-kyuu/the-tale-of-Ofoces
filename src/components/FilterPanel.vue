@@ -31,14 +31,14 @@
       <div v-if="filter.type === 'date'" class="date-range">
         <input 
           type="date" 
-          v-model="selectedFilters[key].start"
+          v-model="(selectedFilters[key] as DateRange).start"
           class="date-input"
           @change="handleFilterChange"
         >
         <span>至</span>
         <input 
           type="date" 
-          v-model="selectedFilters[key].end"
+          v-model="(selectedFilters[key] as DateRange).end"
           class="date-input"
           @change="handleFilterChange"
         >

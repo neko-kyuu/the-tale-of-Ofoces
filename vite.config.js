@@ -15,4 +15,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  publicDir: 'public',
+  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.webp'],
+  base: process.env.NODE_ENV === 'production' 
+    ? '/the-tale-of-Ofoces/'  // 替换为你的仓库名
+    : '/'
 })

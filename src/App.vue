@@ -143,8 +143,8 @@ const updateThemeColors = () => {
     root.style.setProperty('--color-background-soft-rgb', '248, 245, 241')
     root.style.setProperty('--color-background-mute', '#C2C1C0')
     root.style.setProperty('--color-background-dark', '#EEE7DD')
-    root.style.setProperty('--color-background-highlight', '#FFB02E')
-    root.style.setProperty('--color-background-highlight-rgb', '255, 176, 46')
+    root.style.setProperty('--color-background-highlight', '#bd93f6')
+    root.style.setProperty('--color-background-highlight-rgb', '189, 147, 246')
     root.style.setProperty('--color-border', '#CEC8BF')
     root.style.setProperty('--color-text', '#213547')
   }

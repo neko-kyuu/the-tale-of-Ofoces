@@ -6,17 +6,14 @@
           <button 
             :class="{ active: viewMode === 'waterfall' }" 
             @click="viewMode = 'waterfall'"
-          >
-            <i class="ri-layout-masonry-line"></i>
-          </button>
+          ></button>
           <button 
-            :class="{ active: viewMode === 'folder' }" 
-            @click="viewMode = 'folder'"
-          >
-            <i class="ri-folder-line"></i>
-          </button>
+            :class="{ active: viewMode === 'ebook' }" 
+            @click="viewMode = 'ebook'"
+          ></button>
         </div>
         <button 
+          v-if="viewMode === 'waterfall'"
           class="filter-button"
           :class="{ active: showFilters }"
           @click="toggleFilters"
@@ -64,6 +61,14 @@
         </template>
       </VirtualWaterfall>
     </div>
+
+    <div v-else-if="viewMode === 'ebook'" class="ebook-container">
+      <EbookViewer
+        :images="ebookImages"
+        :related-docs="relatedDocs"
+        @open-doc="handleOpenFile"
+      />
+    </div>
   </div>
 </template>
 
@@ -75,6 +80,8 @@ import { gallerys } from '@/constants/entities'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
+import EbookViewer from '@/components/EbookViewer.vue'
+import { ebooks } from '@/constants/entities'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -179,6 +186,54 @@ const handleOpenFile = (file: any) => {
   }
 }
 
+// 使用环境变量或配置文件定义基础路径
+const BASE_PATH = import.meta.env.VITE_BASE_PATH || ''
+
+const ebookImages = computed(() => {
+  try {
+    const imageFiles = import.meta.glob('/public/static/archive/2024-Anniv/*.{png,jpg,jpeg,webp}', {
+      eager: true,
+      import: 'default'
+    })
+    
+    const images = Object.entries(imageFiles)
+      .map(([path, url]) => {
+        // 处理 GitHub Pages 的路径
+        const adjustedPath = process.env.NODE_ENV === 'production'
+          ? `${BASE_PATH}${url}`
+          : url
+          
+        return {
+          id: path,
+          path: adjustedPath,
+          title: path.split('/').pop() || ''
+        }
+      })
+      .sort((a, b) => {
+        return a.title.localeCompare(b.title, undefined, { numeric: true })
+      })
+    
+    return images
+  } catch (error) {
+    console.error('Error loading ebook images:', error)
+    return []
+  }
+})
+
+// 获取关联文档
+const relatedDocs = computed(() => {
+  const currentEbook = ebooks[0]
+  return currentEbook.references.documents.map(docId => {
+    // 这里需要根据 docId 获取文档信息
+    // 假设你有一个 documents 数组
+    return {
+      id: docId,
+      title: `Document ${docId}`,
+      path: `/path/to/document/${docId}`
+    }
+  })
+})
+
 </script>
 
 <style scoped>
@@ -220,6 +275,7 @@ const handleOpenFile = (file: any) => {
 }
 
 .filter-button {
+  height: 24px;
   display: flex;
   align-items: center;
   gap: 4px;
