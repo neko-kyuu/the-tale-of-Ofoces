@@ -26,35 +26,54 @@
             </div>
         </div>
         <div class="detail-toolbar">
+            <div class="tool-buttons">
+                <button 
+                    v-for="tool in tools" 
+                    :key="tool.id"
+                    class="tool-button"
+                    :class="{ 'active': currentTool === tool.id }"
+                    :title="tool.label"
+                    @click="switchTool(tool.id)"
+                >
+                    <i :class="tool.icon"></i>
+                </button>
+            </div>
             <button 
-                v-for="tool in tools" 
-                :key="tool.id"
-                class="tool-button"
-                :class="{ 'active': currentTool === tool.id }"
-                :title="tool.label"
-                @click="switchTool(tool.id)"
+                v-if="useStandardFilter"
+                class="filter-toggle"
+                :class="{ 'active': showFilters }"
+                @click="showFilters = !showFilters"
+                :title="showFilters ? '收起筛选' : '展开筛选'"
             >
-                <i :class="tool.icon"></i>
+                <i class="fi" 
+                  :class="{ 'fi-rr-filter': !showFilters, 
+                  'fi-rr-filter-slash': showFilters }">
+                </i>
             </button>
         </div>
-        <div class="detail-content">
-            <ContentFilter 
-              :current-tool="currentTool"
-              @filter-change="handleFilterChange"
-              @search-change="handleSearchChange"
-            />
-            <!-- <ContentArea
-              :current-tool="currentTool"
-              :character-id="currentChar.id"
-              @select-character="showCharacterDetail"
-              @open-file="openFile"
-            /> -->
+        <div class="detail-content" :class="{ 'with-filter': showFilters }">
+            <Transition name="fade">
+                <div 
+                    v-if="showFilters 
+                    && useStandardFilter 
+                    && Object.keys(filterGroups).length > 0"
+                    class="filter-dropdown"
+                >
+                    <FilterPanel
+                        v-model="showFilters"
+                        :filter-groups="filterGroups"
+                        :active-filters="currentFilters"
+                        @filter="handleFilterChange"
+                    />
+                </div>
+            </Transition>
             <RelatedResources
-              :entity-id="currentChar.id"
-              :entity-type="currentChar.type"
-              :current-tool="currentTool"
-              @select-character="showCharacterDetail"
-              @open-file="openFile"
+                :entity-id="currentChar.id"
+                :entity-type="currentChar.type"
+                :current-tool="currentTool"
+                :filtered-entities="filteredEntities"
+                @select-character="showCharacterDetail"
+                @open-file="openFile"
             />
         </div>
       </div>
@@ -100,9 +119,10 @@ import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ref, onMounted, onUnmounted, computed, h } from 'vue'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
-import ContentFilter from '@/components/ContentFilter.vue'
 import RelatedResources from '@/components/RelatedResources.vue'
 import { getStaticPath } from '@/utils/assets'
+import { gallerys,documents } from '@/constants/entities'
+import FilterPanel from '@/components/FilterPanel.vue'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -179,22 +199,151 @@ const tools = [
 // 当前选中的工具
 const currentTool = ref('overview')
 
+// 获取当前工具对应的基础实体数据
+const currentEntities = computed(() => {
+  const entityMap = {
+    gallerys,
+    documents,
+    // 未来可以在这里添加更多类型
+    // events: events,
+    // footprints: footprints,
+    // media: media,
+    // notes: notes
+  }
+  return entityMap[currentTool.value] || []
+})
+
+// 判断是否使用标准筛选逻辑
+const useStandardFilter = computed(() => {
+  // 只要不是 overview 就使用标准筛选逻辑
+  return currentTool.value !== 'overview'
+})
+
+// 获取与当前角色相关的实体
+const relatedEntities = computed(() => {
+  // 如果没有当前角色，返回空数组
+  if (!currentChar.value) return []
+
+  // overview 模式使用独立逻辑
+  if (currentTool.value === 'overview') {
+    // 这里可以添加 overview 的特殊逻辑
+    return []
+  }
+
+  // 其他工具类型使用统一的筛选逻辑
+  if (!currentEntities.value.length) {
+    return []
+  }
+
+  return currentEntities.value.filter(entity => {
+    if (!entity.references) return false
+    return Object.entries(entity.references).some(([type, refs]) => {
+      const entityType = currentChar.value.type + 's'
+      return type === entityType && refs.includes(currentChar.value.id)
+    })
+  })
+})
+
+// 存储当前激活的筛选条件（为每个工具类型分别存储）
+const activeFilters = ref<Record<string, Record<string, any[]>>>({
+  documents: {},
+  gallerys: {},
+  // 为其他工具预留位置
+  // events: {},
+  // footprints: {},
+  // media: {},
+  // notes: {}
+})
+
+// 获取当前工具的筛选条件
+const currentFilters = computed(() => {
+  // 确保当前工具的筛选条件对象存在
+  if (!activeFilters.value[currentTool.value]) {
+    activeFilters.value[currentTool.value] = {}
+  }
+  return activeFilters.value[currentTool.value]
+})
+
 // 切换工具
 const switchTool = (toolId: string) => {
   currentTool.value = toolId
 }
 
 // 处理筛选变化
-const handleFilterChange = (filters: any) => {
-  // 处理筛选逻辑
-  console.log('Filters changed:', filters)
+const handleFilterChange = (filters: Record<string, any[]>) => {
+  // 更新当前工具的筛选条件
+  activeFilters.value[currentTool.value] = filters
 }
 
-// 处理搜索变化
-const handleSearchChange = (query: string) => {
-  // 处理搜索逻辑
-  console.log('Search query:', query)
-}
+// 筛选后的实体
+const filteredEntities = computed(() => {
+  // overview 模式直接返回相关实体
+  if (!useStandardFilter.value) {
+    return relatedEntities.value
+  }
+  
+  // 确保当前工具的筛选条件存在
+  const currentToolFilters = currentFilters.value
+  
+  // 如果没有激活的筛选条件，返回所有相关实体
+  if (!currentToolFilters || Object.keys(currentToolFilters).length === 0) {
+    return relatedEntities.value
+  }
+
+  // 应用统一的筛选条件
+  return relatedEntities.value.filter(entity => {
+    return Object.entries(currentToolFilters).every(([key, selectedValues]) => {
+      if (!entity?.hasOwnProperty(key) || !selectedValues || selectedValues.length === 0) {
+        return true
+      }
+
+      const entityValue = entity[key]
+      if (Array.isArray(entityValue)) {
+        return selectedValues.some(selected => entityValue.includes(selected))
+      }
+      return selectedValues.includes(entityValue)
+    })
+  })
+})
+
+// 获取可筛选的属性组
+const filterGroups = computed(() => {
+  const groups: Record<string, any> = {}
+  
+  // overview 模式不需要筛选
+  if (!useStandardFilter.value || !currentEntities.value?.length) {
+    return groups
+  }
+
+  // 统一的属性收集逻辑
+  const excludeKeys = ['id', 'path', 'references', 'version', 'type', 'title','finishedDate']
+  const sampleEntity = currentEntities.value[0]
+  
+  if (!sampleEntity) return groups
+
+  Object.keys(sampleEntity).forEach(key => {
+    if (!excludeKeys.includes(key)) {
+      const uniqueValues = [...new Set(currentEntities.value.flatMap(entity => {
+        const value = entity[key]
+        return Array.isArray(value) ? value : [value]
+      }))].filter(value => value !== undefined && value !== null)
+      
+      if (uniqueValues.length > 0) {
+        groups[key] = {
+          label: key, 
+          type: 'select',
+          options: uniqueValues
+        }
+      }
+    }
+  })
+  
+  return groups
+})
+
+// 筛选面板显示状态
+const showFilters = ref(true)
+
 </script>
 
 <style scoped>
@@ -255,12 +404,8 @@ const handleSearchChange = (query: string) => {
 
 .detail-content {
   position: relative;
-  max-width: 800px;
-  margin: 0 auto;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  transition-delay: 0.1s;
+  height: 100%;
+  padding-top: 0.5rem;
 }
 
 .slide-detail--open .detail-content {
@@ -424,23 +569,30 @@ const handleSearchChange = (query: string) => {
 <style scoped>
 .detail-toolbar {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--color-border);
-  width: 100%;
   padding: 0 1rem;
+}
+
+.tool-buttons {
+  display: flex;
 }
 
 .tool-button {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   border: none;
   background: none;
   color: var(--color-text-light);
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.2s ease;
+}
+.tool-button i,
+.filter-toggle i {
+  font-size: 1rem;
 }
 
 .tool-button:hover {
@@ -453,8 +605,59 @@ const handleSearchChange = (query: string) => {
   color: var(--color-primary);
 }
 
-.tool-button i {
-  font-size: 1rem;
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  border: none;
+  background: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.filter-toggle:hover {
+  background: var(--color-background-highlight);
+}
+
+.filter-toggle.active {
+  color: var(--color-primary);
+}
+
+.detail-content {
+  position: relative;
+  height: calc(100% - var(--toolbar-height));
+  transition: height 0.2s ease;
+}
+
+.detail-content.with-filter {
+  height: calc(100% - var(--toolbar-height) - var(--filter-height));
+}
+
+.filter-dropdown {
+  height: var(--filter-height);
+  background: var(--color-background-soft);
+  border-bottom: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+
+/* 淡入淡出效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+:root {
+  --toolbar-height: 3rem;
+  --filter-height: 120px;
 }
 
 /* 移动端适配 */
@@ -462,7 +665,10 @@ const handleSearchChange = (query: string) => {
   .detail-toolbar {
     padding: 0.5rem;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  }
+  
+  :root {
+    --filter-height: 160px;
   }
 }
 </style>

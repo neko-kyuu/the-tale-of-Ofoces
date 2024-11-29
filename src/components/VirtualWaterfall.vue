@@ -25,6 +25,7 @@
                   current-tool="overview"
                   :entity-id="item.id"
                   entity-type="gallery"
+                  :filtered-entities="[]"
                   @select-character="handleSelectEntity"
                   @open-file="handleOpenFile"
                 />

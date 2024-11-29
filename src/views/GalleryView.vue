@@ -26,6 +26,7 @@
     <FilterPanel
       v-model="showFilters"
       :filter-groups="filterGroups"
+      :active-filters="currentFilters"
       @filter="handleFilter"
     />
 

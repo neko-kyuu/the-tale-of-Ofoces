@@ -63,6 +63,7 @@ interface Props {
   currentTool: string
   entityId: number
   entityType: 'character' | 'document' | 'gallery'
+  filteredEntities?: any[]
 }
 
 const props = defineProps<Props>()
@@ -113,6 +114,11 @@ const relatedCharacters = computed(() => {
 
 // 获取关联文档
 const relatedDocuments = computed(() => {
+  console.log(props.filteredEntities)
+  if (props.currentTool === 'documents' && props.filteredEntities) {
+    return props.filteredEntities
+  }
+
   return documents.filter(doc => {
     if (!doc.references) return false
     return Object.entries(doc.references).some(([type, refs]) => {
@@ -219,7 +225,7 @@ const getEntityById = (id: number , type: string) => {
 </style>
 <style scoped>
 .artifacts-section {
-  padding: 1.5rem;
+  padding: 0.5rem;
 }
 
 .artifacts-title {

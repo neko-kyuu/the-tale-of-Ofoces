@@ -1,7 +1,9 @@
 <template>
   <div 
     class="filter-panel"
-    :class="{ 'filter-panel-show': modelValue }"
+    :class="{ 'filter-panel-show': modelValue,
+              'filter-panel-hide': !modelValue
+    }"
   >
     <div 
       v-for="(filter, key) in filterGroups" 
@@ -115,67 +117,38 @@ const resetFilters = () => {
 
 <style scoped>
 .filter-panel {
-  background: var(--color-background-soft);
-  border-radius: 8px;
-  padding: 0.5rem;
-  margin-bottom: 16px;
-  display: none;
-  font-size: 0.8rem;
-}
-
-.filter-panel-show {
+  padding: 1rem;
   display: flex;
-  gap: 1rem;
   flex-wrap: wrap;
+  gap: 1rem;
+}
+.filter-panel-hide{
+  display: none;
 }
 
 .filter-group {
-  display: flex;
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
 }
 
-.filter-label {
-  font-weight: 500;
-  margin-bottom: 8px;
+.filter-group-label {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
 }
 
 .filter-select {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
-.tag-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: var(--color-background);
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.tag-checkbox:hover {
-  background: var(--color-background-mute);
-}
-
-.date-range {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.date-input {
-  padding: 4px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-background);
-  color: var(--color-text);
-}
-
-.filter-actions {
-  display: flex;
-  justify-content: flex-end;
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .filter-group {
+    min-width: 150px;
+  }
 }
 
 .reset-button {
@@ -190,5 +163,35 @@ const resetFilters = () => {
 
 .reset-button:hover {
   background: var(--color-background-mute);
+}
+
+.tag-checkbox{
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  border-radius: 1rem;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  padding: 0 8px;
+}
+.tag-checkbox input{
+  margin-right: 0.25rem;
+}
+.tag-checkbox:hover{
+  background: var(--color-background-mute);
+}
+.date-range{
+  display: flex;
+  align-items: center;
+  gap:8px;
+}
+.date-input{
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-background);
+  color: var(--color-text);
 }
 </style> 
