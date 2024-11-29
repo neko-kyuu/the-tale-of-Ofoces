@@ -102,6 +102,7 @@ import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import ContentFilter from '@/components/ContentFilter.vue'
 import RelatedResources from '@/components/RelatedResources.vue'
+import { getStaticPath } from '@/utils/assets'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -150,7 +151,7 @@ const openFile = (file) => {
   } else {
     ModalManager.getInstance().create(`file-${file.id}`, {
       title: file.title,
-      content: h(MarkdownPreview, { filePath: file.path }),
+      content: h(MarkdownPreview, { filePath: getStaticPath(file.path) }),
       props: {
         minWidth: 200,
         initialWidth: 800,

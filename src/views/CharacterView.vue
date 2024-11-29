@@ -36,7 +36,7 @@
                     @click="showCharacterDetail(char)"
                   >
                     <div class="card-image">
-                      <img :src="char.path" :alt="char.name">
+                      <img :src="getStaticPath(char.path)" :alt="char.name">
                     </div>
                     <div class="card-content">
                       <p class="card-title">{{ char.name }}</p>
@@ -67,7 +67,7 @@ import { Network } from 'vis-network'
 import {  characters } from '@/constants/entities'
 import { RACES, REALMS } from '@/constants/types'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
-
+import { getStaticPath } from '@/utils/assets'
 const store = useCharacterDetailStore()
 
 // 获取某个 realm 下的所有 races
@@ -102,7 +102,7 @@ let network = null
 const nodes = characters.map(char => ({
   id: char.id,
   label: char.name,
-  image: char.path,
+  image: getStaticPath(char.path),
   shape: 'circularImage',
   size: 30,
   imageSize: 30,

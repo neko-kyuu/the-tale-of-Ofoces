@@ -63,6 +63,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { getStaticPath, getAssetUrl } from '@/utils/assets'
 
 const props = defineProps<{
   images: Array<{

@@ -42,7 +42,7 @@
           <div class="gallery-item">
             <div class="item-preview">
               <img 
-                :src="item.path" 
+                :src="getStaticPath(item.path)" 
                 loading="lazy"
               >
             </div>
@@ -76,12 +76,12 @@
 import { ref, computed, onMounted, h, onUnmounted } from 'vue'
 import VirtualWaterfall from '@/components/VirtualWaterfall.vue'
 import FilterPanel from '@/components/FilterPanel.vue'
-import { gallerys } from '@/constants/entities'
+import { gallerys, ebooks } from '@/constants/entities'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import EbookViewer from '@/components/EbookViewer.vue'
-import { ebooks } from '@/constants/entities'
+import { getStaticPath, getAssetUrl } from '@/utils/assets'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -186,9 +186,6 @@ const handleOpenFile = (file: any) => {
   }
 }
 
-// 使用环境变量或配置文件定义基础路径
-const BASE_PATH = import.meta.env.VITE_BASE_PATH || ''
-
 const ebookImages = computed(() => {
   try {
     const imageFiles = import.meta.glob('/public/static/archive/2024-Anniv/*.{png,jpg,jpeg,webp}', {
@@ -198,21 +195,20 @@ const ebookImages = computed(() => {
     
     const images = Object.entries(imageFiles)
       .map(([path, url]) => {
-        // 处理 GitHub Pages 的路径
-        const adjustedPath = process.env.NODE_ENV === 'production'
-          ? `${BASE_PATH}${url}`
-          : url
-          
+        // 获取文件名
+        const fileName = path.split('/').pop() || ''
+        
         return {
           id: path,
-          path: adjustedPath,
-          title: path.split('/').pop() || ''
+          path: getStaticPath(url),
+          title: fileName
         }
       })
       .sort((a, b) => {
         return a.title.localeCompare(b.title, undefined, { numeric: true })
       })
     
+    console.log('Processed images:', images) // 添加日志以检查处理后的路径
     return images
   } catch (error) {
     console.error('Error loading ebook images:', error)
