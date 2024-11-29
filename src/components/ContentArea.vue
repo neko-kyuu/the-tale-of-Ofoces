@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { edges, characters, documents } from '@/constants/entities'
+import { characters, documents } from '@/constants/entities'
 import { getStaticPath } from '@/utils/assets'
 
 const props = defineProps<{
