@@ -194,15 +194,16 @@ const options = {
     }
   },
   edges: {
-    width: 2,
+    width: 1.5,
     color: {
-      color: '#848484', // 设置默认颜色
+      color: '#848484',
       highlight: '#848484',
       hover: '#848484',
-      inherit: false, // 不从节点继承颜色
+      inherit: false,
       opacity: 0.8
     },
     smooth: {
+      enabled: true,
       type: 'continuous',
       roundness: 0.5
     },
@@ -227,25 +228,39 @@ const options = {
     arrows: {
       to: {
         enabled: true,
-        scaleFactor: 0.5
+        scaleFactor: 0.3,
+        type: 'arrow'
+      },
+      from: {
+        enabled: true,
+        scaleFactor: 0.3,
+        type: 'arrow'
       }
     }
   },
   physics: {
     enabled: true,
-    barnesHut: {
-      gravitationalConstant: -2000,
-      centralGravity: 0.3,
-      springLength: 200,
-      springConstant: 0.04,
-      damping: 0.09
+    solver: 'forceAtlas2Based',  // 使用 forceAtlas2Based 布局
+    forceAtlas2Based: {
+      gravitationalConstant: -100,  // 引力常数
+      centralGravity: 0.015,       // 中心引力
+      springLength: 150,           // 弹簧长度
+      springConstant: 0.1,         // 弹簧常数
+      damping: 0.4,               // 阻尼
+      avoidOverlap: 1             // 避免重叠
     },
     stabilization: {
       enabled: true,
       iterations: 1000,
-      updateInterval: 100,
+      updateInterval: 50,
       fit: true
-    }
+    },
+    minVelocity: 0.75,
+    maxVelocity: 30
+  },
+  layout: {
+    improvedLayout: true,
+    randomSeed: 2  // 可以通过调整这个值来改变初始布局
   },
   interaction: {
     hover: true,
