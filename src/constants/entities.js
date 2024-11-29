@@ -1,24 +1,5 @@
 import { CONTENT_TYPES } from "@/constants/types"
 
-export const edges = [
-    { 
-      from: 1, 
-      to: 2,
-      type: 1, 
-      arrows: 'to;from',
-      label: '结婚',
-      color: { color: '#2B7CE9' }
-    },
-    { 
-      from: 2, 
-      to: 5,
-      type: 3, 
-      arrows: 'to;from',
-      label: '养父子',
-      color: { color: '#2B7CE9' }
-    },
-    // ... 更多关系
-  ]
 export const characters = [
   {
       id: 1,
