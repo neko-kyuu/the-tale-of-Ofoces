@@ -169,7 +169,6 @@ const handleOpenFile = (file: any) => {
   if (isMobile.value) {
     store.showFile(file)
   } else {
-    console.log('open modal manager',file.title)
     ModalManager.getInstance().create(`file-${file.id}`, {
       title: file.title,
       content: h(MarkdownPreview, { filePath: file.path }),
@@ -200,7 +199,7 @@ const ebookImages = computed(() => {
         
         return {
           id: path,
-          path: getStaticPath(url),
+          path: getAssetUrl(url),
           title: fileName
         }
       })
@@ -208,7 +207,6 @@ const ebookImages = computed(() => {
         return a.title.localeCompare(b.title, undefined, { numeric: true })
       })
     
-    console.log('Processed images:', images) // 添加日志以检查处理后的路径
     return images
   } catch (error) {
     console.error('Error loading ebook images:', error)

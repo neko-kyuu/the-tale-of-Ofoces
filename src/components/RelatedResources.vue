@@ -117,7 +117,7 @@ const relatedDocuments = computed(() => {
     if (!doc.references) return false
     return Object.entries(doc.references).some(([type, refs]) => {
       const entityType = props.entityType + 's' // 添加复数 s
-      console.log(type,refs,entityType)
+      
       return type === entityType && refs.includes(props.entityId)
     })
   })

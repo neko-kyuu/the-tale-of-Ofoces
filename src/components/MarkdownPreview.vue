@@ -19,7 +19,6 @@ const renderedContent = ref('')
 const renderer = {
   // 添加标题处理
   heading(textObj) {
-    console.log('Heading object:', textObj)
     const { text, depth } = textObj
     
     // 处理粗体（使用双星号的情况）

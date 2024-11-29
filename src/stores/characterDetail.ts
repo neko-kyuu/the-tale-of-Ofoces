@@ -9,7 +9,6 @@ export const useCharacterDetailStore = defineStore('characterDetail', {
   actions: {
     showCharacter(char) {
       this.currentChar = char
-      console.log(this.currentChar)
     },
     
     hideCharacter() {

@@ -52,8 +52,6 @@ const props = defineProps<{
   characterId: number
 }>()
 
-console.log(props.currentTool)
-
 defineEmits<{
   (e: 'select-character', character: any): void
   (e: 'open-file', file: any): void
