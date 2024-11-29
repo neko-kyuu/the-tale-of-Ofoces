@@ -76,7 +76,7 @@
 import { ref, computed, onMounted, h, onUnmounted } from 'vue'
 import VirtualWaterfall from '@/components/VirtualWaterfall.vue'
 import FilterPanel from '@/components/FilterPanel.vue'
-import { gallerys, ebooks } from '@/constants/entities'
+import { gallerys, ebooks, documents } from '@/constants/entities'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
@@ -216,23 +216,20 @@ const ebookImages = computed(() => {
 
 // 获取关联文档
 const relatedDocs = computed(() => {
-  const currentEbook = ebooks[0]
-  return currentEbook.references.documents.map(docId => {
-    // 这里需要根据 docId 获取文档信息
-    // 假设你有一个 documents 数组
-    return {
-      id: docId,
-      title: `Document ${docId}`,
-      path: `/path/to/document/${docId}`
-    }
-  })
+  const currentEbook = ebooks[0] //todo
+  return documents.filter(doc => currentEbook.references.documents.includes(doc.id))
+    .map(doc => ({
+      id: doc.id,
+      title: doc.title,
+      path: doc.path
+    }))
 })
 
 </script>
 
 <style scoped>
 .gallery-container {
-  height: 100%;
+  min-height: 100%;
   padding: 16px;
   background: var(--color-background);
 }

@@ -56,7 +56,7 @@ export const characters = [
       realm: 3, 
       race: 3,
       background: 2,
-      path: "/static/token/mja.png",
+      path: "/static/token/ilse.png",
       references: {
         characters: [
           { id: 1, label: '结婚', edgeType: 1 },
@@ -102,7 +102,7 @@ export const characters = [
       realm: 3, 
       race: 3,
       background: 6,
-      path: "/static/token/mja.png",
+      path: "/static/token/elvis.png",
       references: {
         characters: [
           { id: 3, label: '胞兄', edgeType: 3 },
@@ -123,7 +123,7 @@ export const characters = [
       realm: 3, 
       race: 3,
       background: 2,
-      path: "/static/token/mja.png",
+      path: "/static/token/wiro.png",
       references: {
         characters: [
           { id: 2, label: '养子', edgeType: 3 },
@@ -146,7 +146,7 @@ export const characters = [
       realm: 3, 
       race: 6,  
       background: 5,
-      path: "/static/token/mja.png",
+      path: "/static/token/leslie.png",
       references: {
         characters: [
           { id: 7, label: '未满', edgeType: 1 },
@@ -165,7 +165,7 @@ export const characters = [
       realm: 3, 
       race: 5,
       background: 1,
-      path: "/static/token/mja.png",
+      path: "/static/token/belladonna.png",
       references: {
         characters: [
           { id: 6, label: '未满', edgeType: 1 },
@@ -188,7 +188,7 @@ export const characters = [
     realm: 3, 
     race: 5,
     background: 3,
-    path: "/static/token/mja.png",
+    path: "/static/token/hyacinth.png",
     references: {
         characters: [
           { id: 7, label: '妹妹', edgeType: 3 },
@@ -209,7 +209,7 @@ export const characters = [
     realm: 3, 
     race: 4,
     background: 3,
-    path: "/static/token/mja.png",
+    path: "/static/token/rey.png",
     references:{
         characters: [
           { id: 8, label: '同事', edgeType: 2 },
@@ -230,7 +230,7 @@ export const characters = [
     realm: 3, 
     race: 7,
     background: 4,
-    path: "/static/token/mja.png",
+    path: "/static/token/vee.png",
     references: {
         characters: [
           { id: 9, label: '未满', edgeType: 1 },
@@ -249,7 +249,7 @@ export const characters = [
     realm: 1, 
     race: 8,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/karnacio.png",
     references: {
         characters: [
           { id: 12, label: '远古纯爱', edgeType: 1 },
@@ -277,7 +277,7 @@ export const characters = [
     realm: 2, 
     race: 9,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/herudis.png",
     references: {
         characters: [
           { id: 11, label: '远古纯爱', edgeType: 1 },
@@ -296,7 +296,7 @@ export const characters = [
     realm: 1, 
     race: 8,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/lumo.png",
     references: {
         characters: [
           { id: 11, label: '主神', edgeType: 3 },
@@ -319,7 +319,7 @@ export const characters = [
     realm: 2, 
     race: 10,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/eyzin.png",
     references: {
         characters: [
           { id: 11, label: '主神', edgeType: 4 }
@@ -338,7 +338,7 @@ export const characters = [
     realm: 2, 
     race: 1,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/fjel.png",
     references: {
         characters: [
             { id: 11, label: '父神', edgeType: 4 },
@@ -357,17 +357,17 @@ export const characters = [
     realm: 2, 
     race: 11,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/mondo.png",
     references: {
         characters: [
           { id: 13, label: '母神', edgeType: 3 },
-          { id: 17, label: '??', edgeType: 1 }
+          { id: 17, label: '恋人?', edgeType: 1 }
         ]
     },
     referencedBy: {
         characters: [
           { id: 13, label: '幺子', edgeType: 3 },
-          { id: 17, label: '??', edgeType: 1 }
+          { id: 17, label: '恋人?', edgeType: 1 }
         ]
     }
   },
@@ -378,17 +378,17 @@ export const characters = [
     realm: 2, 
     race: 1,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/selakorvo.png",
     references: {
         characters: [
           { id: 13, label: '母神', edgeType: 4 },
-          { id: 16, label: '??', edgeType: 1 }
+          { id: 16, label: '恋人?', edgeType: 1 }
         ]
     },
     referencedBy: {
         characters: [
           { id: 13, label: '造物', edgeType: 4 },
-          { id: 16, label: '??', edgeType: 1 }
+          { id: 16, label: '恋人?', edgeType: 1 }
         ]
     }
   },
@@ -399,7 +399,7 @@ export const characters = [
     realm: 3, 
     race: 3,
     background: 1,
-    path: "/static/token/mja.png",
+    path: "/static/token/mervargr.png",
     references: {
         characters: [
           { id: 1, label: '友人', edgeType: 2 }
@@ -418,7 +418,7 @@ export const characters = [
     realm: 3, 
     race: 3,
     background: 6,
-    path: "/static/token/mja.png",
+    path: "/static/token/syor.png",
     references: {
         characters: [
           { id: 5, label: '家主', edgeType: 4 }
@@ -437,7 +437,7 @@ export const characters = [
     realm: 3, 
     race: 3,
     background: 6,
-    path: "/static/token/mja.png",
+    path: "/static/token/felrekt.png",
     references: {
         characters: [
           { id: 5, label: '家主', edgeType: 4 }
@@ -456,7 +456,7 @@ export const characters = [
     realm: 3, 
     race: 3,
     background: 6,
-    path: "/static/token/mja.png",
+    path: "/static/token/calimar.png",
     references: {
         characters: [
           { id: 5, label: '家主', edgeType: 4 }

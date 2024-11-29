@@ -30,30 +30,70 @@
     
     <!-- 控制栏 -->
     <div class="ebook-controls">
-      <button @click="prevPage" :disabled="currentIndex <= 0">
-        <i class="ri-arrow-left-line"></i>
+      <!-- 首页按钮 -->
+      <button 
+        @click="goToFirst" 
+        :disabled="currentIndex <= 0"
+        title="首页"
+      >
+        <i class="fi fi-rr-caret-left"></i>
+      </button>
+      
+      <!-- 上一页按钮 -->
+      <button 
+        @click="prevPage" 
+        :disabled="currentIndex <= 0"
+        title="上一页"
+      >
+        <i class="fi fi-rr-angle-small-left"></i>
       </button>
       
       <div class="page-info">
         {{ currentIndex + 1 }} / {{ totalPages }}
       </div>
       
-      <button @click="nextPage" :disabled="currentIndex >= totalPages - 1">
-        <i class="ri-arrow-right-line"></i>
+      <!-- 下一页按钮 -->
+      <button 
+        @click="nextPage" 
+        :disabled="currentIndex >= totalPages - 1"
+        title="下一页"
+      >
+        <i class="fi fi-rr-angle-small-right"></i>
+      </button>
+      
+      <!-- 末页按钮 -->
+      <button 
+        @click="goToLast" 
+        :disabled="currentIndex >= totalPages - 2"
+        title="末页"
+      >
+        <i class="fi fi-rr-caret-right"></i>
       </button>
     </div>
     
     <!-- 关联文档 -->
-    <div class="related-docs" v-if="relatedDocs.length">
-      <h3>关联文档</h3>
-      <div class="doc-list">
+    <div class="related-docs" :class="{ 'expanded': showDocs }">
+      <!-- 触发按钮 -->
+      <button 
+        class="docs-trigger"
+        @mouseenter="showDocs = true"
+        title="相关文档"
+      >
+        <i class="fi fi-rr-link"></i>
+      </button>
+      
+      <!-- 文档列表 -->
+      <div 
+        class="doc-list"
+        @mouseleave="showDocs = false"
+      >
         <div 
           v-for="doc in relatedDocs" 
           :key="doc.id"
           class="doc-item"
           @click="openDoc(doc)"
         >
-          <i class="ri-file-text-line"></i>
+          <i class="fi fi-rr-document"></i>
           {{ doc.title }}
         </div>
       </div>
@@ -72,7 +112,7 @@ const props = defineProps<{
     title: string
   }>
   relatedDocs: Array<{
-    id: string
+    id: number
     path: string
     title: string
   }>
@@ -118,6 +158,32 @@ const prevPage = () => {
 const openDoc = (doc: any) => {
   emit('open-doc', doc)
 }
+
+// 添加跳转到首页方法
+const goToFirst = () => {
+  if (currentIndex.value > 0) {
+    isTurning.value = true
+    setTimeout(() => {
+      currentIndex.value = 0
+      isTurning.value = false
+    }, 300)
+  }
+}
+
+// 添加跳转到末页方法
+const goToLast = () => {
+  const lastPageIndex = totalPages.value - (totalPages.value % 2 === 0 ? 2 : 1)
+  if (currentIndex.value < lastPageIndex) {
+    isTurning.value = true
+    setTimeout(() => {
+      currentIndex.value = lastPageIndex
+      isTurning.value = false
+    }, 300)
+  }
+}
+
+// 添加文档列表显示状态
+const showDocs = ref(false)
 </script>
 
 <style scoped>
@@ -126,8 +192,6 @@ const openDoc = (doc: any) => {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1rem;
-  background: var(--color-background-soft);
 }
 
 .ebook-viewer {
@@ -172,11 +236,20 @@ const openDoc = (doc: any) => {
 
 .ebook-controls button {
   background: var(--color-background-mute);
+  color: var(--color-text-light);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ebook-controls button:hover:not(:disabled) {
+  background: var(--color-background-soft);
+  color: var(--color-text);
 }
 
 .ebook-controls button:disabled {
@@ -190,16 +263,55 @@ const openDoc = (doc: any) => {
 }
 
 .related-docs {
-  padding: 1rem;
+  position: fixed;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.docs-trigger {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
   background: var(--color-background);
-  border-radius: 8px;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.docs-trigger:hover {
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  transform: scale(1.05);
 }
 
 .doc-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  position: absolute;
+  right: 3rem;
+  background: var(--color-background);
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateX(1rem);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.related-docs.expanded .doc-list {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
 }
 
 .doc-item {
@@ -211,10 +323,36 @@ const openDoc = (doc: any) => {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+  color: var(--color-text-light);
 }
 
 .doc-item:hover {
   background: var(--color-background-mute);
-  transform: translateY(-1px);
+  color: var(--color-text);
+  transform: translateX(-4px);
+}
+
+/* 添加动画 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(1rem);
+  }
 }
 </style> 
