@@ -9,7 +9,6 @@ export const useEntityGraphStore = defineStore('entityGraph', () => {
   // 初始化关系图
   const initGraph = () => {
     graph.value = buildEntityGraph()
-    console.log(graph.value)
   }
 
   // 获取相关实体

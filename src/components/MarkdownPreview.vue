@@ -78,7 +78,6 @@ const renderer = {
   
   // 添加链接处理
   link(href, title, text) {
-    console.log('link 接收到的参数:', { href, title, text })
     // 处理可能存在的粗体和斜体
     text = text.replace(
       /\*\*([^*]+)\*\*/g,
@@ -101,9 +100,6 @@ const fetchAndRenderContent = async () => {
     const response = await fetch(props.filePath)
     const markdown = await response.text()
     
-    // 添加调试信息
-    console.log('原始 markdown:', markdown)
-    
     marked.use({ 
       renderer,
       gfm: true,
@@ -116,8 +112,6 @@ const fetchAndRenderContent = async () => {
     })
     
     const parsed = marked.parse(markdown)
-    // 添加调试信息
-    console.log('解析后的 HTML:', parsed)
     renderedContent.value = parsed
   } catch (error) {
     console.error('Error loading markdown file:', error)

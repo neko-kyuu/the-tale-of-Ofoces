@@ -253,8 +253,6 @@ const handleCharacterSelect = (char) => {
 }
 
 const handleFileOpen = (file) => {
-  console.log('modal path',getStaticPath(file.path))
-
   if (isMobile.value) {
     store.showFile(file)
   } else {
