@@ -81,6 +81,7 @@ const handleFileOpen = (file) => {
         }
       }
     })
+    ModalManager.getInstance().activateModal(`${file.type}-${file.id}`)
   }
 }
 </script>

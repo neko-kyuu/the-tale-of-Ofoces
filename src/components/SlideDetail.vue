@@ -170,6 +170,7 @@ const openFile = (file) => {
         }
       }
     })
+    ModalManager.getInstance().activateModal(`${file.type}-${file.id}`)
   }
 }
 const characterStore = useCharacterDetailStore()
