@@ -126,7 +126,7 @@ const showCharacterDetail = (char) => {
 .realm-title {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: var(--color-heading);
+  color: var(--color-text);
 }
 
 .race-groups-container {
