@@ -13,13 +13,8 @@ const router = createRouter({
     },
     {
       path: '/characters',
-      redirect: '/characters/list'
-    },
-    {
-      path: '/characters/:mode',
       name: 'characters',
-      component: CharacterView,
-      props: true
+      component: CharacterView
     },
     {
       path: '/gallery',

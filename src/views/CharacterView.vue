@@ -7,9 +7,28 @@
         'detail-open--mobile': store.currentChar && isMobile
       }"
     >
+      <!-- 视图切换按钮 -->
+      <div class="view-mode">
+        <button 
+          class="view-button"
+          :class="{ active: currentView === 'network' }"
+          @click="switchView('network')"
+          title="关系图"
+        >
+        </button>
+        <button 
+          class="view-button"
+          :class="{ active: currentView === 'list' }"
+          @click="switchView('list')"
+          title="列表视图"
+        >
+        </button>
+      </div>
+    
+      <!-- 列表视图 --> 
       <div 
         class="character-list"
-        :class="{ 'view-active': viewMode === 'list' }"
+        :class="{ 'view-active': currentView === 'list' }"
       >
       <div class="character-groups">
           <!-- 按 realm 分组 -->
@@ -51,7 +70,7 @@
 
       <div 
         class="network-view"
-        :class="{ 'view-active': viewMode === 'network' }"
+        :class="{ 'view-active': currentView === 'network' }"
       >
         <div id="network"></div>
       </div>
@@ -60,14 +79,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { Network } from 'vis-network'
 import {  characters } from '@/constants/entities'
 import { RACES, REALMS } from '@/constants/types'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { getStaticPath } from '@/utils/assets'
+
+const currentView = ref('network')
+
+const switchView = (view: 'network' | 'list') => {
+  currentView.value = view
+}
+
 const store = useCharacterDetailStore()
 
 // 获取某个 realm 下的所有 races
@@ -94,8 +119,6 @@ const showCharacterDetail = (char) => {
   store.showCharacter(char)
 }
 
-const route = useRoute()
-const viewMode = computed(() => route.params.mode)
 let network = null
 
 // 准备节点和边的数据
@@ -277,8 +300,7 @@ const options = {
   }
 }
 
-// 监听路由参数变化
-watch(() => route.params.mode, (newMode) => {
+watch(() => currentView.value, (newMode) => {
   if (newMode === 'network') {
     nextTick(() => {
       initNetwork()
@@ -287,7 +309,7 @@ watch(() => route.params.mode, (newMode) => {
 })
 
 onMounted(() => {
-  if (route.params.mode === 'network') {
+  if (currentView.value === 'network') {
     initNetwork()
   }
 })
@@ -331,7 +353,43 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 </script>
+<style scoped>
+.view-mode {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+  background: var(--color-background-soft);
+  padding: 4px;
+  border-radius: 8px;
+}
 
+.view-mode button {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 8px;
+  background: var(--color-background);
+  border: none;
+}
+.view-mode button.active {
+  background: var(--color-background-mute);
+  border: 1px solid var(--color-background-highlight);
+}
+
+.view-content {
+  height: 100%;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .view-mode {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+</style>
 <style scoped>
 .view-container {
   position: relative;

@@ -9,23 +9,16 @@
           <RouterLink to="/" class="nav-link">
             <i class="fi fi-rr-home"></i>
           </RouterLink>
-          <!-- 视图模式 -->
+          <!-- 角色页面 -->
           <RouterLink 
-            to="/characters/list" 
+            to="/characters" 
             class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/characters/list' }"
-            title="列表视图"
+            :class="{ active: $route.path === '/characters' }"
+            title="角色"
           >
-            <i class="fi fi-rr-radio-button"></i>
+          <i class="fi fi-rr-dot-circle"></i>
           </RouterLink>
-          <RouterLink 
-            to="/characters/network" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/characters/network' }"
-            title="关系图"
-          >
-            <i class="fi fi-rr-dot-circle"></i>
-          </RouterLink>
+          <!-- 画廊 -->
           <RouterLink 
             to="/gallery" 
             class="nav-link view-mode-button" 
