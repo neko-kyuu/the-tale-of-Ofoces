@@ -10,7 +10,7 @@
     <!-- 关联实体展示 -->
     <div class="artifacts-section">
       <div class="artifacts-list">
-        <!-- 角色类型的实体单独分组显示 -->
+        <!-- 角色类型实体 -->
         <div v-if="characterEntities.length" class="character-entities">
           <CharacterAvatarList
             :characters="characterEntities"
@@ -18,9 +18,24 @@
           />
         </div>
 
-        <!-- 其他类型实体 -->
+        <!-- 图片类型实体 -->
+        <div v-if="galleryEntities.length" class="gallery-grid">
+          <div 
+            v-for="entity in galleryEntities" 
+            :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+            class="gallery-item"
+          >
+            <img 
+              :src="getStaticPath(entity.path)" 
+              :alt="entity.title || entity.name"
+              class="gallery-image"
+            >
+          </div>
+        </div>
+
+        <!-- 文档类型实体 -->
         <div 
-          v-for="entity in standardEntities" 
+          v-for="entity in documentEntities" 
           :key="`${props.currentTool}_${entity.type}_${entity.id}`"
           class="artifact-item"
           @click="handleEntityClick(entity)"
@@ -32,6 +47,16 @@
               <span v-for="tag in entity.tags" :key="tag" class="tag">{{ tag }}</span>
             </div>
           </div>
+        </div>
+
+        <!-- 事件类型实体 -->
+        <div 
+          v-for="entity in eventEntities" 
+          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+          class="event-item"
+        >
+          <!-- 事件展示todo -->
+          <div class="event-placeholder"></div>
         </div>
         
         <div v-if="!displayedEntities.length" class="empty-state">
@@ -48,6 +73,7 @@ import { characters } from '@/constants/entities'
 import { useEntityGraphStore } from '@/stores/entityGraph'
 import { CONTENT_TYPES } from '@/constants/types'
 import CharacterAvatarList from './CharacterAvatarList.vue'
+import { getStaticPath } from '@/utils/assets'
 
 const props = defineProps<{
   currentTool: string
@@ -66,9 +92,7 @@ const entityGraphStore = useEntityGraphStore()
 // 获取实体图标
 const getEntityIcon = (type: string) => {
   const icons = {
-    character: '👤',
     document: '📄',
-    gallery: '🖼️',
     ebook: '📚'
   }
   return icons[type] || '📎'
@@ -148,6 +172,19 @@ const characterEntities = computed(() => {
 const standardEntities = computed(() => {
   return displayedEntities.value.filter(entity => entity.type !== CONTENT_TYPES.CHARACTER)
 })
+
+// 按类型分类实体
+const galleryEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.GALLERY)
+})
+
+const documentEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.DOCUMENT)
+})
+
+const eventEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.EVENT)
+})
 </script>
 
 <style scoped>
@@ -171,12 +208,13 @@ const standardEntities = computed(() => {
 .artifact-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
   border-radius: 6px;
-  background: var(--color-background-soft);
+  background: var(--color-background-light);
   cursor: pointer;
   transition: all 0.2s ease;
+  border: 1px solid var(--color-background-mute);
+  padding: 0.3rem 0.6rem;
+  margin: 0 0.6rem;
 }
 
 .artifact-item:hover {
@@ -190,9 +228,7 @@ const standardEntities = computed(() => {
   align-items: center;
   justify-content: center;
   width: 2rem;
-  height: 2rem;
   border-radius: 4px;
-  background: var(--color-background);
 }
 
 .artifact-info {
@@ -200,6 +236,8 @@ const standardEntities = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--color-background-mute);
 }
 
 .artifact-name {
@@ -223,7 +261,7 @@ const standardEntities = computed(() => {
   font-size: 12px;
   padding: 2px 8px;
   border-radius: 12px;
-  background: var(--color-background);
+  background: var(--color-background-mute);
   color: var(--color-text-light);
 }
 
@@ -233,5 +271,54 @@ const standardEntities = computed(() => {
   color: var(--color-text-light);
   font-size: 0.875rem;
   font-style: italic;
+}
+</style>
+<style scoped>
+/* 图片网格布局 */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-background-soft);
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-image {
+  transform: scale(1.05);
+}
+
+/* 事件展示样式 */
+.event-item {
+  padding: 1rem;
+  background: var(--color-background-soft);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.event-placeholder {
+  text-align: center;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style> 

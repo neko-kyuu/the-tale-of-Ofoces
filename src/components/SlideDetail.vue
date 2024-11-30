@@ -472,7 +472,8 @@ const filteredEntities = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-background-highlight);
+  box-shadow: 0 2px 8px rgba(var(--color-background-highlight-rgb), 0.1);
   padding: 0 1rem;
 }
 
@@ -481,6 +482,7 @@ const filteredEntities = computed(() => {
 }
 
 .tool-button {
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -488,7 +490,8 @@ const filteredEntities = computed(() => {
   background: none;
   color: var(--color-text-light);
   cursor: pointer;
-  border-radius: 6px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
   transition: all 0.2s ease;
 }
 .tool-button i,
@@ -502,7 +505,9 @@ const filteredEntities = computed(() => {
 }
 
 .tool-button.active {
-  background: var(--color-background-highlight);
+  border-top: 1px solid var(--color-background-highlight);
+  border-left: 1px solid var(--color-background-highlight);
+  border-right: 1px solid var(--color-background-highlight);
   color: var(--color-primary);
 }
 

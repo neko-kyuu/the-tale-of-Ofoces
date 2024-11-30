@@ -130,6 +130,7 @@ const updateThemeColors = () => {
   const root = document.documentElement
   if (isDarkMode.value) {
     root.style.setProperty('--color-background', '#1a1a1a')
+    root.style.setProperty('--color-background-light', '#1a1a1a')
     root.style.setProperty('--color-background-soft', '#242424')
     root.style.setProperty('--color-background-soft-rgb', '36, 36, 36')
     root.style.setProperty('--color-background-mute', '#2f2f2f')
@@ -140,6 +141,7 @@ const updateThemeColors = () => {
     root.style.setProperty('--color-text', '#ffffff')
   } else {
     root.style.setProperty('--color-background', '#F3EED9')
+    root.style.setProperty('--color-background-light', '#f8f8f8')
     root.style.setProperty('--color-background-soft', '#F8F5F1')
     root.style.setProperty('--color-background-soft-rgb', '248, 245, 241')
     root.style.setProperty('--color-background-mute', '#C2C1C0')
