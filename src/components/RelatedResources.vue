@@ -2,6 +2,7 @@
   <div class="content-area">
     <!-- 关联角色展示 -->
     <CharacterAvatarList
+      class="slide-detail-avatar"
       v-if="showCharacterList"
       :characters="characterList"
       @select="handleCharacterSelect"
@@ -233,6 +234,15 @@ const noteEntities = computed(() => {
 </script>
 
 <style scoped>
+.slide-detail-avatar{
+  padding-top: 0.5rem;
+  background: var(--color-background);
+  
+  box-shadow: 0 -2px rgba(var(--color-background-highlight-rgb), 0.8), /*上阴影*/
+              0 2px rgba(var(--color-background-highlight-rgb), 0.8); /*下阴影*/
+
+}
+
 .artifacts-section {
   padding: 0.5rem;
 }

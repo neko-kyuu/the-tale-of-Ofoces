@@ -45,7 +45,6 @@ defineEmits<{
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.5rem;
   padding: 0 1rem;
 }
 
