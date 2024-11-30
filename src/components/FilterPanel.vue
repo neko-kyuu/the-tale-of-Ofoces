@@ -37,7 +37,7 @@
           class="date-input"
           @change="handleFilterChange"
         >
-        <span>至</span>
+        <span>-</span>
         <input 
           type="date" 
           v-model="(selectedFilters[key] as DateRange).end"
@@ -188,7 +188,7 @@ const resetFilters = () => {
   gap:8px;
 }
 .date-input{
-  padding: 4px 8px;
+  padding: 4px;
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: var(--color-background);

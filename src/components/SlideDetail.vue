@@ -123,6 +123,7 @@ import RelatedResources from '@/components/RelatedResources.vue'
 import { getStaticPath } from '@/utils/assets'
 import { gallerys,documents } from '@/constants/entities'
 import FilterPanel from '@/components/FilterPanel.vue'
+import { collectFilterGroups, DATE_TYPE_KEYS } from '@/utils/filterUtils'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -275,6 +276,15 @@ const handleFilterChange = (filters: Record<string, any[]>) => {
   activeFilters.value[currentTool.value] = filters
 }
 
+// 获取可筛选的属性组
+const filterGroups = computed(() => {
+  if (!useStandardFilter.value || !currentEntities.value?.length) {
+    return {}
+  }
+
+  return collectFilterGroups(currentEntities.value)
+})
+
 // 筛选后的实体
 const filteredEntities = computed(() => {
   // overview 模式直接返回相关实体
@@ -298,47 +308,21 @@ const filteredEntities = computed(() => {
       }
 
       const entityValue = entity[key]
+
+      // 处理日期类型
+      if (DATE_TYPE_KEYS.includes(key)) {
+        const entityDate = new Date(entityValue).toISOString().split('T')[0]
+        const { start, end } = selectedValues
+        return entityDate >= start && entityDate <= end
+      }
+
+      // 处理其他类型
       if (Array.isArray(entityValue)) {
         return selectedValues.some(selected => entityValue.includes(selected))
       }
       return selectedValues.includes(entityValue)
     })
   })
-})
-
-// 获取可筛选的属性组
-const filterGroups = computed(() => {
-  const groups: Record<string, any> = {}
-  
-  // overview 模式不需要筛选
-  if (!useStandardFilter.value || !currentEntities.value?.length) {
-    return groups
-  }
-
-  // 统一的属性收集逻辑
-  const excludeKeys = ['id', 'path', 'references', 'version', 'type', 'title','finishedDate']
-  const sampleEntity = currentEntities.value[0]
-  
-  if (!sampleEntity) return groups
-
-  Object.keys(sampleEntity).forEach(key => {
-    if (!excludeKeys.includes(key)) {
-      const uniqueValues = [...new Set(currentEntities.value.flatMap(entity => {
-        const value = entity[key]
-        return Array.isArray(value) ? value : [value]
-      }))].filter(value => value !== undefined && value !== null)
-      
-      if (uniqueValues.length > 0) {
-        groups[key] = {
-          label: key, 
-          type: 'select',
-          options: uniqueValues
-        }
-      }
-    }
-  })
-  
-  return groups
 })
 
 // 筛选面板显示状态

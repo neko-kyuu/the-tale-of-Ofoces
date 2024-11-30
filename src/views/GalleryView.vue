@@ -83,6 +83,7 @@ import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import EbookViewer from '@/components/EbookViewer.vue'
 import { getStaticPath, getAssetUrl } from '@/utils/assets'
+import { collectFilterGroups } from '@/utils/filterUtils'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -107,21 +108,12 @@ const viewMode = ref('waterfall')
 
 // 从实体中获取可筛选的属性
 const filterGroups = computed(() => {
-  const groups: Record<string, any> = {}
-  
-  // 获取所有标签
-  const tags = new Set<string>()
-  gallerys.forEach(item => {
-    item.tags.forEach(tag => tags.add(tag))
+  return collectFilterGroups(gallerys, {
+    customLabels: {
+      tags: '标签',
+      finishedDate: '完成日期'
+    }
   })
-  
-  groups.tags = {
-    label: '标签',
-    type: 'select',
-    options: Array.from(tags)
-  }
-  
-  return groups
 })
 
 // 筛选面板显示状态
