@@ -198,10 +198,16 @@ onUnmounted(() => {
   border-radius: 50%;
   background: var(--color-background-mute);
   cursor: pointer;
+  visibility: hidden;
+  transition: all 0.2s ease;
 }
 
 .indicator.active {
   background: var(--color-background-highlight);
+}
+.carousel-container:hover .indicator{
+  visibility: visible;
+  transition: all 0.2s ease;
 }
 
 .stats-container {
