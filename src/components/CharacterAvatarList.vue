@@ -84,6 +84,7 @@ defineEmits<{
   transition: all 0.2s ease;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--color-text)
 }
 
 .character-item:hover .character-tooltip {
