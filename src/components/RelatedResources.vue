@@ -1,7 +1,7 @@
 <template>
   <div class="content-area">
-    <!-- 关联实体展示 -->
-    <div class="related-entities" v-if="props.currentTool === 'overview'">
+    <!-- 关联角色展示 -->
+    <div class="related-characters" v-if="props.currentTool === 'overview'">
       <div 
         v-for="relation in relatedCharacters" 
         :key="relation.to"
@@ -53,6 +53,9 @@
 import { computed } from 'vue'
 import { characters, documents, gallerys } from '@/constants/entities'
 import { getStaticPath } from '@/utils/assets'
+import { getRelatedEntities } from '@/utils/entityRelations'
+import { useEntityGraphStore } from '@/stores/entityGraph'
+
 interface EntityReference {
   id: number | string
   type: string
@@ -72,6 +75,8 @@ const emit = defineEmits<{
   (e: 'select-character', entity: any): void
   (e: 'open-file', file: any): void
 }>()
+
+const entityGraphStore = useEntityGraphStore()
 
 // 获取实体图标
 const getEntityIcon = (type: string) => {
@@ -142,10 +147,21 @@ const getEntityById = (id: number , type: string) => {
   }
   return entityMaps[type]?.find(entity => entity.id === id)
 }
+
+// 获取相关实体
+const relatedEntities = computed(() => {
+  if (props.currentTool === 'overview') {
+    // 使用关系图获取相关实体
+    return entityGraphStore.getRelated(props.entityType, props.entityId)
+  }
+  
+  // 其他工具使用筛选后的实体
+  return props.filteredEntities
+})
 </script>
 
 <style scoped>
-.related-entities {
+.related-characters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;

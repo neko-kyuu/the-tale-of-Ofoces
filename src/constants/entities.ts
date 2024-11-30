@@ -3,7 +3,8 @@ import type {
   Characters, 
   Documents, 
   Gallerys, 
-  Ebooks 
+  Ebooks,
+  Events
 } from '@/types/entities'
 
 
@@ -683,4 +684,19 @@ export const ebooks: Ebooks = [
        documents: [1]
     }
   },
+]
+
+export const events: Events = [
+  {
+    id: 1,
+    type: CONTENT_TYPES.EVENT,
+    title: '设定与世界观',
+    tags: ['dndoc','设定'],
+    path: '/static/md/设定与世界观.md',
+    references: {
+      characters: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 ]
+      // ...其他引用
+    }
+  },
+  // ...其他事件
 ]

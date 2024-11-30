@@ -98,10 +98,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, provide, onMounted, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import SlideDetails from '@/components/SlideDetail.vue'
+import { useEntityGraphStore } from '@/stores/entityGraph'
 
 const diceResult = ref(null)
 const modifier = ref(0)
@@ -172,7 +173,12 @@ onMounted(() => {
 
   checkMobile()
   window.addEventListener('resize', checkMobile)
+
+  // 构建实体关系图
+  entityGraphStore.initGraph()
 })
+
+const entityGraphStore = useEntityGraphStore()
 
 </script>
 
