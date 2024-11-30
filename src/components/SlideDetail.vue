@@ -1,17 +1,17 @@
 <template>
     <Teleport to="body">
       <div 
-        v-if="store.currentChar"
+        v-if="characterStore.currentChar"
         class="slide-detail"
         :class="{ 
-          'slide-detail--open': store.currentChar,
+          'slide-detail--open': characterStore.currentChar,
         }"
       >
         <!-- 原有的详情内容 -->
         <div class="detail-header">
             <div class="slide-info">
             <div class="slide-meta">
-                <h2>{{ currentChar.name }}</h2>
+                <h2>{{ characterStore.currentChar.name }}</h2>
                 
             </div>
             </div>
@@ -31,48 +31,40 @@
                     v-for="tool in tools" 
                     :key="tool.id"
                     class="tool-button"
-                    :class="{ 'active': currentTool === tool.id }"
-                    :title="tool.label"
-                    @click="switchTool(tool.id)"
+                    :class="{ 'active': resourcesStore.currentTool === tool.id }"
+                    @click="resourcesStore.switchTool(tool.id)"
                 >
                     <i :class="tool.icon"></i>
                 </button>
             </div>
             <button 
-                v-if="useStandardFilter"
+                v-if="resourcesStore.useStandardFilter"
                 class="filter-toggle"
-                :class="{ 'active': showFilters }"
-                @click="showFilters = !showFilters"
-                :title="showFilters ? '收起筛选' : '展开筛选'"
+                :class="{ 'active': resourcesStore.showFilters }"
+                @click="resourcesStore.showFilters = !resourcesStore.showFilters"
             >
                 <i class="fi" 
-                  :class="{ 'fi-rr-filter': !showFilters, 
-                  'fi-rr-filter-slash': showFilters }">
+                  :class="{ 'fi-rr-filter': !resourcesStore.showFilters, 
+                  'fi-rr-filter-slash': resourcesStore.showFilters }">
                 </i>
             </button>
         </div>
-        <div class="detail-content" :class="{ 'with-filter': showFilters }">
+        <div class="detail-content" :class="{ 'with-filter': resourcesStore.showFilters }">
             <Transition name="fade">
-                <div 
-                    v-if="showFilters 
-                    && useStandardFilter 
-                    && Object.keys(filterGroups).length > 0"
-                    class="filter-dropdown"
-                >
-                    <FilterPanel
-                        v-model="showFilters"
-                        :filter-groups="filterGroups"
-                        :active-filters="currentFilters"
-                        @filter="handleFilterChange"
-                    />
-                </div>
+                <FilterPanel
+                    v-if="resourcesStore.showFilters"
+                    v-model="resourcesStore.showFilters"
+                    :filter-groups="resourcesStore.filterGroups"
+                    :active-filters="resourcesStore.currentFilters"
+                    @filter="handleFilterChange"
+                />
             </Transition>
             <RelatedResources
-                :entity-id="currentChar.id"
-                :entity-type="currentChar.type"
-                :current-tool="currentTool"
+                :entity-id="characterStore.currentChar.id"
+                :entity-type="characterStore.currentChar.type"
+                :current-tool="resourcesStore.currentTool"
                 :filtered-entities="filteredEntities"
-                @select-character="showCharacterDetail"
+                @select-character="characterStore.showCharacter"
                 @open-file="openFile"
             />
         </div>
@@ -80,7 +72,7 @@
   
       <!-- 文件详情窗口 -->
       <div 
-        v-if="store.currentFile"
+        v-if="characterStore.currentFile"
         class="file-detail"
         :class="{ 
           'file-detail--open': true,
@@ -88,7 +80,7 @@
         }"
       >
         <div class="file-detail-header">
-            <h2 class="file-title">{{ currentFile.name }}</h2>
+            <h2 class="file-title">{{ characterStore.currentFile.name }}</h2>
             <div class="file-controls">
               <button 
                   class="control-button"
@@ -108,7 +100,7 @@
         </div>
         
         <div class="file-content">
-            <MarkdownPreview :file-path="currentFile.path" />
+            <MarkdownPreview :file-path="characterStore.currentFile.path" />
         </div>
       </div>
     </Teleport>
@@ -118,17 +110,15 @@
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ref, onMounted, onUnmounted, computed, h } from 'vue'
 import { ModalManager } from '@/utils/ModalManager'
+import { useRelatedResourcesStore } from '@/stores/relatedResourcesStore'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import RelatedResources from '@/components/RelatedResources.vue'
 import { getStaticPath } from '@/utils/assets'
-import { gallerys,documents } from '@/constants/entities'
 import FilterPanel from '@/components/FilterPanel.vue'
-import { collectFilterGroups, DATE_TYPE_KEYS } from '@/utils/filterUtils'
-
+import { DATE_TYPE_KEYS } from '@/utils/filterUtils'
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
 
-const currentFile = computed(() => store.currentFile)
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768
@@ -143,12 +133,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 
-// 计算属性：当前显示的角色
-const currentChar = computed(() => store.currentChar)
 
-const showCharacterDetail = (char) => {
-  store.showCharacter(char)
-}
 
 const closeCharacterDetail = () => {
   store.hideCharacter()
@@ -185,6 +170,8 @@ const openFile = (file) => {
     })
   }
 }
+const characterStore = useCharacterDetailStore()
+const resourcesStore = useRelatedResourcesStore()
 
 // 定义工具栏选项
 const tools = [
@@ -193,109 +180,41 @@ const tools = [
   { id: 'documents', label: '文档', icon: 'fi fi-rr-document' },
   { id: 'events', label: '事件', icon: 'fi fi-rr-calendar' },
   { id: 'footprints', label: '足迹', icon: 'fi fi-rr-map-marker' },
-  { id: 'media', label: '音媒', icon: 'fi fi-rr-play' },
+  { id: 'medias', label: '音媒', icon: 'fi fi-rr-play' },
   { id: 'notes', label: '备忘录', icon: 'fi fi-rr-notebook' }
 ]
 
-// 当前选中的工具
-const currentTool = ref('overview')
-
-// 获取当前工具对应的基础实体数据
-const currentEntities = computed(() => {
-  const entityMap = {
-    gallerys,
-    documents,
-    // 未来可以在这里添加更多类型
-    // events: events,
-    // footprints: footprints,
-    // media: media,
-    // notes: notes
-  }
-  return entityMap[currentTool.value] || []
-})
-
-// 判断是否使用标准筛选逻辑
-const useStandardFilter = computed(() => {
-  // 只要不是 overview 就使用标准筛选逻辑
-  return currentTool.value !== 'overview'
-})
+// 处理筛选变化
+const handleFilterChange = (filters: Record<string, any[]>) => {
+  resourcesStore.updateFilters(filters)
+}
 
 // 获取与当前角色相关的实体
 const relatedEntities = computed(() => {
-  // 如果没有当前角色，返回空数组
-  if (!currentChar.value) return []
+  const currentChar = characterStore.currentChar
+  if (!currentChar) return []
 
-  // overview 模式使用独立逻辑
-  if (currentTool.value === 'overview') {
-    // 这里可以添加 overview 的特殊逻辑
+  if (resourcesStore.currentTool === 'overview') {
     return []
   }
 
-  // 其他工具类型使用统一的筛选逻辑
-  if (!currentEntities.value.length) {
-    return []
-  }
-
-  return currentEntities.value.filter(entity => {
+  return resourcesStore.currentEntities.filter(entity => {
     if (!entity.references) return false
     return Object.entries(entity.references).some(([type, refs]) => {
-      const entityType = currentChar.value.type + 's'
-      return type === entityType && refs.includes(currentChar.value.id)
+      const entityType = currentChar.type + 's'
+      return type === entityType && refs.includes(currentChar.id)
     })
   })
 })
 
-// 存储当前激活的筛选条件（为每个工具类型分别存储）
-const activeFilters = ref<Record<string, Record<string, any[]>>>({
-  documents: {},
-  gallerys: {},
-  // 为其他工具预留位置
-  // events: {},
-  // footprints: {},
-  // media: {},
-  // notes: {}
-})
-
-// 获取当前工具的筛选条件
-const currentFilters = computed(() => {
-  // 确保当前工具的筛选条件对象存在
-  if (!activeFilters.value[currentTool.value]) {
-    activeFilters.value[currentTool.value] = {}
-  }
-  return activeFilters.value[currentTool.value]
-})
-
-// 切换工具
-const switchTool = (toolId: string) => {
-  currentTool.value = toolId
-}
-
-// 处理筛选变化
-const handleFilterChange = (filters: Record<string, any[]>) => {
-  // 更新当前工具的筛选条件
-  activeFilters.value[currentTool.value] = filters
-}
-
-// 获取可筛选的属性组
-const filterGroups = computed(() => {
-  if (!useStandardFilter.value || !currentEntities.value?.length) {
-    return {}
-  }
-
-  return collectFilterGroups(currentEntities.value)
-})
-
 // 筛选后的实体
 const filteredEntities = computed(() => {
-  // overview 模式直接返回相关实体
-  if (!useStandardFilter.value) {
+  if (!resourcesStore.useStandardFilter) {
     return relatedEntities.value
   }
   
-  // 确保当前工具的筛选条件存在
-  const currentToolFilters = currentFilters.value
+  const currentToolFilters = resourcesStore.currentFilters
   
-  // 如果没有激活的筛选条件，返回所有相关实体
   if (!currentToolFilters || Object.keys(currentToolFilters).length === 0) {
     return relatedEntities.value
   }
@@ -324,10 +243,6 @@ const filteredEntities = computed(() => {
     })
   })
 })
-
-// 筛选面板显示状态
-const showFilters = ref(true)
-
 </script>
 
 <style scoped>

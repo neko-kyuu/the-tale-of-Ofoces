@@ -1,7 +1,10 @@
 <template>
   <div class="content-area">
-    <!-- 关联角色展示 -->
-    <div class="related-characters" v-if="props.currentTool === 'overview'">
+    <!-- 关联角色展示（仅当当前实体是角色时显示） -->
+    <div 
+      class="related-characters" 
+      v-if="props.entityType === 'character' && props.currentTool === 'overview'"
+    >
       <div 
         v-for="relation in relatedCharacters" 
         :key="relation.to"
@@ -15,34 +18,34 @@
         >
         <div class="relation-tooltip">
           <div class="relation-label">
-            {{ getCharacterById(relation.to).name || getCharacterById(relation.to).title }}
+            {{ getCharacterById(relation.to).name }}
             <template v-if="relation.label">
-                · {{ relation.label }}
+              · {{ relation.label }}
             </template>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 关联文档展示 -->
-    <div class="artifacts-section" v-if="props.currentTool === 'documents' || props.currentTool === 'overview'">
+    <!-- 关联实体展示 -->
+    <div class="artifacts-section">
       <div class="artifacts-list">
         <div 
-          v-for="file in relatedDocuments" 
-          :key="file.id"
+          v-for="entity in displayedEntities" 
+          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
           class="artifact-item"
-          @click="$emit('open-file', file)"
+          @click="handleEntityClick(entity)"
         >
-          <div class="artifact-icon">{{ getEntityIcon('document') }}</div>
+          <div class="artifact-icon">{{ getEntityIcon(entity.type) }}</div>
           <div class="artifact-info">
-            <span class="artifact-name">{{ file.title }}</span>
-            <div class="artifact-tags">
-              <span v-for="tag in file.tags" :key="tag" class="tag">{{ tag }}</span>
+            <span class="artifact-name">{{ entity.title || entity.name }}</span>
+            <div class="artifact-tags" v-if="entity.tags">
+              <span v-for="tag in entity.tags" :key="tag" class="tag">{{ tag }}</span>
             </div>
           </div>
         </div>
-        <div v-if="!relatedDocuments.length" class="empty-state">
-          暂无相关文件
+        <div v-if="!displayedEntities.length" class="empty-state">
+          暂无相关内容
         </div>
       </div>
     </div>
@@ -51,25 +54,17 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { characters, documents, gallerys } from '@/constants/entities'
+import { characters } from '@/constants/entities'
 import { getStaticPath } from '@/utils/assets'
-import { getRelatedEntities } from '@/utils/entityRelations'
 import { useEntityGraphStore } from '@/stores/entityGraph'
+import { CONTENT_TYPES } from '@/constants/types'
 
-interface EntityReference {
-  id: number | string
-  type: string
-  label?: string
-}
-
-interface Props {
+const props = defineProps<{
   currentTool: string
   entityId: number
-  entityType: 'character' | 'document' | 'gallery'
+  entityType: string
   filteredEntities?: any[]
-}
-
-const props = defineProps<Props>()
+}>()
 
 const emit = defineEmits<{
   (e: 'select-character', entity: any): void
@@ -83,81 +78,71 @@ const getEntityIcon = (type: string) => {
   const icons = {
     character: '👤',
     document: '📄',
-    gallery: '🖼️'
+    gallery: '🖼️',
+    ebook: '📚'
   }
   return icons[type] || '📎'
 }
 
-// 获取当前实体
-const currentEntity = computed(() => {
-  const entityMaps = {
-    character: characters,
-    document: documents,
-    gallery: gallerys
+// 处理实体点击
+const handleEntityClick = (entity: any) => {
+  if (entity.type === CONTENT_TYPES.CHARACTER) {
+    emit('select-character', entity)
+  } else {
+    emit('open-file', entity)
   }
-  return entityMaps[props.entityType]?.find(entity => entity.id === props.entityId)
-})
+}
 
-// 获取关联实体
+// 获取角色关系（仅用于角色实体）
 const relatedCharacters = computed(() => {
-  if (!currentEntity.value?.references) return []
+  if (props.entityType !== 'character') return []
   
-  const relations = []
-  Object.entries(currentEntity.value.references).forEach(([type, refs]) => { 
-    if (Array.isArray(refs) && type == 'characters') {
-      refs.forEach(ref => {
-        relations.push({
-          to: typeof ref === 'object' ? ref.id : ref,
-          type: type.slice(0, -1), // 移除复数 s
-          label: typeof ref === 'object' ? ref.label : ''
-        })
-      })
-    }
-  })
-  return relations
+  const currentEntity = characters.find(char => char.id === props.entityId)
+  if (!currentEntity?.references?.characters) return []
+  
+  return currentEntity.references.characters.map(ref => ({
+    to: typeof ref === 'object' ? ref.id : ref,
+    type: 'character',
+    label: typeof ref === 'object' ? ref.label : ''
+  }))
 })
 
-// 获取关联文档
-const relatedDocuments = computed(() => {
-  console.log(props.filteredEntities)
-  if (props.currentTool === 'documents' && props.filteredEntities) {
-    return props.filteredEntities
+// 获取要显示的实体
+const displayedEntities = computed(() => {
+  console.log('currentTool:', props.currentTool)
+  console.log('filteredEntities:', props.filteredEntities)
+  
+  // 如果不是 overview 模式且有筛选结果
+  if (props.currentTool !== 'overview' && props.filteredEntities) {
+    // 确保只显示当前工具类型的实体
+    const toolTypeMap = {
+      'documents': CONTENT_TYPES.DOCUMENT,
+      'gallerys': CONTENT_TYPES.GALLERY,
+      'ebooks': CONTENT_TYPES.EBOOK,
+      "events": CONTENT_TYPES.EVENT
+    }
+    const currentToolType = toolTypeMap[props.currentTool]
+    console.log('currentToolType:', currentToolType)
+
+    const filtered = props.filteredEntities.filter(entity => {
+      console.log('checking entity:', entity.type, '===', currentToolType, entity.type === currentToolType)
+      return entity.type === currentToolType
+    })
+    
+    console.log('filtered result:', filtered)
+    return filtered
   }
 
-  return documents.filter(doc => {
-    if (!doc.references) return false
-    return Object.entries(doc.references).some(([type, refs]) => {
-      const entityType = props.entityType + 's' // 添加复数 s
-      
-      return type === entityType && refs.includes(props.entityId)
-    })
-  })
+  // overview 模式：使用关系图中的所有相关实体
+  const relatedEntities = entityGraphStore.getRelated(props.entityType, props.entityId)
+  console.log('related entities from graph:', relatedEntities)
+  return relatedEntities
 })
 
+// 用于角色头像显示
 const getCharacterById = (id: number) => {
   return characters.find(char => char.id === id)
 }
-
-// 根据ID和类型获取实体，除character、document以外的类型使用
-const getEntityById = (id: number , type: string) => {
-  const entityMaps = {
-    character: characters,
-    document: documents,
-    gallery: gallerys
-  }
-  return entityMaps[type]?.find(entity => entity.id === id)
-}
-
-// 获取相关实体
-const relatedEntities = computed(() => {
-  if (props.currentTool === 'overview') {
-    // 使用关系图获取相关实体
-    return entityGraphStore.getRelated(props.entityType, props.entityId)
-  }
-  
-  // 其他工具使用筛选后的实体
-  return props.filteredEntities
-})
 </script>
 
 <style scoped>
