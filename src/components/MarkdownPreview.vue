@@ -31,36 +31,41 @@ const renderer = {
   },
   
   paragraph(para) {
-    let { text } = para
-    // 确保 text 是字符串类型
-    if (typeof text !== 'string') {
+    // 如果 para 是对象且包含 raw 属性，使用 raw
+    if (typeof para === 'object' && para.raw) {
+      let text = para.raw
+      
+      // 处理链接格式
+      text = text.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+      )
+      
+      // 其他格式处理...
+      text = text.replace(
+        /\*\*([^*]+)\*\*/g,
+        '<span class="markdown-bold">$1</span>'
+      )
+      
+      text = text.replace(
+        /_([^_]+)_/g,
+        '<span class="markdown-italic">$1</span>'
+      )
+      
+      text = text.replace(
+        /\*([^*]+)\*/g,
+        '<span class="markdown-italic">$1</span>'
+      )
+      
+      text = text.replace(
+        /#([\u4e00-\u9fa5\w]+)/g,
+        '<span class="markdown-tag">#$1</span>'
+      )
+      
       return `<p>${text}</p>`
     }
     
-    // 处理粗体（使用双星号的情况）
-    text = text.replace(
-      /\*\*([^*]+)\*\*/g,
-      '<span class="markdown-bold">$1</span>'
-    )
-    
-    // 处理斜体（使用下划线的情况）
-    text = text.replace(
-      /_([^_]+)_/g,
-      '<span class="markdown-italic">$1</span>'
-    )
-    // 处理斜体（使用星号的情况）
-    text = text.replace(
-      /\*([^*]+)\*/g,
-      '<span class="markdown-italic">$1</span>'
-    )
-    
-    // 处理 #tag 格式的标签，包括中文标签
-    const processedText = text.replace(
-      /#([\u4e00-\u9fa5\w]+)/g,
-      '<span class="markdown-tag">#$1</span>'
-    )
-    
-    return `<p>${processedText}</p>`
+    return `<p>${para}</p>`
   },
   
   // 处理粗体
@@ -69,6 +74,25 @@ const renderer = {
       return text.text || ''
     }
     return `<span class="markdown-bold">${text}</span>`
+  },
+  
+  // 添加链接处理
+  link(href, title, text) {
+    console.log('link 接收到的参数:', { href, title, text })
+    // 处理可能存在的粗体和斜体
+    text = text.replace(
+      /\*\*([^*]+)\*\*/g,
+      '<span class="markdown-bold">$1</span>'
+    ).replace(
+      /_([^_]+)_/g,
+      '<span class="markdown-italic">$1</span>'
+    ).replace(
+      /\*([^*]+)\*/g,
+      '<span class="markdown-italic">$1</span>'
+    )
+    
+    const titleAttr = title ? ` title="${title}"` : ''
+    return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`
   }
 }
 
@@ -77,17 +101,24 @@ const fetchAndRenderContent = async () => {
     const response = await fetch(props.filePath)
     const markdown = await response.text()
     
-    // 设置 marked 选项
+    // 添加调试信息
+    console.log('原始 markdown:', markdown)
+    
     marked.use({ 
       renderer,
       gfm: true,
       breaks: true,
       sanitize: false,
       smartLists: true,
-      smartypants: false
+      smartypants: false,
+      mangle: false,
+      headerIds: false
     })
     
-    renderedContent.value = marked.parse(markdown)
+    const parsed = marked.parse(markdown)
+    // 添加调试信息
+    console.log('解析后的 HTML:', parsed)
+    renderedContent.value = parsed
   } catch (error) {
     console.error('Error loading markdown file:', error)
     renderedContent.value = '加载失败'
@@ -214,6 +245,20 @@ watch(() => props.filePath, () => {
 .markdown-preview :deep(a:hover) {
   color: var(--color-primary-dark);
   border-bottom-style: solid;
+}
+.markdown-preview :deep(a::after) {
+  content: '';
+  display: inline-block;
+  margin-left: 0.5rem;
+  width: 1em;
+  height: 1em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230366d6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15 3 21 3 21 9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+.markdown-preview :deep(a:hover::after) {
+  opacity: 1;
 }
 
 /* 图片样式 */
