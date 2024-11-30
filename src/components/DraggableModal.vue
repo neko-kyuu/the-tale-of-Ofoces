@@ -259,7 +259,7 @@ const handleFileOpen = (file) => {
       title: file.title,
       entityId: file.id,
       entityType: 'document',
-      content: h(MarkdownPreview, { filePath: file.path }),
+      content: h(MarkdownPreview, { filePath: getStaticPath(file.path) }),
       props: {
         minWidth: 200,
         initialWidth: 800,

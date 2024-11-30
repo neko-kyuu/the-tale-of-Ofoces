@@ -9,8 +9,10 @@ const BASE_PATH = import.meta.env.VITE_BASE_PATH || ''
 export const getStaticPath = (path: string) => {
   const cleanPath = path.replace('/public/', '/')
   return process.env.NODE_ENV === 'production'
-    ? `${import.meta.env.BASE_URL}${cleanPath}`
+    ? `${BASE_PATH}${cleanPath}`
     : cleanPath
+    // ? `${import.meta.env.BASE_URL}${cleanPath}`
+    // : cleanPath
 }
 
 /**
