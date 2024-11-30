@@ -180,8 +180,6 @@ const handleCharacterSelect = (character: any) => {
 
 // 获取要显示的实体
 const displayedEntities = computed(() => {
-  console.log(props.filteredEntities)
-
   // 如果不是 overview 模式且有筛选结果
   if (props.currentTool !== 'overview' && props.filteredEntities) {
     // 确保只显示当前工具类型的实体
@@ -244,7 +242,6 @@ const mediaEntities = computed(() => {
 })
 
 const noteEntities = computed(() => {
-  console.log(displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.NOTE))
   return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.NOTE)
 })
 </script>
