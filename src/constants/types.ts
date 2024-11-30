@@ -1,12 +1,13 @@
 // 定义所有可用的内容类型
-export const CONTENT_TYPES = {
-  CHARACTER: 'character',
-  IMAGE: 'image', 
-  DOCUMENT: 'document',
-  EVENT: 'event',
-  LOCATION: 'location',
-  MEDIA: 'media',
-  NOTE: 'note'
+export enum CONTENT_TYPES {
+  CHARACTER = 'character',
+  DOCUMENT = 'document',
+  EVENT = 'event',
+  LOCATION = 'location',
+  MEDIA = 'media',
+  NOTE = 'note',
+  GALLERY = 'gallery',
+  EBOOK = 'ebook'
 }
 // 定义所有属性
 export const REALMS = [

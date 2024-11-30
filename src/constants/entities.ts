@@ -1,6 +1,13 @@
 import { CONTENT_TYPES } from "@/constants/types"
+import type { 
+  Characters, 
+  Documents, 
+  Gallerys, 
+  Ebooks 
+} from '@/types/entities'
 
-export const characters = [
+
+export const characters: Characters = [
   {
       id: 1,
       type: CONTENT_TYPES.CHARACTER,
@@ -452,7 +459,7 @@ export const characters = [
   // ...其他角色
 ]
 
-export const documents = [
+export const documents: Documents = [
   {
     id: 1,
     type: CONTENT_TYPES.DOCUMENT,
@@ -497,9 +504,10 @@ export const documents = [
   // ...其他文档
 ]
 
-export const gallerys = [
+export const gallerys: Gallerys = [
     {
         id: 1,
+        type: CONTENT_TYPES.GALLERY,
         path: "/static/gallery/2024-03-27 155647.jpg",
         tags: [],
         finishedDate: '2024-03-27',
@@ -510,6 +518,7 @@ export const gallerys = [
     },
     {
         id: 2,
+        type: CONTENT_TYPES.GALLERY,
         path: "/static/gallery/2024-05-23 112745.jpg",
         tags: [],
         finishedDate: '2024-05-23',
@@ -520,6 +529,7 @@ export const gallerys = [
     },
     {
         id: 3,
+        type: CONTENT_TYPES.GALLERY,
         path: "/static/gallery/2024-01-01 150432.png",
         tags: [],
         finishedDate: '2024-01-01',
@@ -530,6 +540,7 @@ export const gallerys = [
     },
     {
       id: 4,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-04-21 202906.png",
       tags: [],
       finishedDate: '2024-04-21',
@@ -540,6 +551,7 @@ export const gallerys = [
     },
     {
       id: 5,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-02-14 143044.jpg",
       tags: [],
       finishedDate: '2024-02-14',
@@ -550,6 +562,7 @@ export const gallerys = [
     },
     {
       id: 6,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-01-20 171732.png",
       tags: [],
       finishedDate: '2024-01-20',
@@ -560,6 +573,7 @@ export const gallerys = [
     },
     {
       id: 7,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-02-03 021848.png",
       tags: [],
       finishedDate: '2024-02-03',
@@ -570,6 +584,7 @@ export const gallerys = [
     },
     {
       id: 8,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-02-10 222638.png",
       tags: [],
       finishedDate: '2024-02-10',
@@ -580,6 +595,7 @@ export const gallerys = [
     },
     {
       id: 9,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-08-18 223617.png",
       tags: [],
       finishedDate: '2024-08-18',
@@ -590,6 +606,7 @@ export const gallerys = [
     },
     {
       id: 10,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-06-24 232111.png",
       tags: [],
       finishedDate: '2024-06-24',
@@ -600,6 +617,7 @@ export const gallerys = [
     },
     {
       id: 11,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-03-25 012428.jpg",
       tags: [],
       finishedDate: '2024-03-25',
@@ -610,6 +628,7 @@ export const gallerys = [
     },
     {
       id: 12,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-02-16 171658.jpg",
       tags: [],
       finishedDate: '2024-02-16',
@@ -620,6 +639,7 @@ export const gallerys = [
     },
     {
       id: 13,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-02-27 022625.png",
       tags: [],
       finishedDate: '2024-02-27',
@@ -630,6 +650,7 @@ export const gallerys = [
     },
     {
       id: 14,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-06-07 204215.png",
       tags: [],
       finishedDate: '2024-06-07',
@@ -640,6 +661,7 @@ export const gallerys = [
     },
     {
       id: 15,
+      type: CONTENT_TYPES.GALLERY,
       path: "/static/gallery/2024-05-18 230555.jpg",
       tags: [],
       finishedDate: '2024-05-18',
@@ -649,10 +671,11 @@ export const gallerys = [
       }
     } 
 ]
-export const ebooks = [
+export const ebooks: Ebooks = [
   {
     id: 1,
-    folderPath: "static/archive/2024-Anniv",
+    type: CONTENT_TYPES.EBOOK,
+    path: "static/archive/2024-Anniv",
     tags: [],
     finishedDate: '2024-03-27',
     version: 1,
