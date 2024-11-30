@@ -71,38 +71,19 @@
       </button>
     </div>
     
-    <!-- 关联文档 -->
-    <div class="related-docs" :class="{ 'expanded': showDocs }">
-      <!-- 触发按钮 -->
-      <button 
-        class="docs-trigger"
-        @mouseenter="showDocs = true"
-        title="相关文档"
-      >
-        <i class="fi fi-rr-link"></i>
-      </button>
-      
-      <!-- 文档列表 -->
-      <div 
-        class="doc-list"
-        @mouseleave="showDocs = false"
-      >
-        <div 
-          v-for="doc in relatedDocs" 
-          :key="doc.id"
-          class="doc-item"
-          @click="openDoc(doc)"
-        >
-          <i class="fi fi-rr-document"></i>
-          {{ doc.title }}
-        </div>
-      </div>
-    </div>
+     <!-- todo 后续再做currentBook -->
+    <RelatedPanel
+      :entity-id="1"
+      :entity-type="'ebook'"
+      @select-character="handleCharacterSelect"
+      @open-file="handleFileOpen"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import RelatedPanel from './RelatedPanel.vue'
 import { getStaticPath, getAssetUrl } from '@/utils/assets'
 
 const props = defineProps<{
@@ -111,15 +92,12 @@ const props = defineProps<{
     path: string
     title: string
   }>
-  relatedDocs: Array<{
-    id: number
-    path: string
-    title: string
-  }>
+  
 }>()
 
 const emit = defineEmits<{
-  (e: 'open-doc', doc: any): void
+  (e: 'select-character', character: any): void
+  (e: 'open-file', file: any): void
 }>()
 
 const currentIndex = ref(0)
@@ -155,9 +133,6 @@ const prevPage = () => {
   }
 }
 
-const openDoc = (doc: any) => {
-  emit('open-doc', doc)
-}
 
 // 添加跳转到首页方法
 const goToFirst = () => {
@@ -182,8 +157,13 @@ const goToLast = () => {
   }
 }
 
-// 添加文档列表显示状态
-const showDocs = ref(false)
+const handleCharacterSelect = (character: any) => {
+  emit('select-character', character)
+}
+
+const handleFileOpen = (file: any) => {
+  emit('open-file', file)
+}
 </script>
 
 <style scoped>

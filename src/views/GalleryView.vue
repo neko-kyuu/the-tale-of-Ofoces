@@ -66,8 +66,7 @@
     <div v-else-if="viewMode === 'ebook'" class="ebook-container">
       <EbookViewer
         :images="ebookImages"
-        :related-docs="relatedDocs"
-        @open-doc="handleOpenFile"
+        @open-file="handleOpenFile"
       />
     </div>
   </div>
@@ -205,17 +204,6 @@ const ebookImages = computed(() => {
     console.error('Error loading ebook images:', error)
     return []
   }
-})
-
-// 获取关联文档
-const relatedDocs = computed(() => {
-  const currentEbook = ebooks[0] //todo
-  return documents.filter(doc => currentEbook.references.documents.includes(doc.id))
-    .map(doc => ({
-      id: doc.id,
-      title: doc.title,
-      path: doc.path
-    }))
 })
 
 </script>
