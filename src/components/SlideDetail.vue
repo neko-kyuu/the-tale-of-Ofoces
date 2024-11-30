@@ -229,7 +229,7 @@ const filteredEntities = computed(() => {
       }
 
       const entityValue = entity[key]
-      
+
       // 处理日期类型
       if (DATE_TYPE_KEYS.includes(key)) {
         const entityDate = new Date(entityValue).toISOString().split('T')[0]
@@ -483,7 +483,7 @@ const filteredEntities = computed(() => {
 }
 
 .tool-button {
-  height: 2rem;
+  height: 1.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -506,9 +506,7 @@ const filteredEntities = computed(() => {
 }
 
 .tool-button.active {
-  border-top: 1px solid var(--color-background-highlight);
-  border-left: 1px solid var(--color-background-highlight);
-  border-right: 1px solid var(--color-background-highlight);
+  background:var(--color-background-highlight);
   color: var(--color-primary);
 }
 
