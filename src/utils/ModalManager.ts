@@ -30,6 +30,8 @@ export class ModalManager {
 
   create(id: string, options: {
     title: string,
+    entityId: number,
+    entityType: 'character' | 'document' | 'gallery' | 'event' | 'location' | 'media' | 'note',
     content: any,
     props?: Record<string, any>
   }) {
@@ -54,6 +56,8 @@ export class ModalManager {
           ...defaultProps,
           ...options.props,
           title: options.title,
+          entityId: options.entityId,
+          entityType: options.entityType,
           visible: true,
           onClose: () => manager.close(id),
           onActivate: () => manager.activateModal(id),

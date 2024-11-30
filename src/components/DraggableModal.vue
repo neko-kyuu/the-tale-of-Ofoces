@@ -40,6 +40,14 @@
         <slot></slot>
       </div>
 
+      <!-- 关联实体滑窗 -->
+      <RelatedPanel
+        :entity-id="entityId"
+        :entity-type="entityType"
+        @select-character="handleCharacterSelect"
+        @open-file="handleFileOpen"
+      />
+
       <!-- 调整大小的手柄 -->
       <div 
         v-if="!isMobile && !isCollapsed"
@@ -176,14 +184,30 @@
 .modal-window {
   transition: height 0.3s ease;
 }
+
+.related-panel{
+  right: -1rem;
+  visibility: visible;
+}
+.modal-collapsed .related-panel{
+  visibility: hidden;
+}
 </style>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, h } from 'vue'
 import { useWindowSize } from '@vueuse/core'
+import RelatedPanel from '@/components/RelatedPanel.vue';
+import { useCharacterDetailStore } from '@/stores/characterDetail'
+import { ModalManager } from '@/utils/ModalManager'
+import MarkdownPreview from '@/components/MarkdownPreview.vue'
+
+const store = useCharacterDetailStore()
 
 const props = defineProps({
   title: String,
+  entityId: Number,
+  entityType: String,
   visible: Boolean,
   initialWidth: {
     type: Number,
@@ -222,6 +246,32 @@ const props = defineProps({
     default: 2000
   }
 })
+
+const handleCharacterSelect = (char) => {
+  store.showCharacter(char)
+}
+
+const handleFileOpen = (file) => {
+  if (isMobile.value) {
+    store.showFile(file)
+  } else {
+    ModalManager.getInstance().create(`file-${file.id}`, {
+      title: file.title,
+      entityId: file.id,
+      entityType: 'document',
+      content: h(MarkdownPreview, { filePath: file.path }),
+      props: {
+        minWidth: 200,
+        initialWidth: 800,
+        initialHeight: 600,
+        initialPosition: { 
+          x: 0.6, 
+          y: 0.3
+        }
+      }
+    })
+  }
+}
 
 const emit = defineEmits(['close', 'update:visible', 'activate'])
 

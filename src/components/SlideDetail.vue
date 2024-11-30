@@ -157,6 +157,8 @@ const openFile = (file) => {
   } else {
     ModalManager.getInstance().create(`file-${file.id}`, {
       title: file.title,
+      entityId: file.id,
+      entityType: 'document',
       content: h(MarkdownPreview, { filePath: getStaticPath(file.path) }),
       props: {
         minWidth: 200,
