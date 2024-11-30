@@ -1,6 +1,8 @@
 // // 打开模态窗
 // ModalManager.getInstance().create('unique-id', {
 //     title: '窗口标题',
+//     entityId: 实体id,
+//     entityType: 'character' | 'document' | 'gallery' | 'event' | 'location' | 'media' | 'note',
 //     content: 组件或内容,
 //     props: { /* 其他属性 */ }
 // })
