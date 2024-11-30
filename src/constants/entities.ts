@@ -684,7 +684,95 @@ export const gallerys: Gallerys = [
       references: {
         characters: [20,21]
       }
-    } 
+    },
+    {
+      id: 16,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-05-13 231517.png",
+      tags: [],
+      finishedDate: '2024-05-13',
+      version: 1,
+      references: {
+        characters: [8]
+      }
+    },
+    {
+      id: 17,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-10-21 223248.jpg",
+      tags: [],
+      finishedDate: '2024-10-21',
+      version: 1,
+      references: {
+        characters: [1,7]
+      }
+    },
+    {
+      id: 18,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-11-04 213036.png",
+      tags: [],
+      finishedDate: '2024-11-04',
+      version: 1,
+      references: {
+        characters: [2,3]
+      }
+    },
+    {
+      id: 19,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-11-10 202553.png",
+      tags: [],
+      finishedDate: '2024-11-10',
+      version: 1,
+      references: {
+        characters: [1,2]
+      }
+    },
+    {
+      id: 20,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-11-21 214938.png",
+      tags: [],
+      finishedDate: '2024-11-21',
+      version: 1,
+      references: {
+        characters: [5,6]
+      }
+    },
+    {
+      id: 21,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-07-16 132808.png",
+      tags: [],
+      finishedDate: '2024-07-16',
+      version: 1,
+      references: {
+        characters: [4]
+      }
+    },
+    {
+      id: 22,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-07-29 000132.png",
+      tags: [],
+      finishedDate: '2024-07-29',
+      version: 1,
+      references: {
+        characters: [1,11,15,17]
+      }
+    },
+    {
+      id: 23,
+      type: CONTENT_TYPES.GALLERY,
+      path: "/static/gallery/2024-01-07 154930.png",
+      tags: [],
+      finishedDate: '2024-01-07',
+      version: 1,
+      references: {
+        characters: [7]
+      }
+    },  
 ]
 export const ebooks: Ebooks = [
   {
