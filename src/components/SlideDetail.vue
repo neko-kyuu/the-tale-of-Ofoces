@@ -152,6 +152,8 @@ const closeAllDetails = () => {
 
 // 打开文件
 const openFile = (file) => {
+  console.log('slide path',getStaticPath(file.path))
+
   if (isMobile.value) {
     store.showFile(file)
   } else {

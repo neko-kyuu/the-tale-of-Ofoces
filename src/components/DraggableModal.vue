@@ -201,6 +201,7 @@ import RelatedPanel from '@/components/RelatedPanel.vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
+import { getStaticPath } from '@/utils/assets'
 
 const store = useCharacterDetailStore()
 
@@ -252,6 +253,8 @@ const handleCharacterSelect = (char) => {
 }
 
 const handleFileOpen = (file) => {
+  console.log('modal path',getStaticPath(file.path))
+
   if (isMobile.value) {
     store.showFile(file)
   } else {

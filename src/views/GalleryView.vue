@@ -158,6 +158,7 @@ const handleSelectEntity = (char: any) => {
 
 // 处理文件打开
 const handleOpenFile = (file: any) => {
+  console.log('galleryview path',getStaticPath(file.path))
   if (isMobile.value) {
     store.showFile(file)
   } else {
