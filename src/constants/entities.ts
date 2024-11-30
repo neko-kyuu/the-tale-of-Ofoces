@@ -4,7 +4,10 @@ import type {
   Documents, 
   Gallerys, 
   Ebooks,
-  Events
+  Events,
+  Locations,
+  Medias,
+  Notes
 } from '@/types/entities'
 
 
@@ -687,16 +690,17 @@ export const ebooks: Ebooks = [
 ]
 
 export const events: Events = [
-  {
-    id: 1,
-    type: CONTENT_TYPES.EVENT,
-    title: '设定与世界观',
-    tags: ['dndoc','设定'],
-    path: '/static/md/设定与世界观.md',
-    references: {
-      characters: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 ]
-      // ...其他引用
-    }
-  },
-  // ...其他事件
+  // ...其他事件（时间轴）
+]
+
+export const locations: Locations = [
+  // ...其他地图
+]
+
+export const medias: Medias = [
+  // ...其他音媒
+]
+
+export const notes: Notes = [
+  // ...其他备忘录
 ]

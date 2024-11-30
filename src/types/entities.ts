@@ -4,13 +4,16 @@ import { CONTENT_TYPES } from "@/constants/types"
 interface BaseEntity {
   id: number
   type: CONTENT_TYPES
-  path: string
+  path: string, //如果没有static资源则置空
   references?: {
     characters?: number[] | CharacterReference[]
     documents?: number[]
     gallerys?: number[]
     ebooks?: number[]
     events?: number[]
+    locations?: number[]
+    medias?: number[]
+    notes?: number[]
   }
 }
 
@@ -65,7 +68,24 @@ interface Ebook extends BaseEntity {
 interface Event extends BaseEntity {
   type: CONTENT_TYPES.EVENT
   title: string
-  tags: string[]
+}
+
+// 地图实体
+interface Location extends BaseEntity {
+    type: CONTENT_TYPES.LOCATION
+    title: string
+}
+
+// 音媒实体
+interface Media extends BaseEntity {
+    type: CONTENT_TYPES.MEDIA
+    title: string
+}
+
+// 备忘录（杂项）实体
+interface Note extends BaseEntity {
+    type: CONTENT_TYPES.NOTE
+    title: string
 }
 
 // 导出类型
@@ -76,7 +96,10 @@ export type {
   Document,
   Gallery,
   Ebook,
-  Event
+  Event,
+  Location,
+  Media,
+  Note
 }
 
 // 声明常量的类型
@@ -85,9 +108,12 @@ export type Documents = Document[]
 export type Gallerys = Gallery[]
 export type Ebooks = Ebook[]
 export type Events = Event[]
+export type Locations = Location[]
+export type Medias = Media[]
+export type Notes = Note[]
 
 // 标准实体类型（不包括Character）
-export type StandardEntityType = Document | Gallery | Ebook | Event
+export type StandardEntityType = Document | Gallery | Ebook | Event | Location | Media | Note 
 
 // 实体关系图
 export interface EntityGraph {

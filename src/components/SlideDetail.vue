@@ -179,7 +179,7 @@ const tools = [
   { id: 'gallerys', label: '图片', icon: 'fi fi-rr-picture' },
   { id: 'documents', label: '文档', icon: 'fi fi-rr-document' },
   { id: 'events', label: '事件', icon: 'fi fi-rr-calendar' },
-  { id: 'footprints', label: '足迹', icon: 'fi fi-rr-map-marker' },
+  { id: 'location', label: '足迹', icon: 'fi fi-rr-map-marker' },
   { id: 'medias', label: '音媒', icon: 'fi fi-rr-play' },
   { id: 'notes', label: '备忘录', icon: 'fi fi-rr-notebook' }
 ]

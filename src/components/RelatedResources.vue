@@ -58,6 +58,36 @@
           <!-- 事件展示todo -->
           <div class="event-placeholder"></div>
         </div>
+
+        <!-- 地图类型实体 -->
+        <div 
+          v-for="entity in locationEntities" 
+          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+          class="event-item"
+        >
+          <!-- 展示todo -->
+          <div class="event-placeholder"></div>
+        </div>
+
+        <!-- 媒体类型实体 -->
+        <div 
+          v-for="entity in mediaEntities" 
+          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+          class="event-item"
+        >
+          <!-- 展示todo -->
+          <div class="event-placeholder"></div>
+        </div>
+
+        <!-- 备忘录类型实体 -->
+        <div 
+          v-for="entity in noteEntities" 
+          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+          class="event-item"
+        >
+          <!-- 展示todo -->
+          <div class="event-placeholder"></div>
+        </div>
         
         <div v-if="!displayedEntities.length" class="empty-state">
           暂无相关内容
@@ -143,7 +173,10 @@ const displayedEntities = computed(() => {
       'documents': CONTENT_TYPES.DOCUMENT,
       'gallerys': CONTENT_TYPES.GALLERY,
       'ebooks': CONTENT_TYPES.EBOOK,
-      'events': CONTENT_TYPES.EVENT
+      'events': CONTENT_TYPES.EVENT,
+      'locations': CONTENT_TYPES.LOCATION,
+      'medias': CONTENT_TYPES.MEDIA,
+      'notes': CONTENT_TYPES.NOTE
     }
     const currentToolType = toolTypeMap[props.currentTool]
 
@@ -184,6 +217,18 @@ const documentEntities = computed(() => {
 
 const eventEntities = computed(() => {
   return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.EVENT)
+})
+
+const locationEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.LOCATION)
+})
+
+const mediaEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.MEDIA)
+})
+
+const noteEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.NOTE)
 })
 </script>
 
