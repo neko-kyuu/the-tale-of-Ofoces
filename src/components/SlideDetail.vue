@@ -229,11 +229,12 @@ const filteredEntities = computed(() => {
       }
 
       const entityValue = entity[key]
-
+      
       // 处理日期类型
       if (DATE_TYPE_KEYS.includes(key)) {
         const entityDate = new Date(entityValue).toISOString().split('T')[0]
         const { start, end } = selectedValues
+        if (start == '' && end == '') return true
         return entityDate >= start && entityDate <= end
       }
 
