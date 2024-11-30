@@ -139,8 +139,8 @@
   bottom: 4px;
   width: 8px;
   height: 8px;
-  border-right: 2px solid var(--color-border);
-  border-bottom: 2px solid var(--color-border);
+  border-right: 2px solid var(--color-text);
+  border-bottom: 2px solid var(--color-text);
 }
 
 /* 移动端样式 */
