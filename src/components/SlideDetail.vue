@@ -52,7 +52,7 @@
         <div class="detail-content" :class="{ 'with-filter': resourcesStore.showFilters }">
             <Transition name="fade">
                 <FilterPanel
-                    v-if="resourcesStore.showFilters"
+                    v-if="resourcesStore.showFilters && resourcesStore.currentTool !== 'overview'"
                     v-model="resourcesStore.showFilters"
                     :filter-groups="resourcesStore.filterGroups"
                     :active-filters="resourcesStore.currentFilters"
@@ -197,9 +197,11 @@ const relatedEntities = computed(() => {
   if (resourcesStore.currentTool === 'overview') {
     return []
   }
-
+  
   return resourcesStore.currentEntities.filter(entity => {
-    if (!entity.references) return false
+    if (!entity.references) {
+      return false
+    }
     return Object.entries(entity.references).some(([type, refs]) => {
       const entityType = currentChar.type + 's'
       return type === entityType && refs.includes(currentChar.id)

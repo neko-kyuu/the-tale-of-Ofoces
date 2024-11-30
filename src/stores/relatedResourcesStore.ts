@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { documents, gallerys } from '@/constants/entities'
+import { documents, gallerys, events } from '@/constants/entities'
 import { collectFilterGroups } from '@/utils/filterUtils'
 import type { StandardEntityType } from '@/types/entities'
 
@@ -15,6 +15,7 @@ export const useRelatedResourcesStore = defineStore('relatedResources', () => {
   const activeFilters = ref<Record<string, Record<string, any[]>>>({
     documents: {},
     gallerys: {},
+    events: {}
   })
 
   // 获取当前工具对应的基础实体数据
@@ -22,6 +23,7 @@ export const useRelatedResourcesStore = defineStore('relatedResources', () => {
     const entityMap = {
       gallerys,
       documents,
+      events,
     }
     return entityMap[currentTool.value] || []
   })
