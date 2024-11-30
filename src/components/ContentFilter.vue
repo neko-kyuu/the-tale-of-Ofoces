@@ -1,3 +1,4 @@
+<!-- abandoned -->
 <template>
   <div class="filter-bar">
     <div class="filter-options">
