@@ -27,6 +27,17 @@
           >
             <i class="fi fi-sr-layout-fluid"></i>
           </RouterLink>
+
+
+          <!-- notes备忘录/杂物箱 -->
+          <RouterLink 
+            to="/note" 
+            class="nav-link view-mode-button" 
+            :class="{ active: $route.path === '/note' }"
+            title="备忘录/杂物箱"
+          >
+            <i class="fi fi-rs-box-alt"></i>
+          </RouterLink>
         </div>
         
         

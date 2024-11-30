@@ -86,6 +86,10 @@ interface Media extends BaseEntity {
 interface Note extends BaseEntity {
     type: CONTENT_TYPES.NOTE
     title: string
+    tags: string[]
+    noteType: "document" | "gallery"
+    noteCategory: "character" | "settings"
+
 }
 
 // 导出类型

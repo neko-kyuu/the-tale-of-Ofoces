@@ -84,10 +84,24 @@
         <div 
           v-for="entity in noteEntities" 
           :key="`${props.currentTool}_${entity.type}_${entity.id}`"
-          class="event-item"
+          
         >
-          <!-- 展示todo -->
-          <div class="event-placeholder"></div>
+          <!-- 文档类型note -->
+          <template v-if="entity.noteType === 'document'">
+            <div 
+              class="artifact-item"
+              @click="handleEntityClick(entity)"
+            >
+              <div class="artifact-icon">{{ getEntityIcon(entity.noteType) }}</div>
+              <div class="artifact-info">
+                <span class="artifact-name">{{ entity.title || entity.name }}</span>
+                <div class="artifact-tags" v-if="entity.tags">
+                  <span v-for="tag in entity.tags" :key="tag" class="tag">{{ tag }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- {{ entity.noteType }} -->
+          </template>
         </div>
         
         <div v-if="!displayedEntities.length" class="empty-state">
@@ -133,7 +147,7 @@ const getEntityIcon = (type: string) => {
 const handleEntityClick = (entity: any) => {
   if (entity.type === CONTENT_TYPES.CHARACTER) {
     emit('select-character', entity)
-  } else {
+  } else if ( entity.type === CONTENT_TYPES.NOTE || entity.type === CONTENT_TYPES.DOCUMENT ) {
     emit('open-file', entity)
   }
 }
@@ -166,6 +180,7 @@ const handleCharacterSelect = (character: any) => {
 
 // 获取要显示的实体
 const displayedEntities = computed(() => {
+  console.log(props.filteredEntities)
 
   // 如果不是 overview 模式且有筛选结果
   if (props.currentTool !== 'overview' && props.filteredEntities) {
@@ -229,6 +244,7 @@ const mediaEntities = computed(() => {
 })
 
 const noteEntities = computed(() => {
+  console.log(displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.NOTE))
   return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.NOTE)
 })
 </script>

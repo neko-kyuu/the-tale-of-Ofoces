@@ -1,6 +1,6 @@
 import { CONTENT_TYPES } from '@/constants/types'
 import type { StandardEntityType, EntityGraph, Character } from '@/types/entities'
-import { documents, gallerys, ebooks, characters, events } from '@/constants/entities'
+import { documents, gallerys, ebooks, characters, events, locations, medias, notes } from '@/constants/entities'
 
 // 获取实体的类型标识符
 const getEntityTypeKey = (type: CONTENT_TYPES): string => {
@@ -15,6 +15,12 @@ const getEntityTypeKey = (type: CONTENT_TYPES): string => {
       return 'ebooks'
     case CONTENT_TYPES.EVENT:
       return 'events'
+    case CONTENT_TYPES.LOCATION:
+      return 'locations'
+    case CONTENT_TYPES.MEDIA:
+      return 'medias'
+    case CONTENT_TYPES.NOTE:
+      return 'notes'
     default:
       return ''
   }
@@ -29,7 +35,10 @@ export const buildEntityGraph = (): EntityGraph => {
     ...documents,
     ...gallerys,
     ...ebooks,
-    ...events
+    ...events,
+    ...locations,
+    ...medias,
+    ...notes
   ]
 
   // 第一遍遍历：创建图节点（包括角色和标准实体）

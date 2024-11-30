@@ -161,10 +161,10 @@ const handleOpenFile = (file: any) => {
   if (isMobile.value) {
     store.showFile(file)
   } else {
-    ModalManager.getInstance().create(`file-${file.id}`, {
+    ModalManager.getInstance().create(`${file.type}-${file.id}`, {
       title: file.title,
       entityId: file.id,
-      entityType: 'document',
+      entityType: file.type,
       content: h(MarkdownPreview, { filePath: getStaticPath(file.path) }),
       props: {
         minWidth: 200,
