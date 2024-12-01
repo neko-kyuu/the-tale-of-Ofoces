@@ -33,7 +33,7 @@ export class ModalManager {
   create(id: string, options: {
     title: string,
     entityId: number,
-    entityType: 'character' | 'document' | 'gallery' | 'event' | 'location' | 'media' | 'note',
+    entityType: 'character' | 'document' | 'gallery' | 'event' | 'location' | 'media' | 'note' | 'location-point',
     content: any,
     props?: Record<string, any>
   }) {

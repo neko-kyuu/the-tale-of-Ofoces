@@ -32,7 +32,7 @@ const getPreviewComponent = (entity) => {
 
 /**
  * 打开文件预览模态框的通用方法
- * @param {Object} entity - 文件对象，需包含 id、type、title、path 属性
+ * @param {Object} entity - 文件对象，需包含 id、type、title、path? 属性
  * @param {Object} options - 可选的模态框配置项
  */
 export const openEntityPreviewModal = (entity, options = {}) => {
