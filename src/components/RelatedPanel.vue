@@ -52,7 +52,7 @@ const relatedEntities = computed(() => {
 
 <style scoped>
 .related-panel {
-  position: fixed;
+  position: absolute;
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);

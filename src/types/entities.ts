@@ -70,10 +70,19 @@ interface Event extends BaseEntity {
   title: string
 }
 
+interface LocationPoint {
+  name: string
+  description: string
+  coordinates: [number, number]
+}
+
 // 地图实体
 interface Location extends BaseEntity {
     type: CONTENT_TYPES.LOCATION
     title: string
+    description: string
+    finishedDate: string
+    locations: LocationPoint[]
 }
 
 // 音媒实体

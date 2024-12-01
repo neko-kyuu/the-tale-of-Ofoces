@@ -784,6 +784,24 @@ export const events: Events = [
 
 export const locations: Locations = [
   // ...其他地图
+  {
+    id: 1,
+    type: CONTENT_TYPES.LOCATION,
+    title: 'todo',
+    description: 'desp',
+    path: '/path/to/map',
+    finishedDate: '2024-01-01',
+    locations:[
+      {
+        name: 'loc1',
+        description: 'aaa',
+        coordinates: [50, 30]
+      }
+    ],
+    references: {
+      documents: [1]
+    }
+  }
 ]
 
 export const medias: Medias = [
