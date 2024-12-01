@@ -17,15 +17,27 @@
           v-for="point in points" 
           :key="point.id"
           class="map-marker"
-          :class="{ active: selectedPoint?.id === point.id }"
+          :class="[
+            `marker-${point.pointType}`,
+            { active: selectedPoint?.id  === point.id  }
+          ]"
           :style="{ 
             left: `${point.coordinates[0]}%`, 
             top: `${point.coordinates[1]}%` 
           }"
           @click.stop="openLocationModal(point)"
         >
-          <div class="marker-dot"></div>
-          <div class="marker-pulse"></div>
+          <div class="marker-wrapper"
+            :style="{
+              background: `url(${getStaticPath('/static/icon/marker-background.svg')}) center/contain no-repeat`
+            }"
+          >
+            <img 
+              :src="getStaticPath(`/static/icon/${point.pointType}-marker.png`)" 
+              :alt="point.title"
+              class="marker-icon"
+            >
+          </div>
           <div class="marker-label">{{ point.title }}</div>
         </div>
       </div>
@@ -44,6 +56,7 @@ import { ref, watch } from 'vue'
 import { locations, locationPoints } from '@/constants/entities';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
 import type { Location, LocationPoint } from '@/types/entities';
+import { getStaticPath } from '@/utils/assets'
 
 // 定义 props
 const props = defineProps<{
@@ -118,33 +131,32 @@ const openLocationModal = (point: LocationPoint) => {
   z-index: 10;
 }
 
-.marker-dot {
-  width: 12px;
-  height: 12px;
-  background-color: var(--color-background-highlight);
-  border: 2px solid var(--color-background-soft);
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(var(--color-background-highlight-rgb), 0.3);
-  transition: all 0.3s ease;
+.marker-wrapper {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
 }
 
-.marker-pulse {
+.marker-icon {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
-  background-color: rgba(var(--color-background-highlight-rgb), 0.4);
-  border-radius: 50%;
-  opacity: 0;
-  animation: pulse 2s infinite;
+  width: 50%;
+  height: 50%;
+  transition: transform 0.3s ease;
+}
+
+/* 悬停和激活状态 */
+.map-marker:hover .marker-wrapper,
+.map-marker.active .marker-wrapper {
+  transform: scale(1.2);
 }
 
 .marker-label {
   position: absolute;
-  top: -100%;
-  left: -300%;
+  top: 0;
+  left: -100%;
   transform: translateX(-50%) translateY(5px);
   padding: 4px 8px;
   background-color: var(--color-background-mute);
@@ -160,24 +172,6 @@ const openLocationModal = (point: LocationPoint) => {
 .map-marker:hover .marker-label,
 .map-marker.active .marker-label {
   opacity: 1;
-}
-
-.map-marker:hover .marker-dot,
-.map-marker.active .marker-dot {
-  background-color: var(--color-background-highlight);
-  transform: scale(1.2);
-}
-
-/* 脉冲动画 */
-@keyframes pulse {
-  0% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(2);
-    opacity: 0;
-  }
 }
 
 .location-panel {

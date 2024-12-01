@@ -829,11 +829,12 @@ export const locationPoints: LocationPoints = [
   {
     id: 1,
     type: CONTENT_TYPES.LOCATION_POINT,
+    pointType: 'city',
     path: '',
     title: 'loc1',
     description: 'aaa',
     coordinates: [50, 30],
-    parentId: 1
+    parentId: 1,
   }
   // ...其他位置点
 ]

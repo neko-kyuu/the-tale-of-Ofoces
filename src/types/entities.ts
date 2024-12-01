@@ -90,6 +90,7 @@ interface Location extends BaseEntity {
 // 位置点实体
 interface LocationPoint extends BaseEntity {
   type: CONTENT_TYPES.LOCATION_POINT
+  pointType: 'city' | 'academy' | 'mansion' | 'other'
   title: string
   description: string
   coordinates: [number, number]
