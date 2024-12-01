@@ -28,6 +28,15 @@
             <i class="fi fi-sr-layout-fluid"></i>
           </RouterLink>
 
+          <!-- 地图 -->
+          <RouterLink 
+            to="/location" 
+            class="nav-link view-mode-button" 
+            :class="{ active: $route.path === '/location' }"
+            title="地图"
+          >
+            <i class="fi fi-rr-earth-americas"></i>
+          </RouterLink>
 
           <!-- notes备忘录/杂物箱 -->
           <RouterLink 
