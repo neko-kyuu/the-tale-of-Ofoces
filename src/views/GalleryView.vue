@@ -83,6 +83,7 @@ import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import EbookViewer from '@/components/EbookViewer.vue'
 import { getStaticPath, getAssetUrl } from '@/utils/assets'
 import { collectFilterGroups } from '@/utils/filterUtils'
+import { openFilePreviewModal } from '@/utils/modalHelper'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -158,26 +159,7 @@ const handleSelectEntity = (char: any) => {
 
 // 处理文件打开
 const handleOpenFile = (file: any) => {
-  if (isMobile.value) {
-    store.showFile(file)
-  } else {
-    ModalManager.getInstance().create(`${file.type}-${file.id}`, {
-      title: file.title,
-      entityId: file.id,
-      entityType: file.type,
-      content: h(MarkdownPreview, { filePath: getStaticPath(file.path) }),
-      props: {
-        minWidth: 200,
-        initialWidth: 800,
-        initialHeight: 600,
-        initialPosition: { 
-          x: 0.6, 
-          y: 0.3
-        }
-      }
-    })
-    ModalManager.getInstance().activateModal(`${file.type}-${file.id}`)
-  }
+  openFilePreviewModal(file)
 }
 
 const ebookImages = computed(() => {

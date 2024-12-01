@@ -199,9 +199,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, h } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import RelatedPanel from '@/components/RelatedPanel.vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
-import { ModalManager } from '@/utils/ModalManager'
-import MarkdownPreview from '@/components/MarkdownPreview.vue'
-import { getStaticPath } from '@/utils/assets'
+import { openFilePreviewModal } from '@/utils/modalHelper'
 
 const store = useCharacterDetailStore()
 
@@ -253,26 +251,7 @@ const handleCharacterSelect = (char) => {
 }
 
 const handleFileOpen = (file) => {
-  if (isMobile.value) {
-    store.showFile(file)
-  } else {
-    ModalManager.getInstance().create(`${file.type}-${file.id}`, {
-      title: file.title,
-      entityId: file.id,
-      entityType: file.type,
-      content: h(MarkdownPreview, { filePath: getStaticPath(file.path) }),
-      props: {
-        minWidth: 200,
-        initialWidth: 800,
-        initialHeight: 600,
-        initialPosition: { 
-          x: 0.6, 
-          y: 0.3
-        }
-      }
-    })
-    ModalManager.getInstance().activateModal(`${file.type}-${file.id}`)
-  }
+  openFilePreviewModal(file)
 }
 
 const emit = defineEmits(['close', 'update:visible', 'activate'])
