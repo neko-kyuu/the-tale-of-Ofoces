@@ -14,10 +14,10 @@
         >
         <!-- 地图标记点 -->
         <div 
-          v-for="point in locationPoints" 
-          :key="point.name"
+          v-for="point in points" 
+          :key="point.id"
           class="map-marker"
-          :class="{ active: selectedPoint?.name === point.name }"
+          :class="{ active: selectedPoint?.id === point.id }"
           :style="{ 
             left: `${point.coordinates[0]}%`, 
             top: `${point.coordinates[1]}%` 
@@ -26,32 +26,24 @@
         >
           <div class="marker-dot"></div>
           <div class="marker-pulse"></div>
-          <div class="marker-label">{{ point.name }}</div>
+          <div class="marker-label">{{ point.title }}</div>
         </div>
       </div>
     </div>
 
     <!-- 右侧信息面板 -->
     <div class="location-panel">
-      <div v-if="selectedPoint" class="location-details">
-        <h2>{{ selectedPoint.name }}</h2>
-        <p>{{ selectedPoint.description }}</p>
-      </div>
-      <div v-else class="location-details">
-        <h2>{{ currentMap?.title }}</h2>
-        <p></p>
-      </div>
+      <!-- todo -->
+       todo
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { h } from 'vue'
-import { ModalManager } from '@/utils/ModalManager'
-import { CONTENT_TYPES } from '@/constants/types'
 import { ref, watch } from 'vue'
-import { locations } from '@/constants/entities';
+import { locations, locationPoints } from '@/constants/entities';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
+import type { Location, LocationPoint } from '@/types/entities';
 
 // 定义 props
 const props = defineProps<{
@@ -63,35 +55,8 @@ defineEmits<{
   (e: 'back'): void
 }>()
 
-// 定义位置信息接口
-interface LocationPoint {
-  name: string
-  description: string
-  coordinates: [number, number]
-}
-// 定义地图信息接口
-interface MapItem {
-  id: number
-  type: CONTENT_TYPES.LOCATION
-  title: string
-  description: string
-  finishedDate: string
-  path: string
-  locations: LocationPoint[]
-  references?: {
-    characters?: number[] 
-    documents?: number[]
-    gallerys?: number[]
-    ebooks?: number[]
-    events?: number[]
-    locations?: number[]
-    medias?: number[]
-    notes?: number[]
-  }
-}
-
-const currentMap = ref<MapItem | null>(null)
-const locationPoints = ref<LocationPoint[]>([])
+const currentMap = ref<Location | null>(null)
+const points = ref<LocationPoint[]>([])
 const selectedPoint = ref<LocationPoint | null>(null)
 
 watch(
@@ -99,7 +64,7 @@ watch(
   (newId) => {
     if (newId) {
       currentMap.value = locations.find(location=> location.id == newId ) || null
-      locationPoints.value = currentMap.value?.locations || []
+      points.value = locationPoints.filter(point => point.parentId == newId) 
       selectedPoint.value = null
     }
   },
@@ -109,14 +74,7 @@ watch(
 const openLocationModal = (point: LocationPoint) => {
   selectedPoint.value = point
   
-  let entity = {
-    id: currentMap.value?.id,
-    type: 'location-point',
-    title: point.name,
-    path: currentMap.value?.path
-  }
-  
-  openEntityPreviewModal(entity, {
+  openEntityPreviewModal(point, {
     props: {
       initialWidth: 200,
       initialHeight: 200,

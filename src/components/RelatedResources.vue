@@ -103,7 +103,17 @@
             <!-- {{ entity.noteType }} -->
           </template>
         </div>
-        
+
+        <!-- 位置点类型实体 -->
+        <div 
+          v-for="entity in locationPointEntities" 
+          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+          class="event-item"
+        >
+          <!-- 展示todo -->
+          <div class="event-placeholder"></div>
+        </div>
+
         <div v-if="!displayedEntities.length" class="empty-state">
           暂无相关内容
         </div>
@@ -190,7 +200,8 @@ const displayedEntities = computed(() => {
       'events': CONTENT_TYPES.EVENT,
       'locations': CONTENT_TYPES.LOCATION,
       'medias': CONTENT_TYPES.MEDIA,
-      'notes': CONTENT_TYPES.NOTE
+      'notes': CONTENT_TYPES.NOTE,
+      'location-points': CONTENT_TYPES.LOCATION_POINT
     }
     const currentToolType = toolTypeMap[props.currentTool]
 
@@ -243,6 +254,10 @@ const mediaEntities = computed(() => {
 
 const noteEntities = computed(() => {
   return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.NOTE)
+})
+
+const locationPointEntities = computed(() => {
+  return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.LOCATION_POINT)
 })
 </script>
 

@@ -14,6 +14,7 @@ interface BaseEntity {
     locations?: number[]
     medias?: number[]
     notes?: number[]
+    locationPoints?: number[]
   }
 }
 
@@ -70,10 +71,29 @@ interface Event extends BaseEntity {
   title: string
 }
 
+// 位置点坐标
+// interface LocationPointXY {
+//   name: string
+//   description: string
+//   coordinates: [number, number]
+// }
+
 // 地图实体
 interface Location extends BaseEntity {
     type: CONTENT_TYPES.LOCATION
     title: string
+    description: string
+    finishedDate: string
+    // locations: LocationPointXY[]
+}
+
+// 位置点实体
+interface LocationPoint extends BaseEntity {
+  type: CONTENT_TYPES.LOCATION_POINT
+  title: string
+  description: string
+  coordinates: [number, number]
+  parentId: number // 所属地图的id
 }
 
 // 音媒实体
@@ -103,7 +123,8 @@ export type {
   Event,
   Location,
   Media,
-  Note
+  Note,
+  LocationPoint
 }
 
 // 声明常量的类型
@@ -115,9 +136,9 @@ export type Events = Event[]
 export type Locations = Location[]
 export type Medias = Media[]
 export type Notes = Note[]
-
+export type LocationPoints = LocationPoint[]
 // 标准实体类型（不包括Character）
-export type StandardEntityType = Document | Gallery | Ebook | Event | Location | Media | Note 
+export type StandardEntityType = Document | Gallery | Ebook | Event | Location | Media | Note | LocationPoint
 
 // 实体关系图
 export interface EntityGraph {

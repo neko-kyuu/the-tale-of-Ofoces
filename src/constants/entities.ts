@@ -7,7 +7,8 @@ import type {
   Events,
   Locations,
   Medias,
-  Notes
+  Notes,
+  LocationPoints
 } from '@/types/entities'
 
 
@@ -784,6 +785,24 @@ export const events: Events = [
 
 export const locations: Locations = [
   // ...其他地图
+  {
+    id: 1,
+    type: CONTENT_TYPES.LOCATION,
+    title: 'todo',
+    description: 'desp',
+    path: '/path/to/map',
+    finishedDate: '2024-01-01',
+    // locations:[
+    //   {
+    //     name: 'loc1',
+    //     description: 'aaa',
+    //     coordinates: [50, 30]
+    //   }
+    // ],
+    references: {
+      documents: [1]
+    }
+  }
 ]
 
 export const medias: Medias = [
@@ -804,4 +823,17 @@ export const notes: Notes = [
     }
   }
   // ...其他备忘录
+]
+
+export const locationPoints: LocationPoints = [
+  {
+    id: 1,
+    type: CONTENT_TYPES.LOCATION_POINT,
+    path: '',
+    title: 'loc1',
+    description: 'aaa',
+    coordinates: [50, 30],
+    parentId: 1
+  }
+  // ...其他位置点
 ]

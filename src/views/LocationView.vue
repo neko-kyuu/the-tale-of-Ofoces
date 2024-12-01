@@ -54,15 +54,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, h, ref } from 'vue'
+import { computed, ref } from 'vue'
 import LocationDetail from '@/components/LocationDetail.vue'
 import RelatedPanel from '@/components/RelatedPanel.vue'
 import { CONTENT_TYPES } from '@/constants/types';
 import { locations } from '@/constants/entities';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
-import { ModalManager } from '@/utils/ModalManager'
-import MarkdownPreview from '@/components/MarkdownPreview.vue'
-import { getStaticPath } from '@/utils/assets'
 import { openEntityPreviewModal } from '@/utils/modalHelper';
 
 const panelStyle = computed(() => ({
@@ -71,25 +68,6 @@ const panelStyle = computed(() => ({
 }))
 
 const store = useCharacterDetailStore()
-
-interface MapItem {
-  id: number
-  type: CONTENT_TYPES.LOCATION
-  title: string
-  description: string
-  finishedDate: string
-  path: string
-  references?: {
-    characters?: number[] 
-    documents?: number[]
-    gallerys?: number[]
-    ebooks?: number[]
-    events?: number[]
-    locations?: number[]
-    medias?: number[]
-    notes?: number[]
-  }
-}
 
 const selectedMapId = ref<number | null>(null)
 

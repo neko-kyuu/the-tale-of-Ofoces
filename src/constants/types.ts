@@ -7,7 +7,8 @@ export enum CONTENT_TYPES {
   MEDIA = 'media',
   NOTE = 'note',
   GALLERY = 'gallery',
-  EBOOK = 'ebook'
+  EBOOK = 'ebook',
+  LOCATION_POINT = 'location-point'
 }
 // 定义所有属性
 export const REALMS = [

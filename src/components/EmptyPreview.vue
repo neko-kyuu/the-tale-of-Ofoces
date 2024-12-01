@@ -1,7 +1,7 @@
 <template>
   <div class="empty-preview">
     <!-- 占位内容 -->
-    暂不支持该类型文件的预览
+    暂无预览
   </div>
 </template>
 
