@@ -63,7 +63,7 @@ import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import { getStaticPath } from '@/utils/assets'
-import { openFilePreviewModal } from '@/utils/modalHelper';
+import { openEntityPreviewModal } from '@/utils/modalHelper';
 
 const panelStyle = computed(() => ({
   right: '-1rem', 
@@ -103,7 +103,7 @@ const handleCharacterSelect = (char) => {
 }
 
 const handleFileOpen = (file) => {
-    openFilePreviewModal(file)
+    openEntityPreviewModal(file)
 }
 </script>
 

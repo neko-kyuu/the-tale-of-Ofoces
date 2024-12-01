@@ -116,7 +116,7 @@ import RelatedResources from '@/components/RelatedResources.vue'
 import { getStaticPath } from '@/utils/assets'
 import FilterPanel from '@/components/FilterPanel.vue'
 import { DATE_TYPE_KEYS } from '@/utils/filterUtils'
-import { openFilePreviewModal } from '@/utils/modalHelper'
+import { openEntityPreviewModal } from '@/utils/modalHelper'
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
 
@@ -153,7 +153,7 @@ const closeAllDetails = () => {
 
 // 打开文件
 const openFile = (file) => {
-  openFilePreviewModal(file)
+  openEntityPreviewModal(file)
 }
 const characterStore = useCharacterDetailStore()
 const resourcesStore = useRelatedResourcesStore()

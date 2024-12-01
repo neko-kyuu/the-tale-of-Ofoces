@@ -45,7 +45,7 @@ import { computed, ref, h } from 'vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import { getStaticPath } from '@/utils/assets'
-import { openFilePreviewModal } from '@/utils/modalHelper';
+import { openEntityPreviewModal } from '@/utils/modalHelper';
 
 const store = useCharacterDetailStore()
 
@@ -64,7 +64,7 @@ const displayNotes = computed(() => {
 
 const isMobile = computed(() => window.innerWidth <= 768)
 const handleFileOpen = (file) => {
-  openFilePreviewModal(file)
+  openEntityPreviewModal(file)
 }
 </script>
 
