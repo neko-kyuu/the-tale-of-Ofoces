@@ -100,7 +100,7 @@
         </div>
         
         <div class="file-content">
-            <MarkdownPreview :file-path="characterStore.currentFile.path" />
+            <MarkdownPreview :file-path="getStaticPath(characterStore.currentFile.path)" />
         </div>
       </div>
     </Teleport>
