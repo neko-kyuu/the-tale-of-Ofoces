@@ -199,7 +199,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick, h } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import RelatedPanel from '@/components/RelatedPanel.vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
-import { openFilePreviewModal } from '@/utils/modalHelper'
+import { openEntityPreviewModal } from '@/utils/modalHelper'
 
 const store = useCharacterDetailStore()
 
@@ -251,7 +251,7 @@ const handleCharacterSelect = (char) => {
 }
 
 const handleFileOpen = (file) => {
-  openFilePreviewModal(file)
+  openEntityPreviewModal(file)
 }
 
 const emit = defineEmits(['close', 'update:visible', 'activate'])
