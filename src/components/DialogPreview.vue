@@ -2,6 +2,8 @@
 <template>
   <div class="dialog-container">
     <div class="messages">
+      <div v-if="firstLine" class="message-content" v-html="firstLine"></div>
+      
       <div v-for="message in parsedMessages" 
            :key="message.id" 
            class="message">
@@ -29,6 +31,7 @@ const props = defineProps<{
   filePath: string
 }>();
 
+const firstLine = ref('');
 const parsedMessages = ref<Message[]>([]);
 
 // 解析markdown文件内容
@@ -38,6 +41,15 @@ const parseMessages = async (filePath: string) => {
     const text = await response.text();
     
     const lines = text.split('\n');
+    // 处理第一行标签
+    if (lines.length > 0) {
+      firstLine.value = lines[0].replace(
+        /#([\u4e00-\u9fa5\w]+)/g,
+        '<span class="markdown-tag">#$1</span>'
+      );
+      // 移除第一行，这样后面的处理就只针对对话内容
+      lines.shift();
+    }
     
     const messages: Message[] = [];
     let id = 1;
@@ -296,5 +308,28 @@ const parseMarkdown = (text: string) => {
 }
 .message-content :deep(a:hover::after) {
   opacity: 1;
+}
+.message-content :deep(.markdown-tag) {
+  display: inline-block;
+  padding: 0.2em 0.8em;
+  margin: 0 0.2em;
+  background-color: transparent;
+  color: var(--color-background-soft-mute);
+  border: 1px solid rgba(125, 125, 125, 0.3);
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.message-content :deep(.markdown-tag:hover) {
+  border-color: var(--color-background-soft-mute);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tags-line {
+  padding: 8px;
 }
 </style>
