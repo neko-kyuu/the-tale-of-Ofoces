@@ -29,14 +29,14 @@ const router = createRouter({
       component: LocationView
     },
     {
-      path: '/location/:id',
-      name: 'MapDetail',
-      component: () => import('@/components/LocationDetail.vue')
-    },
-    {
       path: '/note',
       name: 'note',
       component: NoteView
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('@/views/TestView.vue')
     },
   ]
 })
