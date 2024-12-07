@@ -155,11 +155,9 @@ const toggleMessage = (message: Message) => {
 
 <style scoped>
 .dialog-container {
-  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
   height: 100vh;
-  overflow-y: auto;
   background: var(--color-background-soft);
   border-radius: 8px;
 }
