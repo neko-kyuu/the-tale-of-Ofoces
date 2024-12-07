@@ -120,7 +120,7 @@ import { useEntityGraphStore } from '@/stores/entityGraph'
 const diceResult = ref(null)
 const modifier = ref(0)
 const currentDice = ref(null)
-const isDarkMode = ref(true)
+const isDarkMode = ref(false)
 
 const rollDice = (faces) => {
   currentDice.value = faces
@@ -153,7 +153,7 @@ const updateThemeColors = () => {
     root.style.setProperty('--color-border', '#3f3f3f')
     root.style.setProperty('--color-text', '#ffffff')
   } else {
-    root.style.setProperty('--color-background', '#F3EED9')
+    root.style.setProperty('--color-background', '#fffdf6')
     root.style.setProperty('--color-background-light', '#f8f8f8')
     root.style.setProperty('--color-background-soft', '#F8F5F1')
     root.style.setProperty('--color-background-soft-rgb', '248, 245, 241')
