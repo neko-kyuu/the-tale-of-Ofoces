@@ -1,4 +1,4 @@
-<!-- <DialogPreview filePath="/static/md/path-to-markdown-file.md" /> -->
+<!-- <DialogPreview filePath="getStaticPath('/static/md/path-to-markdown-file.md')" /> -->
 <template>
   <div class="dialog-container">
     <div class="messages">
@@ -8,8 +8,13 @@
            :key="message.id" 
            class="message">
         <img :src="message.avatar" alt="头像" class="avatar">
-        <div class="message-details">
-          <div class="message-name">{{ message.name }}</div>
+        <div class="message-details" :class="{ 'collapsed': message.collapsed }">
+          <div class="message-header">
+            <div class="message-name">{{ message.name }}</div>
+            <div class="collapse-button" @click="toggleMessage(message)">
+              <i :class="message.collapsed ? 'fi fi-rr-angle-down' : 'fi fi-rr-angle-up'"></i>
+            </div>
+          </div>
           <div class="message-content" v-html="parseMarkdown(message.content)"></div>
         </div>
       </div>
@@ -18,6 +23,7 @@
 </template>
 
 <script setup lang="ts">
+import { getStaticPath } from '@/utils/assets';
 import { ref, onMounted, watch } from 'vue';
 
 interface Message {
@@ -25,6 +31,7 @@ interface Message {
   content: string;
   name: string;
   avatar: string;
+  collapsed?: boolean;
 }
 
 const props = defineProps<{
@@ -67,7 +74,8 @@ const parseMessages = async (filePath: string) => {
             id: id++,
             name: currentName.trim(),
             content: currentContent.trim(),
-            avatar: `/avatars/${currentName.toLowerCase()}.png`
+            avatar: getStaticPath(`/static/icon/${currentName.toLowerCase()}.png`),
+            collapsed: false
           });
         }
         
@@ -87,7 +95,8 @@ const parseMessages = async (filePath: string) => {
         id: id++,
         name: currentName.trim(),
         content: currentContent.trim(),
-        avatar: `/avatars/${currentName.toLowerCase()}.png`
+        avatar: getStaticPath(`/static/icon/${currentName.toLowerCase()}.png`),
+        collapsed: false
       });
     }
     
@@ -138,6 +147,10 @@ const parseMarkdown = (text: string) => {
     // 处理换行符
     .replace(/\n/g, '<br>');
 };
+
+const toggleMessage = (message: Message) => {
+  message.collapsed = !message.collapsed;
+};
 </script>
 
 <style scoped>
@@ -167,6 +180,19 @@ const parseMarkdown = (text: string) => {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  background: var(--color-background);
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .message-details {
@@ -175,6 +201,7 @@ const parseMarkdown = (text: string) => {
   padding: 12px;
   border-radius: 8px;
   max-width: 80%;
+  min-width: 80%;
 }
 
 .message-name {
@@ -331,5 +358,33 @@ const parseMarkdown = (text: string) => {
 
 .tags-line {
   padding: 8px;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.collapse-button {
+  cursor: pointer;
+  font-size: 0.9em;
+  color: var(--color-text-light);
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.collapse-button:hover {
+  background: var(--color-background-mute);
+}
+
+.message-details.collapsed .message-content {
+  display: none;
+}
+
+.message-details {
+  transition: all 0.3s ease;
 }
 </style>
