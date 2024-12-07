@@ -21,7 +21,7 @@
 
     <div class="note-list">
       <div v-for="note in displayNotes" :key="note.id">
-        <template v-if="note.noteType === 'document'">
+        <template v-if="note.displayType === 'document'">
           <div class="note-item"
             @click="handleFileOpen(note)">
             <div class="note-icon">📄</div>
@@ -59,7 +59,7 @@ const currentTab = ref('all');
 
 const displayNotes = computed(() => {
     return currentTab.value === 'all' ? notes 
-      : notes.filter(note => note.noteType == currentTab.value)
+      : notes.filter(note => note.displayType == currentTab.value)
 })
 
 const isMobile = computed(() => window.innerWidth <= 768)

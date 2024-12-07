@@ -815,7 +815,7 @@ export const notes: Notes = [
     type: CONTENT_TYPES.NOTE,
     title: '术士与魔法的表现',
     tags: ['引用'],
-    noteType: 'document',
+    displayType: 'document',
     noteCategory: 'settings',
     path: '/static/md/术士与魔法的表现.md',
     references: {

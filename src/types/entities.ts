@@ -108,7 +108,7 @@ interface Note extends BaseEntity {
     type: CONTENT_TYPES.NOTE
     title: string
     tags: string[]
-    noteType: "document" | "gallery"
+    displayType: "document" | "gallery"
     noteCategory: "character" | "settings"
 
 }

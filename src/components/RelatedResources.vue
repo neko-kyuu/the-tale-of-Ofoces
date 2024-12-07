@@ -87,12 +87,12 @@
           
         >
           <!-- 文档类型note -->
-          <template v-if="entity.noteType === 'document'">
+          <template v-if="entity.displayType === 'document'">
             <div 
               class="artifact-item"
               @click="handleEntityClick(entity)"
             >
-              <div class="artifact-icon">{{ getEntityIcon(entity.noteType) }}</div>
+              <div class="artifact-icon">{{ getEntityIcon(entity.displayType) }}</div>
               <div class="artifact-info">
                 <span class="artifact-name">{{ entity.title || entity.name }}</span>
                 <div class="artifact-tags" v-if="entity.tags">
@@ -100,7 +100,7 @@
                 </div>
               </div>
             </div>
-            <!-- {{ entity.noteType }} -->
+            <!-- {{ entity.displayType }} -->
           </template>
         </div>
 

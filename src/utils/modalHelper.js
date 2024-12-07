@@ -11,6 +11,7 @@ import { ModalManager } from '@/utils/ModalManager'
 import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import EmptyPreview from '@/components/EmptyPreview.vue'
 import { getStaticPath } from '@/utils/assets'
+import DialogPreview from '@/components/DialogPreview.vue'
 
 const isMobile = computed(() => window.innerWidth <= 768)
 
@@ -20,10 +21,12 @@ const isMobile = computed(() => window.innerWidth <= 768)
  * @returns {VNode} Vue 组件虚拟节点
  */
 const getPreviewComponent = (entity) => {
-  const type = entity.type === 'note' ? entity.noteType : entity.type
+  const type = entity.displayType ?? entity.type
   switch (type) {
     case 'document':
       return h(MarkdownPreview, { filePath: getStaticPath(entity.path) })
+    case 'chat':
+      return h(DialogPreview, { filePath: getStaticPath(entity.path) })
     // 可以在这里添加更多类型的处理
     default:
       return h(EmptyPreview)
