@@ -24,7 +24,8 @@
 
 export interface Node {
   id: string;          // 类似 commit hash，用于唯一标识这个节点
-  title: string;     // 类似 commit message，节点的具体内容
+  title: string;     // 类似 commit message
+  content?: string;  // 节点的具体内容，矩形节点时显示
   timestamp: number;   // 类似 commit timestamp，用于确定提交时间顺序
   parentId?: string;   // 类似 git parent commit，表示这个节点是从哪个节点创建的
   nodeType: 'thought' | 'timestamp' | 'summary';  // 节点类型，这个是我们自定义的，用于区分普通想法、时间节点和总结

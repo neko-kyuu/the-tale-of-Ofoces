@@ -10,22 +10,19 @@
       />
       
       <!-- 节点 -->
-      <g
+      <GraphNode
         v-for="node in flattenedNodes"
         :key="node.id"
-        :transform="`translate(${getX(node.timestamp)}, ${getY(node.level)})`"
+        :node="node"
+        :x="getX(node.timestamp)"
+        :y="getY(node.level)"
+        :style="nodeStyle"
+        :width="nodeWidth"
+        :height="nodeHeight"
+        :radius="nodeRadius"
         @click="handleNodeClick(node)"
         class="node-group"
-      >
-        <circle
-          :r="nodeRadius"
-          :class="['node', node.nodeType]"
-        />
-        <text
-          dy="-15"
-          text-anchor="middle"
-        >{{ node.title }}</text>
-      </g>
+      />
     </svg>
   </div>
 </template>
@@ -33,17 +30,21 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Connection, GraphData, Node } from '@/types/graph'
+import GraphNode from '@/components/GraphNode.vue'
+import type { NodeStyle } from '@/components/GraphNode.vue'
 
 const props = defineProps<{
   data: GraphData
   width?: number
   height?: number
+  nodeStyle?: NodeStyle
+  nodeWidth?: number
+  nodeHeight?: number
   nodeRadius?: number
   xScale?: number
   yScale?: number
 }>()
 
-// 定义要发射的事件
 const emit = defineEmits<{
   'node-click': [node: Node]
 }>()
@@ -53,8 +54,21 @@ const width = computed(() => props.width ?? 800)
 const height = computed(() => props.height ?? 400)
 const nodeRadius = computed(() => props.nodeRadius ?? 6)
 const xScale = computed(() => props.xScale ?? 150)
-const yScale = computed(() => props.yScale ?? 60)
-const xOffset = 50
+const yScale = computed(() => {
+  if (props.nodeStyle === 'rectangle') {
+    return props.yScale ?? 100 // 矩形模式下增加垂直间距
+  }
+  return props.yScale ?? 60 // 圆形模式保持原间距
+})
+
+// 根据节点样式计算水平偏移
+const xOffset = computed(() => {
+  if (props.nodeStyle === 'rectangle') {
+    return (props.nodeWidth ?? 120) / 2 + 20 // 矩形宽度的一半加上边距
+  }
+  return 80 // 圆形节点
+})
+
 const yOffset = computed(() => height.value / 2)
 
 // 计算所有节点的扁平数组
@@ -71,7 +85,7 @@ const flattenedNodes = computed(() => {
 const connections = computed(() => props.data.connections)
 
 // 计算节点横坐标
-const getX = (timestamp: number) => xOffset + timestamp * xScale.value
+const getX = (timestamp: number) => xOffset.value + timestamp * xScale.value
 
 // 计算节点纵坐标
 const getY = (level: number) => yOffset.value + level * yScale.value
@@ -106,21 +120,6 @@ const handleNodeClick = (node: Node) => {
   background-color: var(--color-background-soft);
 }
 
-.node {
-  fill: var(--color-background-light);
-  stroke: var(--color-border);
-  stroke-width: 2;
-}
-
-.node.thought {
-  fill: var(--color-background-dark);
-}
-
-.node.summary {
-  fill: var(--color-background-mute);
-  stroke: var(--color-background-highlight);
-}
-
 .connection {
   fill: none;
   stroke: var(--color-border);
@@ -129,22 +128,14 @@ const handleNodeClick = (node: Node) => {
 
 .connection.commit {
   stroke: var(--color-border);
-  /* 普通提交用实线 */
 }
 
 .connection.branch {
   stroke-dasharray: 4;
-  /* 分支用虚线 */
 }
 
 .connection.merge {
   stroke: var(--color-background-highlight);
-  /* 合并用高亮色 */
-}
-
-text {
-  font-size: 12px;
-  fill: var(--color-text);
 }
 
 .node-group {
