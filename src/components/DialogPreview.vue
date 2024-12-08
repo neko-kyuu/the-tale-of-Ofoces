@@ -74,7 +74,7 @@ const parseMessages = async (filePath: string) => {
             id: id++,
             name: currentName.trim(),
             content: currentContent.trim(),
-            avatar: getStaticPath(`/static/icon/${currentName.toLowerCase()}.png`),
+            avatar: getStaticPath(`/static/icon/${currentName.trim().toLowerCase()}.png`),
             collapsed: false
           });
         }
@@ -95,7 +95,7 @@ const parseMessages = async (filePath: string) => {
         id: id++,
         name: currentName.trim(),
         content: currentContent.trim(),
-        avatar: getStaticPath(`/static/icon/${currentName.toLowerCase()}.png`),
+        avatar: getStaticPath(`/static/icon/${currentName.trim().toLowerCase()}.png`),
         collapsed: false
       });
     }
@@ -246,7 +246,7 @@ const toggleMessage = (message: Message) => {
 }
 
 .message-content :deep(.code-block br) {
-    height: 0;
+    height: 0.5rem;
     line-height: 0;
     margin: 0;
     padding: 0;
