@@ -64,7 +64,7 @@ const getVisEdges = () => {
       arrows: 'to',
       // 使用对象形式设置颜色
       color: {
-        color: conn.type === 'merge' ? '#de6193' : '#848484',
+        color: conn.type === 'merge' ? getComputedColor('--color-background-highlight') : '#848484',
         inherit: false
       },
       dashes: conn.type === 'branch'
