@@ -48,7 +48,7 @@ const getVisNodes = () => {
         shadow: true,
         color: {
           background: getComputedColor('--color-background-soft'),
-          border: '#e0e0e0'
+          border: getComputedColor('--color-border')
         }
       }))
     )
@@ -64,7 +64,7 @@ const getVisEdges = () => {
       arrows: 'to',
       // 使用对象形式设置颜色
       color: {
-        color: conn.type === 'merge' ? '#3D72D7' : '#848484',
+        color: conn.type === 'merge' ? '#de6193' : '#848484',
         inherit: false
       },
       dashes: conn.type === 'branch'
@@ -113,6 +113,9 @@ const options: Options = {
   interaction: {
     dragNodes: false,
     hover: true // 启用hover交互
+  },
+  manipulation: {
+    enabled: false
   }
 }
 
