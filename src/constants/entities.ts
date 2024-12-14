@@ -712,10 +712,10 @@ export const gallerys: Gallerys = [
     {
       id: 19,
       type: CONTENT_TYPES.GALLERY,
-      path: "/static/gallery/2024-11-10 202553.png",
+      path: "/static/gallery/2024-12-15 001443.png",
       tags: [],
-      finishedDate: '2024-11-10',
-      version: 1,
+      finishedDate: '2024-12-15',
+      version: 1.1,
       references: {
         characters: [1,2]
       }
