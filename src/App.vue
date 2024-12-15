@@ -29,14 +29,14 @@
           </RouterLink>
 
           <!-- 地图 -->
-          <RouterLink 
+          <!-- <RouterLink 
             to="/location" 
             class="nav-link view-mode-button" 
             :class="{ active: $route.path === '/location' }"
             title="地图"
           >
             <i class="fi fi-rr-earth-americas"></i>
-          </RouterLink>
+          </RouterLink> -->
 
           <!-- notes备忘录/杂物箱 -->
           <RouterLink 
