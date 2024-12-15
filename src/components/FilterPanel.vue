@@ -230,8 +230,8 @@ onUnmounted(() => {
   border: 1px solid var(--color-background-highlight);
   border-radius: 4px;
   cursor: pointer;
-  background: var(--color-background);
-  color: var(--color-background-highlight);
+  background: var(--color-background-highlight);
+  color: var(--color-text);
   transition: all 0.2s;
 }
 
@@ -267,7 +267,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 8px;
+  padding: 2px 8px;
   background: var(--color-background);
   border: 1px solid var(--color-border);
   border-radius: 4px;
@@ -281,6 +281,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 0.875rem;
 }
 
 .selected-tags {

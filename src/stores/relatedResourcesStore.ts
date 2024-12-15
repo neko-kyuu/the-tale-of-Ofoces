@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { documents, gallerys, events, locations, medias, notes } from '@/constants/entities'
 import { collectFilterGroups } from '@/utils/filterUtils'
 import type { StandardEntityType } from '@/types/entities'
@@ -46,6 +46,11 @@ export const useRelatedResourcesStore = defineStore('relatedResources', () => {
     }
     return collectFilterGroups(currentEntities.value)
   })
+
+  // 监听 filterGroups 变化
+  watch(filterGroups, (newValue) => {
+    showFilters.value = Object.keys(newValue).length > 0
+  }, { immediate: true })
 
   // 获取当前工具的筛选条件
   const currentFilters = computed(() => {
