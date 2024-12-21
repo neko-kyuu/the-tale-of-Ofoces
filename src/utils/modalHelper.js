@@ -29,10 +29,48 @@ const getPreviewComponent = (entity) => {
     case 'chat':
       return h(DialogPreview, { filePath: getStaticPath(entity.path) })
     case 'character':
-      return h(CharacterPreview, { character: entity })
+      return h(CharacterPreview, { characterId: entity.referenceId })
     // 可以在这里添加更多类型的处理
     default:
       return h(EmptyPreview)
+  }
+}
+
+const getModalProps = (entity) => {
+  const type = entity.displayType ?? entity.type
+  const baseProps = {
+    minWidth: 200
+  }
+
+  switch (type) {
+    case 'document':
+      return {
+        ...baseProps,
+        initialWidth: 800,
+        initialHeight: 600,
+        initialPosition: { x: 0.6, y: 0.3 }
+      }
+    case 'chat':
+      return {
+        ...baseProps,
+        initialWidth: 800,
+        initialHeight: 600,
+        initialPosition: { x: 0.6, y: 0.3 }
+      }
+    case 'character':
+      return {
+        ...baseProps,
+        initialWidth: 1000,
+        initialHeight: 600,
+        initialPosition: { x: 0.6, y: 0.3 }
+      }
+    default:
+      return {
+        ...baseProps,
+        initialWidth: 800,
+        initialHeight: 600,
+        initialPosition: { x: 0.6, y: 0.3 }
+      }
   }
 }
 
@@ -55,15 +93,7 @@ export const openEntityPreviewModal = (entity, options = {}) => {
     entityId: entity.id,
     entityType: entity.type,
     content: getPreviewComponent(entity),
-    props: {
-      minWidth: 200,
-      initialWidth: 800,
-      initialHeight: 600,
-      initialPosition: {
-        x: 0.6,
-        y: 0.3
-      }
-    }
+    props: getModalProps(entity)
   }
 
   const mergedOptions = { ...defaultOptions, ...options }

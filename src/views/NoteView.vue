@@ -21,7 +21,7 @@
 
     <div class="note-list">
       <div v-for="note in displayNotes" :key="note.id">
-        <template v-if="note.displayType === 'document'">
+        <template v-if="note.displayType !== 'gallery'">
           <div class="note-item"
             @click="handleFileOpen(note)">
             <div class="note-icon">📄</div>
@@ -124,6 +124,7 @@ const handleFileOpen = (file) => {
   background: var(--color-background-light);
   border-radius: 4px;
   cursor: pointer;
+  margin-bottom: 0.5rem;
 }
 
 .note-item:hover {

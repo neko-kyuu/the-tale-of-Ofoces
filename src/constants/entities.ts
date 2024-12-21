@@ -800,7 +800,7 @@ export const locations: Locations = [
     //   }
     // ],
     references: {
-      documents: [1]
+      
     }
   }
 ]
@@ -820,6 +820,19 @@ export const notes: Notes = [
     path: '/static/md/术士与魔法的表现.md',
     references: {
       documents: [3]
+    }
+  },
+  {
+    id: 2,
+    type: CONTENT_TYPES.NOTE,
+    title: 'dnd5e人物卡模板v1.81β-mja',
+    tags: ['车卡'],
+    displayType: 'character',
+    noteCategory: 'character',
+    path: '',
+    referenceId: 1,
+    references: {
+      characters: [1]
     }
   }
   // ...其他备忘录

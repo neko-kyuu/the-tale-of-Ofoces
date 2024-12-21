@@ -108,9 +108,9 @@ interface Note extends BaseEntity {
     type: CONTENT_TYPES.NOTE
     title: string
     tags: string[]
-    displayType: "document" | "gallery"
+    displayType: "document" | "gallery" | "character"
     noteCategory: "character" | "settings"
-
+    referenceId?: number // 关联entity的id，用于显示
 }
 
 // 导出类型

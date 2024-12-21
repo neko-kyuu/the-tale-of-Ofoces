@@ -3,7 +3,7 @@
     <!-- 顶部信息栏 -->
     <div class="header-section">
       <div class="avatar-container">
-        <img src="" alt="Character Avatar" class="avatar-image">
+        <img :src="getStaticPath(getCharacterAvatarPath)" alt="Character Avatar" class="avatar-image">
       </div>
       <div class="basic-info">
         <div class="name-row">
@@ -45,12 +45,26 @@
         >
           <h3>{{ attr.name }}</h3>
           <div class="score-box">
-            <span class="modifier">{{ calculateModifier(character.attributes[attr.id]) }}</span>
+            <span 
+              class="modifier" 
+              :data-tooltip="`属性调整值:\n
+              将该项属性值减去10在将结果除以 2（向下取整）。
+              `"
+            >
+              {{ calculateModifier(character.attributes[attr.id]) }}
+            </span>
             <div class="main-score">
               {{ character.attributes[attr.id] }}
               <div class="proficiency-dot" :class="{ active: character.proficientAttributes.includes(attr.id) }"></div>
             </div>
-            <span class="modifier">{{ calculateBonus(attr.id) }}</span>
+            <span 
+              class="modifier"
+              :data-tooltip="`豁免检定是用于判断角色是否能够抵抗或免除某种效果或伤害的机制。\n
+              豁免加值由角色的属性、熟练度、特殊效果等因素决定。
+              `"
+            >
+              {{ calculateBonus(attr.id) }}
+            </span>
           </div>
         </div>
       </div>
@@ -170,65 +184,21 @@
 
 <script setup lang="ts">
 import { ATTRIBUTES, SKILLS } from '@/constants/types';
+import { CHARACTER_TEMPLATE } from '@/constants/character';
+import { characters } from '@/constants/entities';
+import { computed } from 'vue';
+import { getStaticPath } from '@/utils/assets'
 
-// 角色数据对象
-const character = {
-  name: 'Charname',
-  level: 5,
-  attributes: {
-    1: 16, // STRENGTH
-    2: 10, // DEXTERITY
-    3: 12, // CONSTITUTION
-    4: 2,  // INTELLIGENCE
-    5: 11, // WISDOM
-    6: 7,  // CHARISMA
-  },
-  proficientAttributes: [1, 3], // 熟练的属性ID
-  proficientSkills: [1, 4, 7], // 熟练的技能ID
-  hitPoints: {
-    current: 19,
-    maximum: 19,
-    hitDice: '2d10 + 2'
-  },
-  armorClass: 10,
-  speed: '60 ft.',
-  size: 'Large',
-  alignment: '守序中立',
-  type: 'Beast',
-  reference: 'MM pg. 336',
-  challengeRating: '1/4',
-  
-  // 其他特性数据
-  languages: '-',
-  tools: '里拉琴',
-  spellSlots: {
-    current: 0,
-    maximum: 3
-  },
-  inspiration: {
-    current: 0,
-    maximum: 1
-  },
-  damage: '-',
-  reputation: '-',
-  threat: '-',
-  blessing: '-',
-  amulet: '-',
-  legendaryFavor: '-',
-  racialTraits: {
-    '属性值加成': '智力+2',
-  },
-  race: '天使',
-  subrace: '-',
-  gender: '无',
-  background: '调查员',
-  height: '6尺/182cm',
-  weight: '-',
-  hairColor: '#FFD700',
-  skinColor: '#F5F5DC',
-  eyeColor: '#8B728E',
-  nailColor: '#FFC0CB',
-};
+const props = defineProps<{
+  characterId: number
+}>();
+
+// 获取角色头像路径
+const getCharacterAvatarPath = computed(() => 
+  characters.find(c => c.id === props.characterId)?.path || ''
+);
+
+const character = CHARACTER_TEMPLATE.get(props.characterId);
 
 // 计算调整值
 const calculateModifier = (score: number): string => {
@@ -265,7 +235,7 @@ const getAttributeAbbr = (attributeId: number): string => {
   return attributeAbbrs[attributeId];
 };
 
-// 计算技能调整值（占位实现）
+// 计算技能调整值
 const calculateSkillModifier = (skill: any): string => {
   const attributeModifier = Math.floor((character.attributes[skill.attributeId] - 10) / 2);
   const proficiencyBonus = character.proficientSkills?.includes(skill.id) 
@@ -406,7 +376,6 @@ const otherFeatures = [
   flex-direction: column;
   gap: 1rem;
 }
-
 .attribute-box {
   background: var(--color-background-mute);
   border: 1px solid var(--color-border);
@@ -415,15 +384,76 @@ const otherFeatures = [
   text-align: center;
 }
 
-.score-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.attribute-box h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-transform: uppercase;
 }
 
 .main-score {
   font-size: 1.5rem;
   font-weight: bold;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.proficiency-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+}
+
+.proficiency-dot.active {
+  background-color: var(--color-background-highlight);
+  border-color: var(--color-background-highlight);
+}
+
+.modifier {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  width: 24px; /* 固定宽度确保对齐 */
+  text-align: center;
+  position: relative;
+}
+
+.modifier[data-tooltip] {
+  cursor: help;
+}
+
+.modifier[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  /* transform: translateX(-50%); */
+  padding: 4px 8px;
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: pre-line;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  width: max-content;    
+  max-width: 200px;
+  text-align: left;     
+}
+
+.modifier[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.score-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem;
 }
 
 .skill-section {
@@ -460,22 +490,9 @@ const otherFeatures = [
   background-color: var(--color-background-mute);
 }
 
-.proficiency-dot {
-  width: 6px;
-  height: 6px;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-}
-
-.proficiency-dot.active {
-  background-color: var(--color-background-highlight);
-  border-color: var(--color-background-highlight);
-}
-
 .skill-modifier {
   width: 2.5rem;
   text-align: center;
-  font-family: monospace;
   font-size: 0.9rem;
 }
 
@@ -545,80 +562,6 @@ const otherFeatures = [
   grid-template-columns: 200px 260px auto; 
   gap: 1rem;
   margin-top: 1rem;
-}
-
-.attribute-box {
-  background: var(--color-background-mute);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 0.5rem;
-  text-align: center;
-}
-
-.attribute-box h3 {
-  margin: 0;
-  font-size: 0.9rem;
-  opacity: 0.8;
-  text-transform: uppercase;
-}
-
-.main-score {
-  font-size: 1.5rem;
-  font-weight: bold;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.proficiency-dot {
-  width: 8px;
-  height: 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  margin-top: 4px;
-}
-
-.proficiency-dot.active {
-  background-color: var(--color-background-highlight);
-  border-color: var(--color-background-highlight);
-}
-
-.modifier {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  width: 24px; /* 固定宽度确保对齐 */
-  text-align: center;
-}
-
-.attribute-box {
-  background: var(--color-background-mute);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 0.5rem;
-  text-align: center;
-}
-
-.score-box {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.25rem;
-}
-
-.skill-group-header {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: var(--color-text);
-  opacity: 0.8;
-  padding: 0.5rem 0 0.25rem 0;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 0.25rem;
-}
-
-/* 第一个组标题不需要上边距 */
-.skill-column > :first-child .skill-group-header {
-  padding-top: 0;
 }
 
 .feature-box {
