@@ -241,7 +241,7 @@ const toggleMessage = (message: Message) => {
   word-wrap: break-word;
   word-break: break-all;
   max-width: 100%;
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: 'Noto Sans SC', 'Consolas', 'Monaco', monospace;
   line-height: 1.2;
 }
 
