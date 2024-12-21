@@ -12,6 +12,7 @@ import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import EmptyPreview from '@/components/EmptyPreview.vue'
 import { getStaticPath } from '@/utils/assets'
 import DialogPreview from '@/components/DialogPreview.vue'
+import CharacterPreview from '@/components/CharacterPreview.vue'
 
 const isMobile = computed(() => window.innerWidth <= 768)
 
@@ -27,6 +28,8 @@ const getPreviewComponent = (entity) => {
       return h(MarkdownPreview, { filePath: getStaticPath(entity.path) })
     case 'chat':
       return h(DialogPreview, { filePath: getStaticPath(entity.path) })
+    case 'character':
+      return h(CharacterPreview, { character: entity })
     // 可以在这里添加更多类型的处理
     default:
       return h(EmptyPreview)
