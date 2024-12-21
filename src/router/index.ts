@@ -34,6 +34,11 @@ const router = createRouter({
       component: NoteView
     },
     {
+      path: '/event',
+      name: 'event',
+      component: () => import('@/views/EventView.vue')
+    },
+    {
       path: '/test',
       name: 'test',
       component: () => import('@/views/TestView.vue')
