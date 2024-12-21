@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { Network, DataSet } from 'vis-network/standalone'
 import type { Node, Edge, Options } from 'vis-network'
 import { GraphData } from '@/types/graph';
@@ -148,6 +148,12 @@ onMounted(() => {
       }
     }
   })
+})
+onUnmounted(() => {
+  if (network) {
+    network.destroy()
+    network = null
+  }
 })
 
 // 数据变化时更新视图

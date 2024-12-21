@@ -183,12 +183,14 @@ const options = {
     selectable: true,
     selectConnectedEdges: true,
     multiselect: true,
-    navigationButtons: true,
     keyboard: {
       enabled: true,
       bindToWindow: false
     },
     zoomView: true
+  },
+  manipulation: {
+    enabled: false
   }
 }
 const store = useCharacterDetailStore()
