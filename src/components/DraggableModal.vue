@@ -182,7 +182,7 @@
 
 /* 添加过渡动画 */
 .modal-window {
-  transition: height 0.3s ease;
+  transition: height 0.3s ease, width 0.3s ease;
 }
 
 .related-panel{
@@ -407,17 +407,29 @@ onUnmounted(() => {
 
 // 添加收起/展开状态
 const isCollapsed = ref(false)
-const originalHeight = ref(null)
+const originalSize = ref(null)
 
 // 切换收起/展开状态
 const toggleCollapse = () => {
   if (!isCollapsed.value) {
-    // 收起前保存原始高度
-    originalHeight.value = size.value.height
-    size.value.height = 44 // 只保留标题栏高度
+    // 收起前保存原始尺寸
+    originalSize.value = { ...size.value }
+    
+    // 计算标题和按钮所需的最小宽度
+    nextTick(() => {
+      const titleEl = modalRef.value.querySelector('.modal-title')
+      const controlsEl = modalRef.value.querySelector('.modal-controls')
+      const padding = 32 // 额外留些padding，16px * 2
+      const minWidth = titleEl.scrollWidth + controlsEl.scrollWidth + padding
+      
+      size.value = {
+        width: Math.max(minWidth, props.minWidth),
+        height: 44 // 只保留标题栏高度
+      }
+    })
   } else {
-    // 恢复原始高度
-    size.value.height = originalHeight.value
+    // 恢复原始尺寸
+    size.value = { ...originalSize.value }
   }
   isCollapsed.value = !isCollapsed.value
 }
