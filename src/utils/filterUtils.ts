@@ -2,7 +2,7 @@
 export const DATE_TYPE_KEYS = ['finishedDate', 'createdAt', 'updatedAt']
 
 // 定义需要排除的属性
-export const EXCLUDE_KEYS = ['id', 'path', 'references', 'version', 'type', 'title']
+export const EXCLUDE_KEYS = ['id', 'path', 'references', 'version', 'type', 'title', 'displayType', 'noteCategory']
 
 /**
  * 从实体集合中收集可筛选的属性组
