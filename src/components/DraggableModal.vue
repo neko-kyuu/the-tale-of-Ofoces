@@ -367,9 +367,14 @@ onMounted(() => {
 const currentZIndex = ref(props.initialZIndex)
 const isClosing = ref(false)
 
-// 处理鼠标按下事件
+const expand = () => {
+  if (isCollapsed.value) {
+    toggleCollapse()
+  }
+}
+
 const handleMouseDown = (e) => {
-  emit('activate')
+  emit('activate', true)
   if (e.target.closest('.modal-handle')) {
     startDrag(e)
   }
@@ -389,7 +394,8 @@ const updateZIndex = (newZIndex) => {
 // 确保在组件挂载后暴露方法
 const exposed = {
   triggerClose: () => isClosing.value = true,
-  updateZIndex
+  updateZIndex,
+  expand
 }
 
 defineExpose(exposed)
@@ -419,12 +425,12 @@ const toggleCollapse = () => {
     nextTick(() => {
       const titleEl = modalRef.value.querySelector('.modal-title')
       const controlsEl = modalRef.value.querySelector('.modal-controls')
-      const padding = 32 // 额外留些padding，16px * 2
+      const padding = 32
       const minWidth = titleEl.scrollWidth + controlsEl.scrollWidth + padding
       
       size.value = {
         width: Math.max(minWidth, props.minWidth),
-        height: 44 // 只保留标题栏高度
+        height: 44
       }
     })
   } else {

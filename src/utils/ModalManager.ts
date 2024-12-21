@@ -62,7 +62,7 @@ export class ModalManager {
           entityType: options.entityType,
           visible: true,
           onClose: () => manager.close(id),
-          onActivate: () => manager.activateModal(id),
+          onActivate: (isDrag = false) => manager.activateModal(id, isDrag),
           onReady: (exposed) => {
             // 保存组件暴露的方法
             const modal = manager.modals.get(id)
@@ -106,13 +106,16 @@ export class ModalManager {
   }
 
   // 激活窗口（置顶）
-  activateModal(id: string) {
+  activateModal(id: string, isDrag: boolean = false) {
     const modal = this.modals.get(id)
     if (modal && modal.exposed) {
       this.currentZIndex++
       const newZIndex = this.currentZIndex
       modal.zIndex = newZIndex
       modal.exposed.updateZIndex(newZIndex)
+      if (!isDrag) {
+        modal.exposed.expand()
+      }
     }
   }
 } 
