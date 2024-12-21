@@ -2,7 +2,7 @@
 <template>
   <div class="dialog-container">
     <div class="messages">
-      <div v-if="firstLine" class="message-content" v-html="firstLine"></div>
+      <div v-if="firstLine" class="markdown-preview" v-html="firstLine"></div>
       
       <div v-for="message in parsedMessages" 
            :key="message.id" 
@@ -15,7 +15,7 @@
               <i :class="message.collapsed ? 'fi fi-rr-angle-down' : 'fi fi-rr-angle-up'"></i>
             </div>
           </div>
-          <div class="message-content" v-html="parseMarkdown(message.content)"></div>
+          <div class="markdown-preview" v-html="parseMarkdown(message.content)"></div>
         </div>
       </div>
     </div>
@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import { getStaticPath } from '@/utils/assets';
 import { ref, onMounted, watch } from 'vue';
+import { marked } from 'marked'
 
 interface Message {
   id: number;
@@ -40,6 +41,120 @@ const props = defineProps<{
 
 const firstLine = ref('');
 const parsedMessages = ref<Message[]>([]);
+
+// 创建自定义 renderer
+const renderer = {
+  // 添加标题处理
+  heading(textObj) {
+    const { text, depth } = textObj
+    
+    // 处理粗体（使用双星号的情况）
+    const processedText = text.replace(
+      /\*\*([^*]+)\*\*/g,
+      '<span class="markdown-bold">$1</span>'
+    )
+    
+    return `<h${depth}>${processedText}</h${depth}>`
+  },
+
+  paragraph(para) {
+    // 如果 para 是对象且包含 raw 属性，使用 raw
+    if (typeof para === 'object' && para.raw) {
+      let text = para.raw
+      
+      // 处理链接格式
+      text = text.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+      )
+      
+      // 其他格式处理...
+      text = text.replace(
+        /\*\*([^*]+)\*\*/g,
+        '<span class="markdown-bold">$1</span>'
+      )
+      
+      text = text.replace(
+        /_([^_]+)_/g,
+        '<span class="markdown-italic">$1</span>'
+      )
+      
+      text = text.replace(
+        /\*([^*]+)\*/g,
+        '<span class="markdown-italic">$1</span>'
+      )
+      
+      text = text.replace(
+        /#([\u4e00-\u9fa5\w]+)/g,
+        '<span class="markdown-tag">#$1</span>'
+      )
+      
+      return `<p>${text}</p>`
+    }
+    
+    return `<p>${para}</p>`
+  },
+  // 处理粗体
+  strong(text) {
+    if (typeof text === 'object') {
+      return text.text || ''
+    }
+    return `<span class="markdown-bold">${text}</span>`
+  },
+  
+  // 添加链接处理
+  link(href, title, text) {
+    // 处理可能存在的粗体和斜体
+    text = text.replace(
+      /\*\*([^*]+)\*\*/g,
+      '<span class="markdown-bold">$1</span>'
+    ).replace(
+      /_([^_]+)_/g,
+      '<span class="markdown-italic">$1</span>'
+    ).replace(
+      /\*([^*]+)\*/g,
+      '<span class="markdown-italic">$1</span>'
+    )
+    
+    const titleAttr = title ? ` title="${title}"` : ''
+    return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`
+  },
+
+  // 处理代码块
+  code(code) {
+    return `<pre class="code-block"><code>${code.text}</code></pre>`;
+  },
+
+  // 处理列表项
+  listitem(text: string) {
+    // 如果 text 是对象且包含 raw 属性，使用 raw
+    if (typeof text === 'object' && text.text) {
+      let content = text.text;
+      
+      // 处理粗体
+      content = content.replace(
+        /\*\*([^*]+)\*\*/g,
+        '<span class="markdown-bold">$1</span>'
+      );
+      
+      // 处理斜体
+      content = content.replace(
+        /[*_]([^*_]+)[*_]/g,
+        '<span class="markdown-italic">$1</span>'
+      );
+      
+      // 处理链接
+      content = content.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+      );
+      
+      return `<li>${content}</li>`;
+    }
+    
+    return `<li>${text}</li>`;
+  }
+};
 
 // 解析markdown文件内容
 const parseMessages = async (filePath: string) => {
@@ -118,34 +233,20 @@ onMounted(() => {
 
 // 解析 markdown 格式的文本
 const parseMarkdown = (text: string) => {
-  return text
-    // 处理代码块 ```language\ncode\n```
-    .replace(/```(?:\s*([a-zA-Z]*)\s*\n)?([\s\S]*?)```/g, (_, language, code) => {
-      return `<pre class="code-block ${language}"><code>${code.trim()}</code></pre>`;
-    })
-    // 处理加粗 **text**
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    // 处理斜体 *text* 或 _text_
-    .replace(/[*_](.*?)[*_]/g, '<em>$1</em>')
-    // 处理行内代码 `text`
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    // 处理下划线 __text__
-    .replace(/__(.*?)__/g, '<u>$1</u>')
-    // 处理删除线 ~~text~~
-    .replace(/~~(.*?)~~/g, '<del>$1</del>')
-    // 处理引用 > text
-    .replace(/^>\s*(.*?)$/gm, '<blockquote>$1</blockquote>')
-    // 处理标题 # text
-    .replace(/^(#{1,6})\s*(.*?)$/gm, (_, level, content) => {
-      const h = level.length;
-      return `<h${h}>${content}</h${h}>`;
-    })
-    // 处理列表 - text 或 * text
-    .replace(/^[-*]\s+(.*?)$/gm, '<li>$1</li>')
-    // 处理链接 [text](url)
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
-    // 处理换行符
-    .replace(/\n/g, '<br>');
+  // 配置 marked
+  marked.use({ 
+    renderer,
+    gfm: true,
+    breaks: true,
+    sanitize: false,
+    smartLists: true,
+    smartypants: false,
+    mangle: false,
+    headerIds: false
+  });
+
+  const parsed = marked.parse(text)
+  return parsed
 };
 
 const toggleMessage = (message: Message) => {
@@ -193,45 +294,50 @@ const toggleMessage = (message: Message) => {
   border-radius: 50%;
 }
 
-.message-details {
-  background: var(--color-background);
-  color: var(--color-text);
-  padding: 12px;
-  border-radius: 8px;
-  max-width: 80%;
-  min-width: 80%;
-}
+
 
 .message-name {
   font-weight: bold;
   margin-bottom: 4px;
 }
 
-.message-content {
+.markdown-preview {
   margin-bottom: 4px;
 }
 
-.message-content :deep(strong) {
+.markdown-preview :deep(.markdown-bold) {
   font-weight: 600;
   color: var(--color-background-highlight);
 }
+.markdown-preview :deep(p),
+.markdown-preview :deep(ul),
+.markdown-preview :deep(ol) {
+  padding: 0;
+  margin: 1.2em 0;
+}
 
-.message-content :deep(em) {
+.markdown-preview :deep(li) {
+  margin-top: 1.2em;
+  margin-bottom: 1.2em;
+  margin-left: 1.5em;
+}
+
+.markdown-preview :deep(em) {
   font-style: italic;
   display: inline-block;
   color: var(--color-text-light);
   font-size: 0.95rem;
 }
 
-.message-content :deep(u) {
+.markdown-preview :deep(u) {
   text-decoration: underline;
 }
 
-.message-content :deep(del) {
+.markdown-preview :deep(del) {
   text-decoration: line-through;
 }
 
-.message-content :deep(.code-block) {
+.markdown-preview :deep(.code-block) {
   background-color: var(--color-background-soft);
   color: var(--color-text);
   padding: 1em;
@@ -245,7 +351,7 @@ const toggleMessage = (message: Message) => {
   line-height: 1.2;
 }
 
-.message-content :deep(.code-block br) {
+.markdown-preview :deep(.code-block br) {
     height: 0.5rem;
     line-height: 0;
     margin: 0;
@@ -254,7 +360,7 @@ const toggleMessage = (message: Message) => {
     content: "";
 }
 
-.message-content :deep(code) {
+.markdown-preview :deep(code) {
   background-color: rgba(var(--color-background-soft-rgb), 0.1);
   padding: 2px 4px;
   border-radius: 3px;
@@ -263,7 +369,7 @@ const toggleMessage = (message: Message) => {
   word-wrap: break-word;
 }
 
-.message-content :deep(blockquote) {
+.markdown-preview :deep(blockquote) {
   margin: 1.5em 0;
   padding: 0.8em 1.2em;
   border-left: 4px solid var(--color-border);
@@ -271,10 +377,10 @@ const toggleMessage = (message: Message) => {
   border-radius: 0 4px 4px 0;
 }
 
-.message-content :deep(h1),
-.message-content :deep(h2),
-.message-content :deep(h3),
-.message-content :deep(h4) {
+.markdown-preview :deep(h1),
+.markdown-preview :deep(h2),
+.markdown-preview :deep(h3),
+.markdown-preview :deep(h4) {
   font-weight: 600;
   line-height: 1.4;
   margin: 2rem 0 1.2rem;
@@ -282,45 +388,42 @@ const toggleMessage = (message: Message) => {
   color: var(--color-background-highlight);
 }
 
-.message-content :deep(h1) {
+.markdown-preview :deep(h1) {
   font-size: 2.2em;
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.3em;
 }
 
-.message-content :deep(h2) {
+.markdown-preview :deep(h2) {
   font-size: 1.8em;
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.3em;
 }
 
-.message-content :deep(h3) {
+.markdown-preview :deep(h3) {
   font-size: 1.5em;
 }
 
-.message-content :deep(h4) {
+.markdown-preview :deep(h4) {
   font-size: 1.25em;
 }
-.message-content :deep(h5) { font-size: 1em; margin: 0.5em 0; }
-.message-content :deep(h6) { font-size: 0.9em; margin: 0.5em 0; }
+.markdown-preview :deep(h5) { font-size: 1em; margin: 0.5em 0; }
+.markdown-preview :deep(h6) { font-size: 0.9em; margin: 0.5em 0; }
 
-.message-content :deep(li) {
-  margin-left: 1.5em;
-  list-style-type: disc;
-}
 
-.message-content :deep(a) {
+
+.markdown-preview :deep(a) {
   color: var(--color-primary);
   text-decoration: none;
   border-bottom: 1px dashed var(--color-primary);
   transition: all 0.3s ease;
 }
 
-.message-content :deep(a:hover) {
+.markdown-preview :deep(a:hover) {
   color: var(--color-primary-dark);
   border-bottom-style: solid;
 }
-.message-content :deep(a::after) {
+.markdown-preview :deep(a::after) {
   content: '';
   display: inline-block;
   margin-left: 0.5rem;
@@ -331,10 +434,10 @@ const toggleMessage = (message: Message) => {
   background-repeat: no-repeat;
   opacity: 0.7;
 }
-.message-content :deep(a:hover::after) {
+.markdown-preview :deep(a:hover::after) {
   opacity: 1;
 }
-.message-content :deep(.markdown-tag) {
+.markdown-preview :deep(.markdown-tag) {
   display: inline-block;
   padding: 0.2em 0.8em;
   margin: 0 0.2em;
@@ -348,7 +451,7 @@ const toggleMessage = (message: Message) => {
   cursor: pointer;
 }
 
-.message-content :deep(.markdown-tag:hover) {
+.markdown-preview :deep(.markdown-tag:hover) {
   border-color: var(--color-background-soft-mute);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -363,6 +466,20 @@ const toggleMessage = (message: Message) => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
+  position: sticky;  /* 添加 sticky 定位 */
+  top: 0;           /* 固定在顶部 */
+  background: var(--color-background);
+  z-index: 1;       
+}
+
+.message-details {
+  background: var(--color-background);
+  color: var(--color-text);
+  padding: 12px;
+  border-radius: 8px;
+  max-width: 80%;
+  min-width: 80%;
+  position: relative;  /* 为 sticky header 创建定位上下文 */
 }
 
 .collapse-button {
@@ -378,7 +495,7 @@ const toggleMessage = (message: Message) => {
   background: var(--color-background-mute);
 }
 
-.message-details.collapsed .message-content {
+.message-details.collapsed .markdown-preview {
   display: none;
 }
 
