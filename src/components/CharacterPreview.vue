@@ -11,23 +11,26 @@
           <span class="challenge-rating">CR {{ getLevel() }}</span>
         </div>
         <div class="traits-row">
-          <span class="trait">{{ character.basicInfo.size }}</span>
-          <span class="trait">{{ character.basicInfo.alignment }}</span>
-          <span class="trait">{{ character.basicInfo.type }}</span>
+          <span class="trait">{{ computedStats.basicInfo.size }}</span>
+          <span class="trait">{{ computedStats.basicInfo.alignment }}</span>
+          <span class="trait">{{ computedStats.basicInfo.type }}</span>
           <a 
             class="reference" 
-            :href="character.basicInfo.referenceUrl" 
+            :href="computedStats.basicInfo.referenceUrl" 
             target="_blank"
             rel="noopener noreferrer"
           >
-            {{ character.basicInfo.reference }}
+            {{ computedStats.basicInfo.reference }}
           </a>
         </div>
         <div class="stats-row">
           <div class="stat-item">
             <label>HP</label>
-            <div class="stat-value">{{ getHitDice().maxHP }}</div>
-            <span class="stat-note">{{ getHitDice().formula }}</span>
+            <div class="stat-value">{{ getHitDice().maxHP }} 
+              <span class="stat-note">( {{ getHitDice().formula }} )</span> 
+            </div>
+            <span class="stat-note">{{ computedStats.levelClass }}</span>
+
           </div>
           <div class="stat-item">
             <label
@@ -38,7 +41,7 @@
               `"
             >AC</label>
             <div class="stat-value">
-              {{ calculateAC().normal }}/{{ calculateAC().flatFooted }}/{{ calculateAC().touch }}
+              {{ calculateAC().normal }} / {{ calculateAC().flatFooted }} / {{ calculateAC().touch }}
             </div>
             <span 
               class="stat-note"
@@ -56,9 +59,11 @@
             </span>
           </div>
           <div class="stat-item">
-            <label>速度</label>
-            <div class="stat-value">{{ character.combatStats.speed }}</div>
-            <span class="stat-note">{{ character.combatStats.specialSpeed }}</span>
+            <label
+              :data-tooltip="`dnd中的尺为英尺，一格为5尺。1尺等于30.48厘米。`"
+            >速度</label>
+            <div class="stat-value">{{ computedStats.combatStats.speed }}</div>
+            <span class="stat-note">{{ computedStats.combatStats.specialSpeed }}</span>
           </div>
         </div>
       </div>
@@ -127,9 +132,9 @@
                   :class="{
                     'double': getDoubleProficientSkills()?.includes(skill.id),
                     'active': !getDoubleProficientSkills()?.includes(skill.id) && 
-                              getProficiencySkills()?.includes(skill.id),
+                              getProficienctSkills()?.includes(skill.id),
                     'half': !getDoubleProficientSkills()?.includes(skill.id) && 
-                            !getProficiencySkills()?.includes(skill.id) && 
+                            !getProficienctSkills()?.includes(skill.id) && 
                             getHalfProficientSkills()?.includes(skill.id)
                   }"
                 ></div>
@@ -213,7 +218,7 @@
             <i :class="status.icon"></i>
             <span class="status-label">{{ status.label }}</span>
             <div class="status-detail" v-if="status.detailKey">
-              {{ character.statusDetails[status.detailKey] }}
+              {{ formatStatusDetail(computedStats.statusDetails[status.detailKey]) }}
             </div>
           </div>
         </div>
@@ -227,7 +232,14 @@ import { CHARACTER_TEMPLATE } from '@/constants/character';
 import { characters } from '@/constants/entities';
 import { computed, ref } from 'vue';
 import { getStaticPath } from '@/utils/assets'
-import { ATTRIBUTES, SKILLS, CLASS_HIT_DICE, CLASS_ABILITIES, BACKGROUND_SKILLS } from '@/constants/dnd5e';
+import { 
+  ATTRIBUTES, 
+  SKILLS, 
+  CLASS_HIT_DICE, 
+  RACE_ATTRIBUTES,
+  BACKGROUND_ATTRIBUTES,
+  CLASS_ATTRIBUTES
+} from '@/constants/dnd5e';
 import { deepMerge } from '@/utils/mergeHelper';
 
 const props = defineProps<{
@@ -245,17 +257,25 @@ const getCharacterAvatarPath = computed(() =>
 const computedStats = computed(() => {
   // 首先计算基础属性值
   const baseStats = {
+    race: character.basicInfo.race,
+    background: character.basicInfo.background,
+    mainClass: character.class[0].class,
+    basicInfo: character.basicInfo,
+    combatStats: character.combatStats,
+
     // 等级计算
     level: (() => {
       const classList = character.class;
       return classList.reduce((total, item) => total + item.level, 0);
     })(),
 
-    // 熟练属性计算
-    proficiencyAbilities: (() => {
-      const className = character.class[0].class;
-      return CLASS_ABILITIES[className].savingThrows;
+    levelClass: (() => {
+      const classList = character.class;
+      return classList.reduce((total, item) => total.concat(`${item.subClass} ${item.level}`), []).join(' / ');
     })(),
+
+    // 熟练属性计算
+    proficiencyAbilities: [],
     
     // 基础属性值
     attributes: (() => {
@@ -267,14 +287,9 @@ const computedStats = computed(() => {
     })(),
 
     // 双倍熟练技能
-    doubleProficientSkills:(() => {
-      return character.doubleProficientSkills;
-    })(),
+    doubleProficientSkills: character.doubleProficientSkills,
     // 熟练技能
-    proficiencySkills:(() => {
-      const background = character.basicInfo.background;
-      return BACKGROUND_SKILLS[background];
-    })(),
+    proficientSkills: [],
     // 一半熟练
     halfProficentSkills: (() => {
       return character.class.some(item => item.class === '吟游诗人') ? 
@@ -284,20 +299,25 @@ const computedStats = computed(() => {
     armorBonus: character.combatStats.armorBonus || 0,
     shieldBonus: character.combatStats.shieldBonus || 0,
     otherACBonus: character.combatStats.otherACBonus || 0,
-
+    
+    statusDetails: character.statusDetails,
   };
+  // 合并特性
+  const raceEnhancedStats = deepMerge(baseStats, RACE_ATTRIBUTES[baseStats.race]);
+  const backgroundEnhancedStats = deepMerge(raceEnhancedStats, BACKGROUND_ATTRIBUTES[baseStats.background]);
+  const enhancedStatus = deepMerge(backgroundEnhancedStats,CLASS_ATTRIBUTES[baseStats.mainClass])
 
   // 基于属性值的计算结果
   const computed = {
-    ...baseStats,
+    ...enhancedStatus,
     
     // 熟练加值计算
-    proficiencyBonus: Math.floor((baseStats.level - 1) / 4) + 2,
+    proficiencyBonus: Math.floor((enhancedStatus.level - 1) / 4) + 2,
 
     // 属性调整值计算
     modifiers: (() => {
       const mods: { [key: number]: string } = {};
-      for (const [id, score] of Object.entries(baseStats.attributes)) {
+      for (const [id, score] of Object.entries(enhancedStatus.attributes)) {
         const modifier = Math.floor((score - 10) / 2);
         mods[Number(id)] = modifier >= 0 ? `+${modifier}` : `${modifier}`;
       }
@@ -312,7 +332,7 @@ const computedStats = computed(() => {
     // 豁免加值计算
     savingThrows: (() => {
       const throws: { [key: number]: string } = {};
-      for (const [id, score] of Object.entries(baseStats.attributes)) {
+      for (const [id, score] of Object.entries(enhancedStatus.attributes)) {
         const modifier = Math.floor((score - 10) / 2);
         const proficiencyBonus = computed.proficiencyAbilities.includes(Number(id)) 
           ? computed.proficiencyBonus 
@@ -326,9 +346,9 @@ const computedStats = computed(() => {
     // 生命骰计算
     hitDice: (() => {
       const classList = character.class;
-      const conScore = baseStats.attributes[3];
+      const conScore = enhancedStatus.attributes[3];
       const conModifier = Math.floor((conScore - 10) / 2);
-      const conBonus = baseStats.level * conModifier;
+      const conBonus = enhancedStatus.level * conModifier;
       
       let diceStr = '';
       let baseHP = 0;
@@ -350,13 +370,13 @@ const computedStats = computed(() => {
     skillModifiers:(()=>{
       const throws: { [key: number]: string } = {};
       for (const [index,skill] of Object.entries(SKILLS)) {
-        const attributeModifier = Math.floor((baseStats.attributes[skill.attributeId] - 10) / 2);
+        const attributeModifier = Math.floor((enhancedStatus.attributes[skill.attributeId] - 10) / 2);
         let proficiencyBonus = 0;
-        if (baseStats.doubleProficientSkills?.includes(skill.id)) {
+        if (enhancedStatus.doubleProficientSkills?.includes(skill.id)) {
           proficiencyBonus = computed.proficiencyBonus* 2;
-        } else if (baseStats.proficiencySkills?.includes(skill.id)) {
+        } else if (enhancedStatus.proficientSkills?.includes(skill.id)) {
           proficiencyBonus = computed.proficiencyBonus;
-        } else if (baseStats.halfProficentSkills?.includes(skill.id)) {
+        } else if (enhancedStatus.halfProficentSkills?.includes(skill.id)) {
           proficiencyBonus = Math.floor(computed.proficiencyBonus/ 2);
         }
 
@@ -369,19 +389,16 @@ const computedStats = computed(() => {
     // 计算AC
     ac: (() => {
       const baseAC = 10;
-      const armorBonus = baseStats.armorBonus;
-      const shieldBonus = baseStats.shieldBonus;
+      const armorBonus = enhancedStatus.armorBonus;
+      const shieldBonus = enhancedStatus.shieldBonus;
       const dexModifier = Number(computed.modifiers[2]);
-      const otherBonus = baseStats.otherACBonus;
+      const otherBonus = enhancedStatus.otherACBonus;
 
       const maxBonus = Math.min((armorBonus + dexModifier), 8);
 
       return {
-        // 标准AC
         normal: baseAC + maxBonus + shieldBonus + otherBonus,
-        // 措手不及AC
         flatFooted: baseAC + armorBonus + otherBonus,
-        // 接触AC
         touch: baseAC + dexModifier + otherBonus
       };
     })(),
@@ -393,6 +410,15 @@ const computedStats = computed(() => {
   return deepMerge(finalComputed, character.overrides);
 });
 
+// 格式化状态详情
+const formatStatusDetail = (detail: string | string[] | undefined): string => {
+  if (!detail) return '';
+  if (Array.isArray(detail)) {
+    return detail.join(', ');
+  }
+  return detail;
+};
+
 // 使用计算属性进行渲染或进一步计算
 const getLevel = () => computedStats.value.level;
 const getProficiencyAbility = () => computedStats.value.proficiencyAbilities;
@@ -401,7 +427,7 @@ const calculateModifier = (attrId: number): string => computedStats.value.modifi
 const getProficiencyBonus = () => computedStats.value.proficiencyBonus;
 const getSavingThrow = (attrId: number): string => computedStats.value.savingThrows[attrId];
 const getDoubleProficientSkills = () => computedStats.value.doubleProficientSkills;
-const getProficiencySkills = () => computedStats.value.proficiencySkills;
+const getProficienctSkills = () => computedStats.value.proficientSkills;
 const getHalfProficientSkills = () => computedStats.value.halfProficentSkills;
 const calculateSkillModifier = (skillId: number): string => computedStats.value.skillModifiers[skillId];
 const calculateAC = () => computedStats.value.ac;
@@ -534,7 +560,7 @@ const currentTab = ref('attributes');
 
 .stat-item label {
   font-size: 0.8rem;
-  opacity: 0.7;
+  color: var(--color-text-soft);
 }
 
 .stat-value {
@@ -544,7 +570,7 @@ const currentTab = ref('attributes');
 
 .stat-note {
   font-size: 0.8rem;
-  opacity: 0.7;
+  color: var(--color-text-soft);
   position: relative;
 }
 
@@ -564,7 +590,7 @@ const currentTab = ref('attributes');
 .attribute-box h3 {
   margin: 0;
   font-size: 0.9rem;
-  opacity: 0.8;
+  color: var(--color-text-soft);
   text-transform: uppercase;
 }
 
@@ -627,7 +653,7 @@ const currentTab = ref('attributes');
 
 .modifier {
   font-size: 0.9rem;
-  opacity: 0.8;
+  color: var(--color-text-soft);
   width: 24px; /* 固定宽度确保对齐 */
   text-align: center;
   position: relative;
@@ -655,8 +681,7 @@ const currentTab = ref('attributes');
 .skill-group-header {
   font-size: 0.9rem;
   font-weight: bold;
-  color: var(--color-text);
-  opacity: 0.8;
+  color: var(--color-text-soft);
   padding: 0.25rem 0;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 0.25rem;
@@ -686,8 +711,7 @@ const currentTab = ref('attributes');
 }
 
 .skill-attr {
-  color: var(--color-text);
-  opacity: 0.7;
+  color: var(--color-text-soft);
   font-size: 0.85rem;
   width: 3rem;
   text-align: right;
@@ -784,8 +808,7 @@ const currentTab = ref('attributes');
 .feature-desc, .feature-value {
   text-align: right;
   font-size: 0.9rem;
-  color: var(--color-text);
-  opacity: 0.8;
+  color: var(--color-text-soft);
 }
 
 .feature-desc {
@@ -833,8 +856,7 @@ const currentTab = ref('attributes');
 }
 
 .info-label {
-  color: var(--color-text);
-  opacity: 0.8;
+  color: var(--color-text-soft);
   white-space: nowrap;
 }
 
@@ -900,7 +922,7 @@ const currentTab = ref('attributes');
 
 .status-item i {
   font-size: 0.9rem;
-  opacity: 0.8;
+  color: var(--color-text-soft);
   width: 1.2rem;
   text-align: center;
 }
@@ -912,8 +934,7 @@ const currentTab = ref('attributes');
 }
 
 .status-detail {
-  color: var(--color-text);
-  opacity: 0.8;
+  color: var(--color-text-soft);
   flex: 1;
 }
 
