@@ -277,7 +277,8 @@ const locationPointEntities = computed(() => {
 
 /* 角色实体容器样式 */
 .character-entities {
-  margin-bottom: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
   padding: 0 0.5rem;
 }
 
