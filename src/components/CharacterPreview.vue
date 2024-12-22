@@ -8,35 +8,75 @@
       <div class="basic-info">
         <div class="name-row">
           <h2 class="character-name">{{ character.name }}</h2>
-          <span class="challenge-rating">CR {{ character.challengeRating }}</span>
+          <span class="challenge-rating">CR {{ getLevel() }}</span>
         </div>
         <div class="traits-row">
           <span class="trait">{{ character.size }}</span>
           <span class="trait">{{ character.alignment }}</span>
           <span class="trait">{{ character.type }}</span>
-          <span class="reference">{{ character.reference }}</span>
+          <a 
+            class="reference" 
+            :href="character.referenceUrl" 
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ character.reference }}
+          </a>
         </div>
         <div class="stats-row">
           <div class="stat-item">
-            <label>Hit Points</label>
-            <div class="stat-value">{{ character.hitPoints.current }} / {{ character.hitPoints.maximum }}</div>
-            <span class="stat-note">{{ character.hitPoints.hitDice }}</span>
+            <label>HP</label>
+            <div class="stat-value">{{ getHitDice().maxHP }}</div>
+            <span class="stat-note">{{ getHitDice().hitDice }}</span>
           </div>
           <div class="stat-item">
-            <label>Armor Class</label>
-            <div class="stat-value">{{ character.armorClass }}</div>
-            <span class="stat-note">Proficiency +{{ getProficiencyBonus(character.level) }}</span>
+            <label
+              :data-tooltip="`AC:
+                标准AC = 10 + 盔甲加值 + 盾牌加值 + 敏捷调整值 + 其他调整值;
+                措手不及 = 10 + 盔甲加值 + 其他调整值;
+                接触 = 10 + 敏捷调整值 + 其他调整值
+              `"
+            >AC</label>
+            <div class="stat-value">
+              {{ calculateAC().normal }}/{{ calculateAC().flatFooted }}/{{ calculateAC().touch }}
+            </div>
+            <span 
+              class="stat-note"
+              :data-tooltip="`熟练加值:
+                熟练加值适用于许多你将记录在角色卡上的事项。
+                • 使用拥有熟练项的武器发动攻击检定时
+                • 施展的法术发动攻击检定时
+                • 使用拥有熟练项的技能进行属性检定时
+                • 使用拥有熟练项的工具进行属性检定时
+                • 使用拥有熟练项的豁免属性进行豁免检定时
+                • 施展的法术的豁免 DC
+                `"
+            >
+              熟练加值+{{ getProficiencyBonus(getLevel()) }}
+            </span>
           </div>
           <div class="stat-item">
-            <label>Speed</label>
+            <label>速度</label>
             <div class="stat-value">{{ character.speed }}</div>
-            <span class="stat-note">Special Movement</span>
+            <span class="stat-note">{{ character.specialSpeed }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="main-content">
+    <div class="tab-container">
+      <div 
+        v-for="tab in tabs" 
+        :key="tab.id"
+        class="tab-item"
+        :class="{ active: currentTab === tab.id }"
+        @click="currentTab = tab.id"
+      >
+        {{ tab.label }}
+      </div>
+    </div>
+
+    <div class="main-content" v-if="currentTab === 'attributes'">
       <div class="attributes-section">
         <div 
           v-for="attr in ATTRIBUTES" 
@@ -47,20 +87,20 @@
           <div class="score-box">
             <span 
               class="modifier" 
-              :data-tooltip="`属性调整值:\n
-              将该项属性值减去10在将结果除以 2（向下取整）。
+              :data-tooltip="`属性调整值:
+                将该项属性值减去10在将结果除以 2（向下取整）。
               `"
             >
               {{ calculateModifier(character.attributes[attr.id]) }}
             </span>
             <div class="main-score">
               {{ character.attributes[attr.id] }}
-              <div class="proficiency-dot" :class="{ active: character.proficientAttributes.includes(attr.id) }"></div>
+              <div class="proficiency-dot" :class="{ active: getProficiencyAbility().includes(attr.id) }"></div>
             </div>
             <span 
               class="modifier"
-              :data-tooltip="`豁免检定是用于判断角色是否能够抵抗或免除某种效果或伤害的机制。\n
-              豁免加值由角色的属性、熟练度、特殊效果等因素决定。
+              :data-tooltip="`豁免检定是用于判断角色是否能够抵抗或免除某种效果或伤害的机制。
+                豁免加值由角色的属性、熟练度、特殊效果等因素决定。
               `"
             >
               {{ calculateBonus(attr.id) }}
@@ -82,10 +122,19 @@
                 class="skill-item"
                 :class="{ 'striped': skill.id % 2 === 0 }"
               >
-                <div class="proficiency-dot" :class="{ active: character.proficientSkills?.includes(skill.id) }"></div>
+                <div 
+                  class="proficiency-dot" 
+                  :class="{
+                    'double': getDoubleProficientSkills()?.includes(skill.id),
+                    'active': !getDoubleProficientSkills()?.includes(skill.id) && 
+                              getProficiencySkills()?.includes(skill.id),
+                    'half': !getDoubleProficientSkills()?.includes(skill.id) && 
+                            !getProficiencySkills()?.includes(skill.id) && 
+                            getHalfProficientSkills()?.includes(skill.id)
+                  }"
+                ></div>
                 <span class="skill-name">{{ skill.name }}</span>
                 <span class="skill-modifier">{{ calculateSkillModifier(skill) }}</span>
-                <!-- <span class="skill-attr">({{ getAttributeAbbr(skill.attributeId) }})</span> -->
               </div>
             </template>
           </template>
@@ -106,8 +155,8 @@
             <div class="info-row">
               <div class="info-label">性别</div>
               <div class="info-value">{{ character.gender }}</div>
-              <div class="info-label">阵营</div>
-              <div class="info-value">{{ character.alignment }}</div>
+              <div class="info-label">年龄</div>
+              <div class="info-value">{{ character.age }}</div>
             </div>
             <div class="info-row">
               <div class="info-label">背景</div>
@@ -144,37 +193,28 @@
             <div class="info-row">
               <div class="info-label">指甲色</div>
               <div class="info-value">
-                <div class="color-box" :style="{ backgroundColor: character.nailColor }"></div>
+                <div 
+                  class="color-box" 
+                  :class="{ 'disabled': !character.nailColor }"
+                  :style="{ backgroundColor: character.nailColor || '#ffffff' }"
+                ></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 种族特性 -->
-        <div class="feature-box">
-          <h3>种族特性</h3>
+        <!-- 添加状态列表 -->
+        <div class="status-list">
           <div 
-            v-for="(desc, name, index) in character.racialTraits" 
-            :key="name"
-            class="feature-item"
-            :class="{ 'striped': index % 2 === 0 }"
+            v-for="status in statusItems" 
+            :key="status.id"
+            class="status-item"
           >
-            <span class="feature-name">{{ name }}</span>
-            <span class="feature-desc">{{ desc }}</span>
-          </div>
-        </div>
-
-        <!-- 其他特性 -->
-        <div class="feature-box">
-          <h3>其他特性</h3>
-          <div 
-            v-for="(item, index) in otherFeatures" 
-            :key="item.label"
-            class="feature-item"
-            :class="{ 'striped': index % 2 === 0 }"
-          >
-            <span class="feature-name">{{ item.label }}</span>
-            <span class="feature-value">{{ item.value }}</span>
+            <i :class="status.icon"></i>
+            <span class="status-label">{{ status.label }}</span>
+            <div class="status-detail" v-if="status.detailKey">
+              {{ character.statusDetails[status.detailKey] }}
+            </div>
           </div>
         </div>
       </div>
@@ -183,22 +223,66 @@
 </template>
 
 <script setup lang="ts">
-import { ATTRIBUTES, SKILLS } from '@/constants/types';
 import { CHARACTER_TEMPLATE } from '@/constants/character';
 import { characters } from '@/constants/entities';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { getStaticPath } from '@/utils/assets'
+import { ATTRIBUTES, SKILLS, CLASS_HIT_DICE, CLASS_ABILITIES, BACKGROUND_SKILLS } from '@/constants/dnd5e';
 
 const props = defineProps<{
   characterId: number
 }>();
+
+const character = CHARACTER_TEMPLATE.get(props.characterId);
 
 // 获取角色头像路径
 const getCharacterAvatarPath = computed(() => 
   characters.find(c => c.id === props.characterId)?.path || ''
 );
 
-const character = CHARACTER_TEMPLATE.get(props.characterId);
+// 获取等级
+const getLevel = () => {
+  const classList = character.class;
+  let level = 0;
+  classList.forEach(item => {
+    level += item.level;
+  });
+  return level;
+};
+
+// 获取生命骰与最大生命值
+const getHitDice = () => {
+
+  const classList = character.class;
+
+  const conScore = character.attributes[3];
+  const conModifier = Math.floor((conScore - 10) / 2);
+  const conBonus = getLevel() * conModifier;
+  const modifierStr = conBonus >= 0 ? `+${conBonus}` : `${conBonus}`;
+
+  let diceStr = '';
+  let baseHP = 0;
+  classList.forEach((item, index) => {
+    const dice = CLASS_HIT_DICE[item.class].hitDice;
+    const level = item.level;
+    diceStr += `${index === 0 ? '' : ' + '}${level}${dice}`;
+    baseHP += level * CLASS_HIT_DICE[item.class].diceValue;
+  });
+  
+  // 计算最大生命值
+  const maxHP = baseHP + conBonus;
+
+  return {
+    hitDice: `${diceStr} ${modifierStr}`,
+    maxHP: maxHP
+  };
+};
+
+// 获取熟练属性
+const getProficiencyAbility = () => {
+  const className = character.class[0].class;
+  return CLASS_ABILITIES[className].savingThrows;
+};
 
 // 计算调整值
 const calculateModifier = (score: number): string => {
@@ -215,32 +299,40 @@ const getProficiencyBonus = (level: number): number => {
 const calculateBonus = (attributeId: number): string => {
   const score = character.attributes[attributeId];
   const modifier = Math.floor((score - 10) / 2);
-  const proficiencyBonus = character.proficientAttributes.includes(attributeId) 
-    ? getProficiencyBonus(character.level) 
+  const proficiencyBonus = getProficiencyAbility().includes(attributeId) 
+    ? getProficiencyBonus(getLevel()) 
     : 0;
   const total = modifier + proficiencyBonus;
   return total >= 0 ? `+${total}` : `${total}`;
 };
 
-// 获取属性简称
-const getAttributeAbbr = (attributeId: number): string => {
-  const attributeAbbrs = {
-    1: 'Str',
-    2: 'Dex',
-    3: 'Con',
-    4: 'Int',
-    5: 'Wis',
-    6: 'Cha'
-  };
-  return attributeAbbrs[attributeId];
+const getDoubleProficientSkills = () => {
+  return character.doubleProficientSkills;
+};
+
+const getProficiencySkills = () => {
+  const background = character.background;
+  return BACKGROUND_SKILLS[background];
+};
+
+const getHalfProficientSkills = () => {
+  return character.class.some(item => item.class === '吟游诗人') ? 
+    [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] : [];
 };
 
 // 计算技能调整值
 const calculateSkillModifier = (skill: any): string => {
   const attributeModifier = Math.floor((character.attributes[skill.attributeId] - 10) / 2);
-  const proficiencyBonus = character.proficientSkills?.includes(skill.id) 
-    ? getProficiencyBonus(character.level) 
-    : 0;
+  let proficiencyBonus = 0;
+  
+  if (getDoubleProficientSkills()?.includes(skill.id)) {
+    proficiencyBonus = getProficiencyBonus(getLevel()) * 2;
+  } else if (getProficiencySkills()?.includes(skill.id)) {
+    proficiencyBonus = getProficiencyBonus(getLevel());
+  } else if (getHalfProficientSkills()?.includes(skill.id)) {
+    proficiencyBonus = Math.floor(getProficiencyBonus(getLevel()) / 2);
+  }
+  
   const total = attributeModifier + proficiencyBonus;
   return total >= 0 ? `+${total}` : `${total}`;
 };
@@ -250,22 +342,50 @@ const getSkillsByAttribute = (attributeId: number) => {
   return SKILLS.filter(skill => skill.attributeId === attributeId);
 };
 
-// 其他特性数组（用于方便渲染和控制顺序）
-const otherFeatures = [
-  { label: '语言', value: character.languages },
-  { label: '工具', value: character.tools },
-  { label: '施法间隔', value: `${character.spellSlots?.current || 0} / ${character.spellSlots?.maximum || 3}` },
-  { label: '激励', value: `${character.inspiration?.current || 0} / ${character.inspiration?.maximum || 1}` },
-  { label: '伤害', value: character.damage },
-  { label: '声望', value: character.reputation },
-  { label: '威胁', value: character.threat },
-  { label: '祝福', value: character.blessing },
-  { label: '护符', value: character.amulet },
-  { label: '传奇恩惠', value: character.legendaryFavor }
-].map(item => ({
-  ...item,
-  value: item.value || '-'
-}));
+// 状态列表数据
+const statusItems = [
+  { id: 1, icon: 'fi fi-sr-eye', label: '感官', detailKey: 'VISION'},
+  { id: 2, icon: 'fi fi-sr-comments', label: '语言',detailKey: 'LANGUAGES'},
+  { id: 3, icon: 'fi fi-sr-shield',  label: '伤害免疫', detailKey: 'DAMAGE_IMMUNITY'},
+  { id: 4, icon: 'fi fi-sr-shield-plus', label: '伤害抗性', detailKey: 'DAMAGE_RESISTANCE' },
+  { id: 5, icon: 'fi fi-sr-skull', label: '易伤', detailKey: 'VULNERABILITY' },
+  { id: 6, icon: 'fi fi-sr-sparkles', label: '伤害加成', detailKey: 'DAMAGE_BONUS' },
+  { id: 7, icon: 'fi fi-sr-circle-heart', label: '状态免疫', detailKey: 'STATUS_IMMUNITY' },
+  { id: 8, icon: 'fi fi-sr-sword', label: '武器熟练', detailKey: 'WEAPON_PROFICIENCY' },
+  { id: 9, icon: 'fi fi-sr-shield-check', label: '护甲熟练', detailKey: 'ARMOR_PROFICIENCY' },
+  { id: 10, icon: 'fi fi-bs-tools', label: '工具', detailKey: 'TOOLS' },
+  { id: 11, icon: 'fi fi-sr-chess-queen', label: '声望', detailKey: 'REPUTATION' },
+  { id: 12, icon: 'fi fi-sr-cross-religion', label: '祝福', detailKey: 'BLESSING' },
+  { id: 13, icon: 'fi fi-ss-brand', label: '护符', detailKey: 'AMULET' },
+  { id: 14, icon: 'fi fi-sr-diamond', label: '传奇恩惠', detailKey: 'LEGENDARY_FAVOR' }
+];
+
+const calculateAC = () => {
+  const baseAC = 10;
+  const armorBonus = character.armorBonus || 0;
+  const shieldBonus = character.shieldBonus || 0;
+  const dexModifier = Number(calculateModifier(character.attributes[2]));
+  const otherBonus = character.otherACBonus || 0;
+
+  const maxBonus = Math.min((armorBonus + dexModifier), 8);
+
+  return {
+    // 标准AC
+    normal: baseAC + maxBonus + shieldBonus + otherBonus,
+    // 措手不及AC
+    flatFooted: baseAC + armorBonus + otherBonus,
+    // 接触AC
+    touch: baseAC + dexModifier + otherBonus
+  };
+};
+
+const tabs = [
+  { id: 'attributes', label: '属性' },
+  { id: 'inventory', label: '持有物' },
+  { id: 'spellbook', label: '法术书' }
+];
+
+const currentTab = ref('attributes');
 </script>
 
 <style scoped>
@@ -342,6 +462,12 @@ const otherFeatures = [
 .reference {
   color: var(--color-text);
   opacity: 0.7;
+  text-decoration: none;
+}
+
+.reference:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 .stats-row {
@@ -369,6 +495,7 @@ const otherFeatures = [
 .stat-note {
   font-size: 0.8rem;
   opacity: 0.7;
+  position: relative;
 }
 
 .attributes-section {
@@ -405,11 +532,47 @@ const otherFeatures = [
   height: 8px;
   border: 1px solid var(--color-border);
   border-radius: 50%;
+  position: relative;
+  background-color: var(--color-background-soft);
 }
 
 .proficiency-dot.active {
   background-color: var(--color-background-highlight);
   border-color: var(--color-background-highlight);
+}
+
+.proficiency-dot.double {
+  background-color: var(--color-background-highlight);
+  border-color: var(--color-background-highlight);
+}
+
+.proficiency-dot.double::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--color-background-highlight);
+  border-radius: 50%;
+  top: -3px;
+  left: -3px;
+}
+
+.proficiency-dot.half {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  position: relative;
+}
+
+.proficiency-dot.half::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-background-highlight);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .modifier {
@@ -418,35 +581,6 @@ const otherFeatures = [
   width: 24px; /* 固定宽度确保对齐 */
   text-align: center;
   position: relative;
-}
-
-.modifier[data-tooltip] {
-  cursor: help;
-}
-
-.modifier[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  /* transform: translateX(-50%); */
-  padding: 4px 8px;
-  background-color: var(--color-background-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 0.8rem;
-  white-space: pre-line;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
-  width: max-content;    
-  max-width: 200px;
-  text-align: left;     
-}
-
-.modifier[data-tooltip]:hover::after {
-  opacity: 1;
-  visibility: visible;
 }
 
 .score-box {
@@ -672,11 +806,126 @@ const otherFeatures = [
   height: 1rem;
   border: 1px solid var(--color-border);
   border-radius: 2px;
+  position: relative;
+}
+
+.color-box.disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140%;    /* 稍微加长以确保覆盖整个方块 */
+  height: 1px;    /* 线的粗细 */
+  background-color: var(--color-border);
+  transform: rotate(-45deg);
+  transform-origin: top right;
 }
 
 .color-group .info-value {
   background-color: transparent;
   padding: 0;
   min-width: auto;
+}
+
+.status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--color-background-mute);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.status-item {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  background-color: var(--color-background-soft);
+  border-radius: 2px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.5rem;
+}
+
+.status-item i {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  width: 1.2rem;
+  text-align: center;
+}
+
+.status-label {
+  color: var(--color-text);
+  white-space: nowrap;
+  width: 80px;
+}
+
+.status-detail {
+  color: var(--color-text);
+  opacity: 0.8;
+  flex: 1;
+}
+
+/* 添加通用的 tooltip 样式 */
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  padding: 4px 8px;
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: pre-line;
+  width: max-content;
+  max-width: 300px;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  text-shadow: 
+    -1px -1px 0 var(--color-background-soft),
+    1px -1px 0 var(--color-background-soft),
+    -1px 1px 0 var(--color-background-soft),
+    1px 1px 0 var(--color-background-soft);
+}
+
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tab-container {
+  display: flex;
+  gap: 1px;
+  border-bottom: 1px solid var(--color-background-mute);
+}
+
+.tab-item {
+  padding: 0 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none;
+  font-size: 0.9rem;
+}
+
+.tab-item:hover {
+  color: var(--color-background-highlight);
+}
+
+.tab-item.active {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  background: var(--color-background-mute);
+  font-weight: 500;
 }
 </style>

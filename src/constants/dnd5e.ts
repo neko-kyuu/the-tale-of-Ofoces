@@ -1,0 +1,135 @@
+type ClassHitDice = {
+  [key: string]: { hitDice: string, diceValue: number };
+};
+
+export const CLASS_HIT_DICE: ClassHitDice = {
+  法师: { hitDice: 'd6', diceValue: 4 },
+  术士: { hitDice: 'd6', diceValue: 4 },
+  吟游诗人: { hitDice: 'd8', diceValue: 5 },
+  牧师: { hitDice: 'd8', diceValue: 5 },
+  德鲁伊: { hitDice: 'd8', diceValue: 5 },
+  武僧: { hitDice: 'd8', diceValue: 5 },
+  游荡者: { hitDice: 'd8', diceValue: 5 },
+  邪术师: { hitDice: 'd8', diceValue: 5 },
+  奇械师: { hitDice: 'd8', diceValue: 5 },
+  战士: { hitDice: 'd10', diceValue: 6 },
+  圣武士: { hitDice: 'd10', diceValue: 6 },
+  游侠: { hitDice: 'd10', diceValue: 6 },
+  野蛮人: { hitDice: 'd12', diceValue: 7 }
+};
+
+type ClassAbilities = {
+  [key: string]: { keyAbility: number, savingThrows: number[] };
+};
+type BackgroundSkills = {
+  [key: string]: number[];
+};
+
+export const ATTRIBUTES = [
+  { id: 1, name: '力量' },
+  { id: 2, name: '敏捷' },
+  { id: 3, name: '体质' },
+  { id: 4, name: '智力' },
+  { id: 5, name: '感知' },
+  { id: 6, name: '魅力' },
+]
+export const SKILLS = [
+  { id: 1, name: '运动', attributeId: 1 },
+  { id: 2, name: '特技', attributeId: 2 },
+  { id: 3, name: '巧手', attributeId: 2 },
+  { id: 4, name: '隐匿', attributeId: 2 },
+  { id: 5, name: '调查', attributeId: 4 },
+  { id: 6, name: '奥秘', attributeId: 4 },
+  { id: 7, name: '历史', attributeId: 4 },
+  { id: 8, name: '自然', attributeId: 4 },
+  { id: 9, name: '宗教', attributeId: 4  },
+  { id: 10, name: '察觉', attributeId: 6 },
+  { id: 11, name: '洞悉', attributeId: 5 },
+  { id: 12, name: '驯兽', attributeId: 5 },
+  { id: 13, name: '医药', attributeId: 5 },
+  { id: 14, name: '求生', attributeId: 5 },
+  { id: 15, name: '游说', attributeId: 6 },
+  { id: 16, name: '欺瞒', attributeId: 6 },
+  { id: 17, name: '威吓', attributeId: 6 },
+  { id: 18, name: '表演', attributeId: 6 },
+]
+
+export const CLASS_ABILITIES: ClassAbilities = {
+  法师: { keyAbility: 4, savingThrows: [4, 5] },
+  术士: { keyAbility: 6, savingThrows: [3, 6] },
+  吟游诗人: { keyAbility: 6, savingThrows: [2, 6] },
+  牧师: { keyAbility: 5, savingThrows: [5, 6] },
+  德鲁伊: { keyAbility: 5, savingThrows: [4, 5] },
+  武僧: { keyAbility: 5, savingThrows: [1, 2] },
+  游荡者: { keyAbility: 2, savingThrows: [2, 4] },
+  邪术师: { keyAbility: 6, savingThrows: [5, 6] },
+  奇械师: { keyAbility: 4, savingThrows: [3, 4] },
+  战士: { keyAbility: 1, savingThrows: [1, 3] },
+  圣武士: { keyAbility: 6, savingThrows: [5, 6] },
+  游侠: { keyAbility: 5, savingThrows: [1, 2] },
+  野蛮人: { keyAbility: 3, savingThrows: [1, 3] }
+};
+export const BACKGROUND_SKILLS: BackgroundSkills = {
+  侍僧: [11, 9],
+  骗子: [16, 3],
+  罪犯: [16, 4],
+  密探: [16, 4],
+  艺人: [2, 18],
+  角斗士: [2, 18],
+  平民英雄: [12, 14],
+  公会工匠: [11, 15],
+  公会商人: [11, 15],
+  隐士: [13, 9],
+  贵族: [7, 15],
+  骑士: [7, 15],
+  化外之民: [1, 14],
+  智者: [6, 7],
+  水手: [1, 10],
+  海盗: [1, 10],
+  士兵: [1, 17],
+  流浪儿: [3, 4],
+  城市守卫: [1, 11],
+  氏族工匠: [7, 11],
+  隐修学者: [7, 6, 8, 9],
+  朝臣: [11, 15],
+  派系特工: [11],
+  远行者: [11, 10],
+  继承者: [14, 6, 7, 9],
+  教团骑士: [15, 6, 7, 9],
+  老佣兵: [1, 15],
+  城市猎人: [16, 11, 15, 4],
+  乌斯伽部族成员: [1, 14],
+  深水人贵族: [7, 15],
+  俄佐立官员: [11, 17],
+  波洛斯军团兵: [1, 17],
+  底密尔特务: [16, 4],
+  葛加理成员: [8, 14],
+  古鲁反抗者: [12, 1],
+  伊捷工程师: [6, 5],
+  欧佐夫议员: [17, 9],
+  拉铎斯邪教徒: [2, 18],
+  瑟雷尼亚祀徒: [8, 15],
+  析米克科学家: [6, 13],
+  家族代理人: [5, 15],
+  名人冒险家的子孙: [10, 18],
+  失败商人: [5, 15],
+  赌徒: [16, 11],
+  起诉人: [13, 15],
+  竞争对手实习生: [7, 5],
+  自由斗士: [16, 18],
+  沃什塔克特工: [16, 4],
+  运动员: [2, 1],
+  噩梦缠身: [6, 5, 9, 14],
+  调查员: [11, 5, 10],
+  衡鉴学生: [7, 9],
+  粹丽学生: [2, 18],
+  量析学生: [6, 8],
+  银毫学生: [17, 15],
+  靡华学生: [8, 14],
+  星界浪客: [11, 9],
+  荒宇人: [1, 14],
+  巨人养子: [17, 14],
+  符文雕刻者: [7, 10],
+  受宠者: [11, 15],
+  受难者: [4, 14]
+};
