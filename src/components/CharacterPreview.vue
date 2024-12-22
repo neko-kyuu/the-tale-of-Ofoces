@@ -51,10 +51,10 @@ import {
   CLASS_ATTRIBUTES
 } from '@/constants/dnd5e';
 import { deepMerge } from '@/utils/mergeHelper';
-import CharacterHeader from './CharacterHeader.vue';
-import CharacterAttributes from './CharacterAttributes.vue';
-import CharacterInventory from './CharacterInventory.vue';
-import CharacterSpellbook from './CharacterSpellbook.vue';
+import CharacterHeader from '@/components/CharacterHeader.vue';
+import CharacterAttributes from '@/components/CharacterAttributes.vue';
+import CharacterInventory from '@/components/CharacterInventory.vue';
+import CharacterSpellbook from '@/components/CharacterSpellbook.vue';
 
 const props = defineProps<{
   characterId: number
