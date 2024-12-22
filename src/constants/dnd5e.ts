@@ -43,7 +43,7 @@ export const SKILLS = [
   { id: 7, name: '历史', attributeId: 4 },
   { id: 8, name: '自然', attributeId: 4 },
   { id: 9, name: '宗教', attributeId: 4  },
-  { id: 10, name: '察觉', attributeId: 6 },
+  { id: 10, name: '察觉', attributeId: 5 },
   { id: 11, name: '洞悉', attributeId: 5 },
   { id: 12, name: '驯兽', attributeId: 5 },
   { id: 13, name: '医药', attributeId: 5 },

@@ -11,23 +11,23 @@
           <span class="challenge-rating">CR {{ getLevel() }}</span>
         </div>
         <div class="traits-row">
-          <span class="trait">{{ character.size }}</span>
-          <span class="trait">{{ character.alignment }}</span>
-          <span class="trait">{{ character.type }}</span>
+          <span class="trait">{{ character.basicInfo.size }}</span>
+          <span class="trait">{{ character.basicInfo.alignment }}</span>
+          <span class="trait">{{ character.basicInfo.type }}</span>
           <a 
             class="reference" 
-            :href="character.referenceUrl" 
+            :href="character.basicInfo.referenceUrl" 
             target="_blank"
             rel="noopener noreferrer"
           >
-            {{ character.reference }}
+            {{ character.basicInfo.reference }}
           </a>
         </div>
         <div class="stats-row">
           <div class="stat-item">
             <label>HP</label>
             <div class="stat-value">{{ getHitDice().maxHP }}</div>
-            <span class="stat-note">{{ getHitDice().hitDice }}</span>
+            <span class="stat-note">{{ getHitDice().formula }}</span>
           </div>
           <div class="stat-item">
             <label
@@ -52,13 +52,13 @@
                 • 施展的法术的豁免 DC
                 `"
             >
-              熟练加值+{{ getProficiencyBonus(getLevel()) }}
+              熟练加值+{{ getProficiencyBonus()}}
             </span>
           </div>
           <div class="stat-item">
             <label>速度</label>
-            <div class="stat-value">{{ character.speed }}</div>
-            <span class="stat-note">{{ character.specialSpeed }}</span>
+            <div class="stat-value">{{ character.combatStats.speed }}</div>
+            <span class="stat-note">{{ character.combatStats.specialSpeed }}</span>
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@
                 将该项属性值减去10在将结果除以 2（向下取整）。
               `"
             >
-              {{ calculateModifier(character.attributes[attr.id]) }}
+              {{ calculateModifier(attr.id) }}
             </span>
             <div class="main-score">
               {{ character.attributes[attr.id] }}
@@ -103,7 +103,7 @@
                 豁免加值由角色的属性、熟练度、特殊效果等因素决定。
               `"
             >
-              {{ calculateBonus(attr.id) }}
+              {{ getSavingThrow(attr.id) }}
             </span>
           </div>
         </div>
@@ -134,7 +134,7 @@
                   }"
                 ></div>
                 <span class="skill-name">{{ skill.name }}</span>
-                <span class="skill-modifier">{{ calculateSkillModifier(skill) }}</span>
+                <span class="skill-modifier">{{ calculateSkillModifier(skill.id) }}</span>
               </div>
             </template>
           </template>
@@ -148,25 +148,25 @@
           <div class="info-group">
             <div class="info-row">
               <div class="info-label">种族</div>
-              <div class="info-value">{{ character.race }}</div>
+              <div class="info-value">{{ character.basicInfo.race }}</div>
               <div class="info-label">亚种</div>
-              <div class="info-value">{{ character.subrace }}</div>
+              <div class="info-value">{{ character.basicInfo.subrace }}</div>
             </div>
             <div class="info-row">
               <div class="info-label">性别</div>
-              <div class="info-value">{{ character.gender }}</div>
+              <div class="info-value">{{ character.basicInfo.gender }}</div>
               <div class="info-label">年龄</div>
-              <div class="info-value">{{ character.age }}</div>
+              <div class="info-value">{{ character.basicInfo.age }}</div>
             </div>
             <div class="info-row">
               <div class="info-label">背景</div>
-              <div class="info-value">{{ character.background }}</div>
+              <div class="info-value">{{ character.basicInfo.background }}</div>
             </div>
             <div class="info-row">
               <div class="info-label">身高</div>
-              <div class="info-value">{{ character.height }}</div>
+              <div class="info-value">{{ character.basicInfo.appearance.height }}</div>
               <div class="info-label">体重</div>
-              <div class="info-value">{{ character.weight }}</div>
+              <div class="info-value">{{ character.basicInfo.appearance.weight }}</div>
             </div>
           </div>
 
@@ -175,19 +175,19 @@
             <div class="info-row">
               <div class="info-label">发色</div>
               <div class="info-value">
-                <div class="color-box" :style="{ backgroundColor: character.hairColor }"></div>
+                <div class="color-box" :style="{ backgroundColor: character.basicInfo.appearance.hairColor }"></div>
               </div>
             </div>
             <div class="info-row">
               <div class="info-label">肤色</div>
               <div class="info-value">
-                <div class="color-box" :style="{ backgroundColor: character.skinColor }"></div>
+                <div class="color-box" :style="{ backgroundColor: character.basicInfo.appearance.skinColor }"></div>
               </div>
             </div>
             <div class="info-row">
               <div class="info-label">瞳色</div>
               <div class="info-value">
-                <div class="color-box" :style="{ backgroundColor: character.eyeColor }"></div>
+                <div class="color-box" :style="{ backgroundColor: character.basicInfo.appearance.eyeColor }"></div>
               </div>
             </div>
             <div class="info-row">
@@ -195,8 +195,8 @@
               <div class="info-value">
                 <div 
                   class="color-box" 
-                  :class="{ 'disabled': !character.nailColor }"
-                  :style="{ backgroundColor: character.nailColor || '#ffffff' }"
+                  :class="{ 'disabled': !character.basicInfo.appearance.nailColor }"
+                  :style="{ backgroundColor: character.basicInfo.appearance.nailColor || '#ffffff' }"
                 ></div>
               </div>
             </div>
@@ -228,6 +228,7 @@ import { characters } from '@/constants/entities';
 import { computed, ref } from 'vue';
 import { getStaticPath } from '@/utils/assets'
 import { ATTRIBUTES, SKILLS, CLASS_HIT_DICE, CLASS_ABILITIES, BACKGROUND_SKILLS } from '@/constants/dnd5e';
+import { deepMerge } from '@/utils/mergeHelper';
 
 const props = defineProps<{
   characterId: number
@@ -240,102 +241,170 @@ const getCharacterAvatarPath = computed(() =>
   characters.find(c => c.id === props.characterId)?.path || ''
 );
 
-// 获取等级
-const getLevel = () => {
-  const classList = character.class;
-  let level = 0;
-  classList.forEach(item => {
-    level += item.level;
-  });
-  return level;
-};
+// 计算角色属性
+const computedStats = computed(() => {
+  // 首先计算基础属性值
+  const baseStats = {
+    // 等级计算
+    level: (() => {
+      const classList = character.class;
+      return classList.reduce((total, item) => total + item.level, 0);
+    })(),
 
-// 获取生命骰与最大生命值
-const getHitDice = () => {
+    // 熟练属性计算
+    proficiencyAbilities: (() => {
+      const className = character.class[0].class;
+      return CLASS_ABILITIES[className].savingThrows;
+    })(),
+    
+    // 基础属性值
+    attributes: (() => {
+      const attrs: { [key: number]: number } = {};
+      for (const [id, score] of Object.entries(character.attributes)) {
+        attrs[Number(id)] = score;
+      }
+      return attrs;
+    })(),
 
-  const classList = character.class;
+    // 双倍熟练技能
+    doubleProficientSkills:(() => {
+      return character.doubleProficientSkills;
+    })(),
+    // 熟练技能
+    proficiencySkills:(() => {
+      const background = character.basicInfo.background;
+      return BACKGROUND_SKILLS[background];
+    })(),
+    // 一半熟练
+    halfProficentSkills: (() => {
+      return character.class.some(item => item.class === '吟游诗人') ? 
+        [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] : [];
+    })(),
 
-  const conScore = character.attributes[3];
-  const conModifier = Math.floor((conScore - 10) / 2);
-  const conBonus = getLevel() * conModifier;
-  const modifierStr = conBonus >= 0 ? `+${conBonus}` : `${conBonus}`;
+    armorBonus: character.combatStats.armorBonus || 0,
+    shieldBonus: character.combatStats.shieldBonus || 0,
+    otherACBonus: character.combatStats.otherACBonus || 0,
 
-  let diceStr = '';
-  let baseHP = 0;
-  classList.forEach((item, index) => {
-    const dice = CLASS_HIT_DICE[item.class].hitDice;
-    const level = item.level;
-    diceStr += `${index === 0 ? '' : ' + '}${level}${dice}`;
-    baseHP += level * CLASS_HIT_DICE[item.class].diceValue;
-  });
-  
-  // 计算最大生命值
-  const maxHP = baseHP + conBonus;
-
-  return {
-    hitDice: `${diceStr} ${modifierStr}`,
-    maxHP: maxHP
   };
-};
 
-// 获取熟练属性
-const getProficiencyAbility = () => {
-  const className = character.class[0].class;
-  return CLASS_ABILITIES[className].savingThrows;
-};
+  // 基于属性值的计算结果
+  const computed = {
+    ...baseStats,
+    
+    // 熟练加值计算
+    proficiencyBonus: Math.floor((baseStats.level - 1) / 4) + 2,
 
-// 计算调整值
-const calculateModifier = (score: number): string => {
-  const modifier = Math.floor((score - 10) / 2);
-  return modifier >= 0 ? `+${modifier}` : `${modifier}`;
-};
+    // 属性调整值计算
+    modifiers: (() => {
+      const mods: { [key: number]: string } = {};
+      for (const [id, score] of Object.entries(baseStats.attributes)) {
+        const modifier = Math.floor((score - 10) / 2);
+        mods[Number(id)] = modifier >= 0 ? `+${modifier}` : `${modifier}`;
+      }
+      return mods;
+    })(),
+  };
 
-// 计算熟练加值
-const getProficiencyBonus = (level: number): number => {
-  return Math.floor((level - 1) / 4) + 2;
-};
+  // 依赖前面计算结果的计算
+  const finalComputed = {
+    ...computed,
+    
+    // 豁免加值计算
+    savingThrows: (() => {
+      const throws: { [key: number]: string } = {};
+      for (const [id, score] of Object.entries(baseStats.attributes)) {
+        const modifier = Math.floor((score - 10) / 2);
+        const proficiencyBonus = computed.proficiencyAbilities.includes(Number(id)) 
+          ? computed.proficiencyBonus 
+          : 0;
+        const total = modifier + proficiencyBonus;
+        throws[Number(id)] = total >= 0 ? `+${total}` : `${total}`;
+      }
+      return throws;
+    })(),
 
-// 计算总加值
-const calculateBonus = (attributeId: number): string => {
-  const score = character.attributes[attributeId];
-  const modifier = Math.floor((score - 10) / 2);
-  const proficiencyBonus = getProficiencyAbility().includes(attributeId) 
-    ? getProficiencyBonus(getLevel()) 
-    : 0;
-  const total = modifier + proficiencyBonus;
-  return total >= 0 ? `+${total}` : `${total}`;
-};
+    // 生命骰计算
+    hitDice: (() => {
+      const classList = character.class;
+      const conScore = baseStats.attributes[3];
+      const conModifier = Math.floor((conScore - 10) / 2);
+      const conBonus = baseStats.level * conModifier;
+      
+      let diceStr = '';
+      let baseHP = 0;
+      
+      classList.forEach((item, index) => {
+        const dice = CLASS_HIT_DICE[item.class].hitDice;
+        const itemLevel = item.level;
+        diceStr += `${index === 0 ? '' : ' + '}${itemLevel}${dice}`;
+        baseHP += itemLevel * CLASS_HIT_DICE[item.class].diceValue;
+      });
 
-const getDoubleProficientSkills = () => {
-  return character.doubleProficientSkills;
-};
+      return {
+        formula: `${diceStr} ${conBonus >= 0 ? '+' : ''}${conBonus}`,
+        maxHP: baseHP + conBonus
+      };
+    })(),
 
-const getProficiencySkills = () => {
-  const background = character.background;
-  return BACKGROUND_SKILLS[background];
-};
+    // 计算技能调整值
+    skillModifiers:(()=>{
+      const throws: { [key: number]: string } = {};
+      for (const [index,skill] of Object.entries(SKILLS)) {
+        const attributeModifier = Math.floor((baseStats.attributes[skill.attributeId] - 10) / 2);
+        let proficiencyBonus = 0;
+        if (baseStats.doubleProficientSkills?.includes(skill.id)) {
+          proficiencyBonus = computed.proficiencyBonus* 2;
+        } else if (baseStats.proficiencySkills?.includes(skill.id)) {
+          proficiencyBonus = computed.proficiencyBonus;
+        } else if (baseStats.halfProficentSkills?.includes(skill.id)) {
+          proficiencyBonus = Math.floor(computed.proficiencyBonus/ 2);
+        }
 
-const getHalfProficientSkills = () => {
-  return character.class.some(item => item.class === '吟游诗人') ? 
-    [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] : [];
-};
+        const total = attributeModifier + proficiencyBonus;
+        throws[Number(skill.id)] = total >= 0 ? `+${total}` : `${total}`;
+      }
+      return throws;
+    })(),
 
-// 计算技能调整值
-const calculateSkillModifier = (skill: any): string => {
-  const attributeModifier = Math.floor((character.attributes[skill.attributeId] - 10) / 2);
-  let proficiencyBonus = 0;
-  
-  if (getDoubleProficientSkills()?.includes(skill.id)) {
-    proficiencyBonus = getProficiencyBonus(getLevel()) * 2;
-  } else if (getProficiencySkills()?.includes(skill.id)) {
-    proficiencyBonus = getProficiencyBonus(getLevel());
-  } else if (getHalfProficientSkills()?.includes(skill.id)) {
-    proficiencyBonus = Math.floor(getProficiencyBonus(getLevel()) / 2);
-  }
-  
-  const total = attributeModifier + proficiencyBonus;
-  return total >= 0 ? `+${total}` : `${total}`;
-};
+    // 计算AC
+    ac: (() => {
+      const baseAC = 10;
+      const armorBonus = baseStats.armorBonus;
+      const shieldBonus = baseStats.shieldBonus;
+      const dexModifier = Number(computed.modifiers[2]);
+      const otherBonus = baseStats.otherACBonus;
+
+      const maxBonus = Math.min((armorBonus + dexModifier), 8);
+
+      return {
+        // 标准AC
+        normal: baseAC + maxBonus + shieldBonus + otherBonus,
+        // 措手不及AC
+        flatFooted: baseAC + armorBonus + otherBonus,
+        // 接触AC
+        touch: baseAC + dexModifier + otherBonus
+      };
+    })(),
+    // ... 其他需要计算的属性
+  };
+
+  console.log(finalComputed)
+  // 与角色中的显式设置合并
+  return deepMerge(finalComputed, character.overrides);
+});
+
+// 使用计算属性进行渲染或进一步计算
+const getLevel = () => computedStats.value.level;
+const getProficiencyAbility = () => computedStats.value.proficiencyAbilities;
+const getHitDice = () => computedStats.value.hitDice;
+const calculateModifier = (attrId: number): string => computedStats.value.modifiers[attrId];
+const getProficiencyBonus = () => computedStats.value.proficiencyBonus;
+const getSavingThrow = (attrId: number): string => computedStats.value.savingThrows[attrId];
+const getDoubleProficientSkills = () => computedStats.value.doubleProficientSkills;
+const getProficiencySkills = () => computedStats.value.proficiencySkills;
+const getHalfProficientSkills = () => computedStats.value.halfProficentSkills;
+const calculateSkillModifier = (skillId: number): string => computedStats.value.skillModifiers[skillId];
+const calculateAC = () => computedStats.value.ac;
 
 // 按属性分组获取技能
 const getSkillsByAttribute = (attributeId: number) => {
@@ -359,25 +428,6 @@ const statusItems = [
   { id: 13, icon: 'fi fi-ss-brand', label: '护符', detailKey: 'AMULET' },
   { id: 14, icon: 'fi fi-sr-diamond', label: '传奇恩惠', detailKey: 'LEGENDARY_FAVOR' }
 ];
-
-const calculateAC = () => {
-  const baseAC = 10;
-  const armorBonus = character.armorBonus || 0;
-  const shieldBonus = character.shieldBonus || 0;
-  const dexModifier = Number(calculateModifier(character.attributes[2]));
-  const otherBonus = character.otherACBonus || 0;
-
-  const maxBonus = Math.min((armorBonus + dexModifier), 8);
-
-  return {
-    // 标准AC
-    normal: baseAC + maxBonus + shieldBonus + otherBonus,
-    // 措手不及AC
-    flatFooted: baseAC + armorBonus + otherBonus,
-    // 接触AC
-    touch: baseAC + dexModifier + otherBonus
-  };
-};
 
 const tabs = [
   { id: 'attributes', label: '属性' },
