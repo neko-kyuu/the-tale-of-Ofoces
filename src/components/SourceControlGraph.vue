@@ -32,6 +32,11 @@ const getX = (timestamp: number) => xOffset.value + timestamp * xScale.value
 // 计算节点纵坐标
 const getY = (level: number) => yOffset.value + level * yScale.value
 
+const getComputedColor = (varName: string) => {
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(varName).trim()
+}
+
 // 将节点数据转换为vis-network格式
 const getVisNodes = () => {
   return new DataSet(
@@ -76,7 +81,8 @@ const getVisEdges = () => {
 const options: Options = {
   nodes: {
     font: {
-      size: 14
+      size: 14,
+      color: getComputedColor('--color-text')
     },
     borderWidth: 1,
     borderWidthSelected: 2,
@@ -117,11 +123,6 @@ const options: Options = {
   manipulation: {
     enabled: false
   }
-}
-
-const getComputedColor = (varName: string) => {
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(varName).trim()
 }
 
 onMounted(() => {
