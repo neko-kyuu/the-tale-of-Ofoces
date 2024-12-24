@@ -74,6 +74,12 @@ const getCharacterAvatarPath = computed(() =>
   characters.find(c => c.id === props.characterId)?.path || ''
 );
 
+interface ClassFeatureInfo {
+  className: string;
+  level: number;
+  feature: string;
+}
+
 // 计算角色属性
 const computedStats = computed(() => {
   // 首先计算基础属性值
@@ -238,9 +244,51 @@ const computedStats = computed(() => {
         touch: baseAC + dexModifier + otherBonus
       };
     })(),
-    // ... 其他需要计算的属性
-  };
 
+    // 计算职业特性
+    classFeatures: (() => {
+      const features: ClassFeatureInfo[] = [];
+      
+      // 遍历每个职业
+      character.class.forEach(classInfo => {
+        const className = classInfo.class;
+        const classLevel = classInfo.level;
+        
+        // 获取职业特性信息
+        const classAttributes = CLASS_ATTRIBUTES[className];
+        if (!classAttributes)  return;
+
+        // 获取该职业的特性Map
+        const featureInfo = classAttributes.classFeatureInfo;
+        if (!featureInfo) return;
+
+        // 从1级开始，遍历到当前等级
+        for (let level = 1; level <= classLevel; level++) {
+          const levelFeatures = featureInfo.get(level);
+          if (levelFeatures) {
+            // 如果是数组，添加所有特性
+            if (Array.isArray(levelFeatures)) {
+              levelFeatures.forEach(feature => {
+                features.push({
+                  className,
+                  level,
+                  feature
+                });
+              });
+            } else {
+              features.push({
+                className,
+                level,
+                feature: levelFeatures.classFeature
+              });
+            }
+          }
+        }
+      });
+
+      return features;
+    })(),
+  };
   // 与角色中的显式设置合并
   return deepMerge(finalComputed, character.overrides);
 });

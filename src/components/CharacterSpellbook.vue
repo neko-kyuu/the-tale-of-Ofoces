@@ -60,7 +60,7 @@ const props = defineProps<{
   character: Character;
   computedStats: Character;
 }>();
-console.log(props.computedStats)
+
 interface Spell {
   id: number;
   name: string;

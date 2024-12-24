@@ -84,6 +84,11 @@ export interface CharacterClass {
     spellSlots?: number[];
   }
   
+  export interface classFeatures {
+    className: string;
+    level: number;
+    feature: string;
+  }
 
   export interface Character {
     characterId?: number;
@@ -96,6 +101,7 @@ export interface CharacterClass {
     halfProficientSkills?: number[];
     combatStats?: CombatStats;
     classFeatureInfo?: classFeatureInfo;
+    classFeatures?: classFeatures[];
     statusDetails?: StatusDetails;
     overrides?: CharacterOverrides;
   }
