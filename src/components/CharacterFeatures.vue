@@ -1,24 +1,45 @@
 <template>
   <div class="features-content">
-    <div v-for="(group, className) in groupedFeatures" :key="className" class="feature-category">
-      <div class="category-header">
-        <h3>{{ className }}</h3>
+    <div class="features-grid">
+      <!-- 职业特性 -->
+      <div class="class-features">
+        <div v-for="(group, className) in groupedFeatures" :key="className" class="feature-category">
+          <div class="category-header">
+            <h3>{{ className }}</h3>
+          </div>
+          <div class="feature-list">
+            <div 
+              v-for="(features, level) in group" 
+              :key="level" 
+              class="feature-row"
+              :class="{ 'striped': Number(level) % 2 === 0 }"
+            >
+              <div class="feature-level">{{ level }}级</div>
+              <div class="feature-name">{{ features }}</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="feature-list">
-        <div 
-          v-for="(features, level) in group" 
-          :key="level" 
-          class="feature-row"
-          :class="{ 'striped': Number(level) % 2 === 0 }"
-        >
-          <div class="feature-level">{{ level }}级</div>
-          <div class="feature-name">{{ features || '-' }}</div>
+
+      <!-- 属性值提升/专长 -->
+      <div class="asi-features">
+        <div class="category-header">
+          <h3>属性值提升/专长</h3>
+        </div>
+        <div class="feature-list">
+          <div 
+            v-for="{ className, level } in getASILevels()" 
+            :key="`${className}-${level}`" 
+            class="feature-row"
+            :class="{ 'striped': level % 2 === 0 }"
+          >
+            <div class="feature-level">{{ level }}级</div>
+            <div class="feature-class">{{ className }}</div>
+            <div class="feature-choice">-</div>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- 属性值提升/专长 -->
-    
   </div>
 </template>
 
@@ -36,19 +57,40 @@ const groupedFeatures = computed(() => {
   const groups = {};
   
   props.computedStats.classFeatures.forEach(({ className, level, feature }) => {
-    if (!groups[className]) {
-      groups[className] = {};
+    if (feature && feature !== '属性值提升') {
+      if (!groups[className]) {
+        groups[className] = {};
+      }
+      groups[className][level] = feature;
     }
-    groups[className][level] = feature;
   });
   
   return groups;
 });
+
+// 获取所有属性值提升的等级
+const getASILevels = () => {
+  return props.computedStats.classFeatures
+    .filter(({ feature }) => feature === '属性值提升')
+    .map(({ className, level }) => ({ className, level }))
+    .sort((a, b) => a.level - b.level);
+};
 </script>
 
 <style scoped>
 .features-content {
   margin-top: 1rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.class-features,
+.asi-features {
+  min-width: 0; 
 }
 
 .feature-category {
@@ -96,6 +138,24 @@ const groupedFeatures = computed(() => {
 }
 
 .feature-name {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.asi-features .column-headers,
+.asi-features .feature-row {
+  display: grid;
+  grid-template-columns: 4rem 6rem 1fr;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  align-items: center;
+}
+.feature-class {
+  color: var(--color-text-soft);
+  font-size: 0.9rem;
+}
+
+.feature-choice {
   color: var(--color-text);
   font-weight: 500;
 }
