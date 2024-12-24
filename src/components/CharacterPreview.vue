@@ -35,6 +35,12 @@
       :character="character"
       :computed-stats="computedStats"
     />
+
+    <CharacterFeatures
+      v-else-if="currentTab === 'features'"
+      :character="character"
+      :computed-stats="computedStats"
+    />
   </div>
 </template>
 
@@ -55,6 +61,7 @@ import CharacterHeader from '@/components/CharacterHeader.vue';
 import CharacterAttributes from '@/components/CharacterAttributes.vue';
 import CharacterInventory from '@/components/CharacterInventory.vue';
 import CharacterSpellbook from '@/components/CharacterSpellbook.vue';
+import CharacterFeatures from '@/components/CharacterFeatures.vue';
 
 const props = defineProps<{
   characterId: number
@@ -76,6 +83,7 @@ const computedStats = computed(() => {
     mainClass: character.class[0].class,
     basicInfo: character.basicInfo,
     combatStats: character.combatStats,
+    classList: character.class,
 
     // 等级计算
     level: (() => {
@@ -86,6 +94,11 @@ const computedStats = computed(() => {
     levelClass: (() => {
       const classList = character.class;
       return classList.reduce((total, item) => total.concat(`${item.subClass} ${item.level}`), []).join(' / ');
+    })(),
+
+    mainLevel: (() => {
+      const classList = character.class;
+      return classList[0].level || 0;
     })(),
 
     // 熟练属性计算
@@ -115,6 +128,7 @@ const computedStats = computed(() => {
     otherACBonus: character.combatStats.otherACBonus || 0,
     
     statusDetails: character.statusDetails,
+    classFeatureInfo: {},
   };
   // 合并特性
   const raceEnhancedStats = deepMerge(baseStats, RACE_ATTRIBUTES[baseStats.race]);
@@ -137,6 +151,14 @@ const computedStats = computed(() => {
       }
       return mods;
     })(),
+
+    classFeatureInfo:(() =>{
+      if(enhancedStatus.classList.length > 1){
+        return CLASS_ATTRIBUTES['兼职施法者'].classFeatureInfo.get(enhancedStatus.level)
+      } else {
+        return CLASS_ATTRIBUTES[baseStats.mainClass].classFeatureInfo.get(enhancedStatus.level)
+      }
+    })()
   };
 
   // 依赖前面计算结果的计算
@@ -219,7 +241,6 @@ const computedStats = computed(() => {
     // ... 其他需要计算的属性
   };
 
-  console.log(finalComputed)
   // 与角色中的显式设置合并
   return deepMerge(finalComputed, character.overrides);
 });
@@ -229,7 +250,8 @@ const computedStats = computed(() => {
 const tabs = [
   { id: 'attributes', label: '属性' },
   { id: 'inventory', label: '持有物' },
-  { id: 'spellbook', label: '法术书' }
+  { id: 'spellbook', label: '法术书' },
+  { id: 'features', label: '特性' }
 ];
 
 const currentTab = ref('attributes');

@@ -79,7 +79,6 @@ const props = defineProps<{
     avatarPath: string
 }>();
 
-// 使用计算属性进行渲染或进一步计算
 const getLevel = () => props.computedStats.level;
 const getHitDice = () => props.computedStats.hitDice;
 const getProficiencyBonus = () => props.computedStats.proficiencyBonus;

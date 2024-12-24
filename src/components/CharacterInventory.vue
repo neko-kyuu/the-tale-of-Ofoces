@@ -27,6 +27,35 @@
         </div>
       </div>
     </div>
+
+    <div class="inventory-status-bar">
+      <div class="currency-info">
+        <span>0/3 <i class="fi fi-sr-sun" :data-tooltip="`物品同调`"></i></span>
+        <span class="separator">|</span>
+        <span :data-tooltip="`铂金币`">0 PP</span>
+        <span class="separator">|</span>
+        <span :data-tooltip="`银金币`">0 GP</span>
+        <span class="separator">|</span>
+        <span :data-tooltip="`金币`">0 EP</span>
+        <span class="separator">|</span>
+        <span :data-tooltip="`银币`">0 SP</span>
+        <span class="separator">|</span>
+        <span :data-tooltip="`铜币`">0 CP</span>
+      </div>
+      <div class="weight-info">
+        <div class="weight-progress">
+          <div 
+            class="weight-progress-bar" 
+            :style="{
+              width: `${weightStatus.percentage}%`,
+              backgroundColor: weightStatus.color
+            }"
+          ></div>
+        </div>
+        <span>负重: {{ currentWeight }}/{{ maxWeight }}</span>
+        <i class="fi fi-sr-backpack"></i>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -108,11 +137,57 @@ const getItemCount = (categoryId: string): number => {
 const getItemsByCategory = (categoryId: string) => {
   return itemsByCategory.value.get(categoryId) || [];
 };
+
+
+const currentWeight = computed(() => {
+  let total = 0;
+  
+  inventoryCategories.forEach(category => {
+    const items = itemsByCategory.value.get(category.id) || []; 
+    items.forEach(item => {
+      if (item.weight) { 
+        total += item.weight * item.quantity;
+      }
+    });
+  });
+  
+  return Number(total.toFixed(1));
+});
+
+const attributes = props.computedStats.attributes;
+const STR = attributes[1];
+
+const lightLoad = STR * 5;    
+const mediumLoad = STR * 10;
+const maxWeight = STR * 15; 
+
+const weightStatus = computed(() => {
+  const percentage = (currentWeight.value / maxWeight) * 100;
+  
+  if (currentWeight.value <= lightLoad) {
+    return {
+      percentage,
+      color: '#4caf50'  
+    };
+  } else if (currentWeight.value <= mediumLoad) {
+    return {
+      percentage,
+      color: '#ff9800'  
+    };
+  } else {
+    return {
+      percentage,
+      color: '#f44336'  
+    };
+  }
+});
 </script>
 
 <style scoped>
 .inventory-content {
   margin-top: 1rem;
+  position: relative;
+  padding-bottom: 3rem;
 }
 
 .inventory-section {
@@ -199,5 +274,94 @@ const getItemsByCategory = (categoryId: string) => {
 .header-quantity,
 .item-quantity {
   min-width: 3rem;
+}
+
+.inventory-status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--color-background);
+  border-top: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.currency-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.currency-info i {
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.separator {
+  color: var(--color-border);
+}
+
+.weight-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-soft);
+}
+
+.weight-info i {
+  font-size: 1rem;
+}
+
+.weight-progress {
+  width: 100px;
+  height: 4px;
+  background-color: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.weight-progress-bar {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+/* 添加通用的 tooltip 样式 */
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  padding: 4px 8px;
+  background-color: var(--color-background-soft);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: pre-line;
+  width: max-content;
+  max-width: 300px;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  text-shadow: 
+    -1px -1px 0 var(--color-background-soft),
+    1px -1px 0 var(--color-background-soft),
+    -1px 1px 0 var(--color-background-soft),
+    1px 1px 0 var(--color-background-soft);
+}
+
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 </style>

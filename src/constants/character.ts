@@ -39,6 +39,13 @@ export const CHARACTER_TEMPLATE: Map<number, Character> = new Map([
       shieldBonus: 0,
       otherACBonus: 5,
     },
+    classFeatureInfo:{
+      proficiencyBonus: 2,
+      spellPoints: 0,
+      classAbility: "施法能力：奥术恢复、仪式施法",
+      knownCantrips: 3,
+      spellSlots: [2, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
     overrides: {
       skillModifiers: {
         10: '+10',

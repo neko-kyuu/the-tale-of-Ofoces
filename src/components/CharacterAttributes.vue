@@ -126,7 +126,7 @@
         </div>
     </div>
 
-    <!-- 添加状态列表 -->
+    <!-- 状态列表 -->
     <div class="status-list">
         <div 
         v-for="status in statusItems" 
@@ -511,8 +511,8 @@ const statusItems = [
   position: absolute;
   top: 0;
   right: 0;
-  width: 140%;    /* 稍微加长以确保覆盖整个方块 */
-  height: 1px;    /* 线的粗细 */
+  width: 140%;    
+  height: 1px;    
   background-color: var(--color-border);
   transform: rotate(-45deg);
   transform-origin: top right;

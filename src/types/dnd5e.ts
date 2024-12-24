@@ -31,6 +31,8 @@ export interface CharacterClass {
     otherACBonus?: number;
     speed?: string;
     specialSpeed?: string;
+    keyAttribute?: number;
+    spellDC?: number;
   }
   
   export interface BasicInfo {
@@ -73,6 +75,16 @@ export interface CharacterClass {
     // ... 其他可能被覆盖的属性
   }
   
+  export interface classFeatureInfo {
+    proficiencyBonus?: number;
+    spellPoints?: number;
+    classFeature?: string;
+    knownCantrips?: number;
+    knownSpells?: number;
+    spellSlots?: number[];
+  }
+  
+
   export interface Character {
     characterId?: number;
     name?: string;
@@ -82,7 +94,8 @@ export interface CharacterClass {
     doubleProficientSkills?: number[];
     proficientSkills?: number[];
     halfProficientSkills?: number[];
-    combatStats: CombatStats;
-    statusDetails: StatusDetails;
+    combatStats?: CombatStats;
+    classFeatureInfo?: classFeatureInfo;
+    statusDetails?: StatusDetails;
     overrides?: CharacterOverrides;
   }
