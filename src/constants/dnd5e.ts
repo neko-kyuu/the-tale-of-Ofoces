@@ -1,4 +1,4 @@
-import { Character, classFeatureInfo} from "@/types/dnd5e";
+import { OptionalCharacter, classFeatureInfo} from "@/types/dnd5e";
 
 type ClassHitDice = {
   [key: string]: { hitDice: string, diceValue: number };
@@ -50,7 +50,7 @@ export const SKILLS = [
 ]
 
 type RaceAttributes = {
-  [key: string]: Character
+  [key: string]: OptionalCharacter
 }
 
 export const RACE_ATTRIBUTES: RaceAttributes = {
@@ -351,20 +351,22 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
   }
 };
 
-type ClassAttributes = {
+interface ClassAttributes {
   proficiencyAbilities: number[];
   statusDetails: { 
     WEAPON_PROFICIENCY: string[], 
     ARMOR_PROFICIENCY: string[] 
   };
-  combatStats?: {
+  combatStats: {
     keyAttribute: number;
   };
-  classFeatureInfo?: Map<number, classFeatureInfo>;
-  specialAbilities?: string[];
+  classFeatureInfo: Map<number, Partial<classFeatureInfo>>;
+  specialAbilities: string[];
 }
 
-export const CLASS_ATTRIBUTES: Record<string, ClassAttributes> = {
+type OptionalClassAttributes = Partial<ClassAttributes>
+
+export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
   法师: {
     proficiencyAbilities: [4, 5],
     statusDetails: {
