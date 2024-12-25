@@ -70,12 +70,12 @@
 </template>
 
 <script setup lang="ts">
-import { Character } from '@/types/dnd5e';
+import { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 import { getStaticPath } from '@/utils/assets';
 
 const props = defineProps<{
-    character: Character,
-    computedStats: Character,
+    character: OptionalCharacter,
+    computedStats: OptionalComputedStats,
     avatarPath: string
 }>();
 

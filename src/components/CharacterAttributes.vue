@@ -18,7 +18,9 @@
         </span>
         <div class="main-score">
             {{ character.attributes[attr.id] }}
-            <div class="proficiency-dot" :class="{ active: getProficiencyAbility().includes(attr.id) }"></div>
+            <div class="proficiency-dot" :class="{ active: getProficiencyAbility().includes(attr.id) }"
+              :data-tooltip="`豁免熟练项的作用与技能熟练项一样，具有某属性豁免熟练项的角色进行相应属性豁免时，可以将其熟练加值加入豁免检定结果中。`"
+            ></div>
         </div>
         <span 
             class="modifier"
@@ -145,15 +147,15 @@
 </template>
 
 <script setup lang="ts">
-import { Character } from '@/types/dnd5e';
+import { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 import { 
   ATTRIBUTES, 
   SKILLS, 
 } from '@/constants/dnd5e';
 
 const props = defineProps<{
-    character: Character,
-    computedStats: Character,
+    character: OptionalCharacter,
+    computedStats: OptionalComputedStats,
 }>();
 
 // 格式化状态详情

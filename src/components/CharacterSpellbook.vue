@@ -53,12 +53,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Character } from '@/types/dnd5e';
+import type { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 import { ATTRIBUTES } from '@/constants/dnd5e';
 
 const props = defineProps<{
-  character: Character;
-  computedStats: Character;
+  character: OptionalCharacter;
+  computedStats: OptionalComputedStats;
 }>();
 
 interface Spell {

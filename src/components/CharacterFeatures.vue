@@ -12,7 +12,6 @@
               v-for="(features, level) in group" 
               :key="level" 
               class="feature-row"
-              :class="{ 'striped': Number(level) % 2 === 0 }"
             >
               <div class="feature-level">{{ level }}级</div>
               <div class="feature-name">{{ features }}</div>
@@ -21,21 +20,38 @@
         </div>
       </div>
 
-      <!-- 属性值提升/专长 -->
+      <!-- 专长/战技 -->
       <div class="asi-features">
-        <div class="category-header">
-          <h3>属性值提升/专长</h3>
+        <div class="feature-category">
+          <div class="category-header">
+            <h3>属性值提升/专长</h3>
+          </div>
+          <div class="feature-list">
+            <div 
+              v-for="{ className, level } in getASILevels()" 
+              :key="`${className}-${level}`" 
+              class="feature-row"
+            >
+              <div class="feature-level">{{ level }}级</div>
+              <div class="feature-class">{{ className }}</div>
+              <div class="feature-choice">-</div>
+            </div>
+          </div>
         </div>
-        <div class="feature-list">
-          <div 
-            v-for="{ className, level } in getASILevels()" 
-            :key="`${className}-${level}`" 
-            class="feature-row"
-            :class="{ 'striped': level % 2 === 0 }"
-          >
-            <div class="feature-level">{{ level }}级</div>
-            <div class="feature-class">{{ className }}</div>
-            <div class="feature-choice">-</div>
+
+        <div class="feature-category">
+          <div class="category-header">
+            <h3>战技/魔能祈唤/超魔法</h3>
+          </div>
+          <div class="feature-list">
+            <div 
+              v-for="{ className, level } in getSpecialAbilitiesLevels()" 
+              :key="`${className}-${level}`" 
+              class="feature-row"
+            >
+              <div class="feature-level">{{ level }}级</div>
+              <div class="feature-choice">-</div>
+            </div>
           </div>
         </div>
       </div>
@@ -45,11 +61,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Character } from '@/types/dnd5e';
+import type { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 
 const props = defineProps<{
-  character: Character;
-  computedStats: Character;
+  character: OptionalCharacter;
+  computedStats: OptionalComputedStats;
 }>();
 
 // 将特性按职业和等级分组
@@ -75,6 +91,13 @@ const getASILevels = () => {
     .map(({ className, level }) => ({ className, level }))
     .sort((a, b) => a.level - b.level);
 };
+
+const getSpecialAbilitiesLevels = () => {
+  return props.computedStats.classFeatures
+    .filter(({ feature }) => feature === '战技' || feature === '魔能祈唤' || feature === '超魔法')
+    .map(({ className, level }) => ({ className, level }))
+    .sort((a, b) => a.level - b.level);
+}
 </script>
 
 <style scoped>
@@ -124,12 +147,12 @@ const getASILevels = () => {
   border-bottom: 1px solid var(--color-border);
 }
 
-.feature-row:hover {
-  background-color: rgba(144, 238, 144, 0.2);
+.feature-list .feature-row:nth-child(even) {
+  background-color: rgba(144, 238, 144, 0.15);
 }
 
-.feature-row.striped {
-  background-color: rgba(144, 238, 144, 0.15);
+.feature-row:hover {
+  background-color: rgba(144, 238, 144, 0.2);
 }
 
 .feature-level {
@@ -158,5 +181,9 @@ const getASILevels = () => {
 .feature-choice {
   color: var(--color-text);
   font-weight: 500;
+}
+
+.asi-features .feature-list .feature-row:nth-child(even) {
+  background-color: rgba(144, 238, 144, 0.15);
 }
 </style>

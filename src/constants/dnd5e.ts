@@ -78,6 +78,7 @@ export const RACE_ATTRIBUTES: RaceAttributes = {
   精灵:{
     basicInfo:{
       size: "中型",
+      type: '类人生物',
     },
     combatStats: {
       speed: "30 ft",
@@ -125,7 +126,7 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
     proficientSkills: [2, 18] 
   },
   平民英雄: { 
-    statusDetails: { TOOLS: ['一种工匠工具', '载具（陆运）'] }, 
+    statusDetails: { TOOLS: ['一种工匠工具', '载具(陆运)'] }, 
     proficientSkills: [12, 14] 
   },
   公会工匠: { 
@@ -157,15 +158,15 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
     proficientSkills: [6, 7] 
   },
   水手: { 
-    statusDetails: { TOOLS: ['领航工具', '载具（水运）'] }, 
+    statusDetails: { TOOLS: ['领航工具', '载具(水运)'] }, 
     proficientSkills: [1, 10] 
   },
   海盗: { 
-    statusDetails: { TOOLS: ['领航工具', '载具（水运）'] }, 
+    statusDetails: { TOOLS: ['领航工具', '载具(水运)'] }, 
     proficientSkills: [1, 10] 
   },
   士兵: { 
-    statusDetails: { TOOLS: ['一种赌具', '载具（陆运）'] }, 
+    statusDetails: { TOOLS: ['一种赌具', '载具(陆运)'] }, 
     proficientSkills: [1, 17] 
   },
   流浪儿: { 
@@ -205,7 +206,7 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
     proficientSkills: [15, 6, 7, 9] 
   },
   老佣兵: { 
-    statusDetails: { TOOLS: ['一种赌具', '载具（陆运）'] }, 
+    statusDetails: { TOOLS: ['一种赌具', '载具(陆运)'] }, 
     proficientSkills: [1, 15] 
   },
   城市猎人: { 
@@ -293,7 +294,7 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
     proficientSkills: [16, 4] 
   },
   运动员: { 
-    statusDetails: { TOOLS: ['载具（陆运）'] }, 
+    statusDetails: { TOOLS: ['载具(陆运)'] }, 
     proficientSkills: [2, 1] 
   },
   噩梦缠身: { 
@@ -329,7 +330,7 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
     proficientSkills: [11, 9]
   },
   荒宇人: {
-    statusDetails: { TOOLS: ['领航者工具', '载具（太空）'] },
+    statusDetails: { TOOLS: ['领航者工具', '载具(太空)'] },
     proficientSkills: [1, 14]
   },
   巨人养子: {
@@ -350,9 +351,6 @@ export const BACKGROUND_ATTRIBUTES: Record<string, BackgroundAttributes> = {
   }
 };
 
-
-
-
 type ClassAttributes = {
   proficiencyAbilities: number[];
   statusDetails: { 
@@ -363,6 +361,7 @@ type ClassAttributes = {
     keyAttribute: number;
   };
   classFeatureInfo?: Map<number, classFeatureInfo>;
+  specialAbilities?: string[];
 }
 
 export const CLASS_ATTRIBUTES: Record<string, ClassAttributes> = {
@@ -428,7 +427,8 @@ export const CLASS_ATTRIBUTES: Record<string, ClassAttributes> = {
       [18, { proficiencyBonus: 6, spellPoints: 18, classFeature: "术法起源特性", knownCantrips: 6, knownSpells: 15, spellSlots: [4, 3, 3, 3, 3, 1, 1, 1, 1] }],
       [19, { proficiencyBonus: 6, spellPoints: 19, classFeature: "属性值提升", knownCantrips: 6, knownSpells: 15, spellSlots: [4, 3, 3, 3, 3, 2, 1, 1, 1] }],
       [20, { proficiencyBonus: 6, spellPoints: 20, classFeature: "术法复苏", knownCantrips: 6, knownSpells: 15, spellSlots: [4, 3, 3, 3, 3, 2, 2, 1, 1] }]
-    ])
+    ]),
+    specialAbilities:['谨慎法术','远程法术','强效法术','延效法术','升阶法术','瞬发法术','精妙法术','孪生法术'] 
   },
   吟游诗人: {
     proficiencyAbilities: [2, 6],
@@ -476,7 +476,7 @@ export const CLASS_ATTRIBUTES: Record<string, ClassAttributes> = {
     proficiencyAbilities: [4, 5],
     statusDetails: {
       WEAPON_PROFICIENCY: ['短棒', '匕首', '飞镖', 'ḷ枪', '硬头锤', '长棍', '弯刀', '镰刀', '投石索', '矛'],
-      ARMOR_PROFICIENCY: ['轻甲', '中甲', '盾牌（德鲁伊不能装备或使用金属质的护甲和盾）']
+      ARMOR_PROFICIENCY: ['轻甲', '中甲', '盾牌(德鲁伊不能装备或使用金属质的护甲和盾)']
     },
     combatStats:{
       keyAttribute: 5,
@@ -631,3 +631,54 @@ export const CLASS_ATTRIBUTES: Record<string, ClassAttributes> = {
     ])
   }
 };
+
+type WeaponInfo = {
+  damage: string;
+  damageType: string;
+  weight: number;
+  properties: string;
+  cost: string;
+};
+
+export const WEAPONS: Map<string, WeaponInfo> = new Map([
+  ["短棒", { damage: "1d4", damageType: "钝击", cost: "1 sp", properties: "轻型", weight: 2 }],
+  ["匕首", { damage: "1d4", damageType: "穿刺", cost: "2 gp", properties: "灵巧 轻型 投掷(射程20/60)", weight: 1 }],
+  ["巨棒", { damage: "1d8", damageType: "钝击", cost: "2 sp", properties: "双手", weight: 10 }],
+  ["手斧", { damage: "1d6", damageType: "挥砍", cost: "5 gp", properties: "轻型 投掷(射程20/60)", weight: 2 }],
+  ["标枪", { damage: "1d6", damageType: "穿刺", cost: "5 sp", properties: "投掷(射程30/120)", weight: 2 }],
+  ["轻锤", { damage: "1d4", damageType: "钝击", cost: "2 gp", properties: "轻型 投掷(射程20/60)", weight: 2 }],
+  ["硬头锤", { damage: "1d6", damageType: "钝击", cost: "5 gp", properties: "—", weight: 4 }],
+  ["长棍", { damage: "1d6", damageType: "钝击", cost: "2 sp", properties: "两用(1d8)", weight: 4 }],
+  ["镰刀", { damage: "1d4", damageType: "挥砍", cost: "1 gp", properties: "轻型", weight: 2 }],
+  ["矛", { damage: "1d6", damageType: "穿刺", cost: "1 gp", properties: "投掷(射程20/60) 两用(1d8)", weight: 3 }],
+  ["轻弩", { damage: "1d8", damageType: "穿刺", cost: "25 gp", properties: "弹药(射程80/320) 装填 双手", weight: 5 }],
+  ["飞镖", { damage: "1d4", damageType: "穿刺", cost: "5 cp", properties: "灵巧 轻型 投掷(射程20/60)", weight: 0.25 }],
+  ["短弓", { damage: "1d6", damageType: "穿刺", cost: "5 cp", properties: "弹药(射程80/320) 双手", weight: 2 }],
+  ["投石索", { damage: "1d4", damageType: "钝击", cost: "1 sp", properties: "弹药(射程30/120)", weight: 0 }],
+  ["战斧", { damage: "1d8", damageType: "挥砍", cost: "10 gp", properties: "两用(1d10)", weight: 4 }],
+  ["链枷", { damage: "1d8", damageType: "钝击", cost: "10 gp", properties: "—", weight: 2 }],
+  ["长柄刀", { damage: "1d10", damageType: "挥砍", cost: "20 gp", properties: "重型 触及 双手", weight: 6 }],
+  ["巨斧", { damage: "1d12", damageType: "挥砍", cost: "30 gp", properties: "重型 双手", weight: 7 }],
+  ["巨剑", { damage: "2d6", damageType: "挥砍", cost: "50 gp", properties: "重型", weight: 6 }],
+  ["戟", { damage: "1d10", damageType: "挥砍", cost: "20 gp", properties: "重型 触及 双手", weight: 6 }],
+  ["骑枪", { damage: "1d12", damageType: "穿刺", cost: "10 gp", properties: "触及 特殊", weight: 6 }],
+  ["长剑", { damage: "1d8", damageType: "挥砍", cost: "15 gp", properties: "两用(1d10)", weight: 3 }],
+  ["巨锤", { damage: "2d6", damageType: "钝击", cost: "10 gp", properties: "重型 双手", weight: 10 }],
+  ["钉头锤", { damage: "1d8", damageType: "穿刺", cost: "15 gp", properties: "—", weight: 4 }],
+  ["长矛", { damage: "1d10", damageType: "穿刺", cost: "5 gp", properties: "重型 触及 双手", weight: 18 }],
+  ["刺剑", { damage: "1d8", damageType: "穿刺", cost: "25 gp", properties: "灵巧", weight: 2 }],
+  ["弯刀", { damage: "1d6", damageType: "挥砍", cost: "25 gp", properties: "灵巧 轻型", weight: 3 }],
+  ["短剑", { damage: "1d6", damageType: "穿刺", cost: "10 gp", properties: "灵巧 轻型", weight: 2 }],
+  ["三叉戟", { damage: "1d6", damageType: "穿刺", cost: "5 gp", properties: "投掷(射程20/60) 两用(1d8)", weight: 4 }],
+  ["战镐", { damage: "1d8", damageType: "穿刺", cost: "5 gp", properties: "—", weight: 2 }],
+  ["战锤", { damage: "1d8", damageType: "钝击", cost: "15 gp", properties: "两用(1d10)", weight: 2 }],
+  ["鞭", { damage: "1d4", damageType: "挥砍", cost: "2 gp", properties: "灵巧 触及", weight: 3 }],
+  ["吹箭筒", { damage: "1", damageType: "穿刺", cost: "10 gp", properties: "弹药(射程25/100) 装填", weight: 1 }],
+  ["手弩", { damage: "1d6", damageType: "穿刺", cost: "75 gp", properties: "弹药(射程30/120) 轻型 装填", weight: 3 }],
+  ["重弩", { damage: "1d10", damageType: "穿刺", cost: "50 gp", properties: "弹药(射程100/400) 重型 装填 双手", weight: 18 }],
+  ["长弓", { damage: "1d8", damageType: "穿刺", cost: "50 gp", properties: "弹药(射程150/600) 重型 双手", weight: 2 }],
+  ["捕网", { damage: "0", damageType: "—", cost: "1 gp", properties: "特殊 投掷(射程5/15)", weight: 3 }],
+  ["双刃弯刀", { damage: "2d4", damageType: "挥砍", cost: "100 gp", properties: "特殊 双手", weight: 6 }],
+  ["手枪", { damage: "1d10", damageType: "穿刺", cost: "250 gp", properties: "弹药(射程30/90) 装填", weight: 3 }],
+  ["滑膛枪", { damage: "1d12", damageType: "穿刺", cost: "500 gp", properties: "弹药(射程40/120) 装填 双手", weight: 10 }]
+]);

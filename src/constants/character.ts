@@ -1,7 +1,7 @@
 // dnd5e人物卡模板v1.81β
-import type { Character } from "@/types/dnd5e";
+import type { OptionalCharacter } from "@/types/dnd5e";
 
-export const CHARACTER_TEMPLATE: Map<number, Character> = new Map([
+export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
   [1, {
     characterId: 1,
     name: 'Mja',
@@ -14,10 +14,10 @@ export const CHARACTER_TEMPLATE: Map<number, Character> = new Map([
       background: '调查员',
       appearance: {
         height: '6尺/182cm',
-        weight: '-',
+        weight: '75kg',
         hairColor: '#FFD4AE',
-        skinColor: '#BDA3D8',
-        eyeColor: '#E7D3D0',
+        skinColor: '#E7D3D0',
+        eyeColor: '#BDA3D8',
         nailColor: null
       }
     },
@@ -39,21 +39,81 @@ export const CHARACTER_TEMPLATE: Map<number, Character> = new Map([
       shieldBonus: 0,
       otherACBonus: 5,
     },
-    classFeatureInfo:{
-      proficiencyBonus: 2,
-      spellPoints: 0,
-      classAbility: "施法能力：奥术恢复、仪式施法",
-      knownCantrips: 3,
-      spellSlots: [2, 0, 0, 0, 0, 0, 0, 0, 0]
-    },
+    inventoryItem: [
+      {
+        id: 1,
+        name: '裁决 Judex',
+        weaponType: '长剑',
+        subType:'手半剑',
+        usage: '1动作',
+        quantity: 1,
+        categoryId: 'weapons'
+      },
+    ],
     overrides: {
       skillModifiers: {
+        9: '+10',
         10: '+10',
         18: '+10'
       },
       statusDetails: {
-        LANGUAGES: ['通用语'],
         TOOLS:['里拉琴'],
+      }
+    }
+  }],  [2, {
+    characterId: 2,
+    name: 'Ilse',
+    basicInfo: {
+      alignment: '混乱中立',
+      race: '精灵',
+      subrace: '月精灵',
+      gender: '男',
+      age: '?',
+      background: '贵族',
+      appearance: {
+        height: '6尺/185cm',
+        weight: '69kg',
+        hairColor: '#141414',
+        skinColor: '#ECD9D7',
+        eyeColor: '#C13343',
+        nailColor: '#141414'
+      }
+    },
+    class:[
+      { class: '术士', subClass: '狂野魔法', level: 12 },
+      { class: '游荡者', subClass: '刺客', level: 3 },
+    ],
+    attributes: {
+        1: 10, // STRENGTH
+        2: 17, // DEXTERITY
+        3: 8, // CONSTITUTION
+        4: 19,  // INTELLIGENCE
+        5: 12, // WISDOM
+        6: 14,  // CHARISMA
+    },
+    doubleProficientSkills:[2,3,4,7],
+    combatStats: {
+      armorBonus: 1,
+      shieldBonus: 0,
+      otherACBonus: 0,
+    },
+    inventoryItem: [
+      {
+        id: 1,
+        name: '毒刺 Sting',
+        weaponType: '短剑',
+        usage: '1动作',
+        quantity: 1,
+        categoryId: 'weapons'
+      },
+    ],
+    overrides: {
+      skillModifiers: {
+        13: '+10',
+      },
+      statusDetails: {
+        TOOLS:['药剂包'],
+        REPUTATION:['贸易商业'],
       }
     }
   }]

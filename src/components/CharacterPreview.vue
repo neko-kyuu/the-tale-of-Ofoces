@@ -88,8 +88,8 @@ const computedStats = computed(() => {
     background: character.basicInfo.background,
     mainClass: character.class[0].class,
     basicInfo: character.basicInfo,
-    combatStats: character.combatStats,
     classList: character.class,
+    combatStats: character.combatStats,
 
     // 等级计算
     level: (() => {
@@ -135,6 +135,8 @@ const computedStats = computed(() => {
     
     statusDetails: character.statusDetails,
     classFeatureInfo: {},
+    
+    inventoryItem: character.inventoryItem,
   };
   // 合并特性
   const raceEnhancedStats = deepMerge(baseStats, RACE_ATTRIBUTES[baseStats.race]);

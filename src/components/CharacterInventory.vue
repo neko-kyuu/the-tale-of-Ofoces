@@ -60,12 +60,14 @@
 </template>
 
 <script setup lang="ts">
-import { Character } from '@/types/dnd5e';
+import { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 import { computed } from 'vue';
+import { WEAPONS } from '@/constants/dnd5e';
+import type { InventoryItem } from '@/types/dnd5e';
 
 const props = defineProps<{
-  character: Character;
-  computedStats: Character;
+  character: OptionalCharacter;
+  computedStats: OptionalComputedStats;
 }>();
 
 interface InventoryItem {
@@ -86,17 +88,8 @@ const inventoryCategories = [
   { id: 'valuables', name: '贵重品' }
 ];
 
-// 虚拟数据
-const mockItems: InventoryItem[] = [
-  {
-    id: 1,
-    name: '裁决 Judex',
-    weight: 3,
-    usage: '1动作',
-    quantity: 1,
-    categoryId: 'weapons'
-  },
-];
+const inventoryItem = props.character.inventoryItem || [];
+console.log(inventoryItem);
 
 const itemsByCategory = computed(() => {
   const result = new Map();
@@ -104,20 +97,32 @@ const itemsByCategory = computed(() => {
   // 先处理普通物品
   inventoryCategories.forEach(category => {
     if (category.id !== 'tools') {
-      result.set(
-        category.id, 
-        mockItems.filter(item => item.categoryId === category.id)
-      );
+      const items = inventoryItem.filter(item => item.categoryId === category.id)
+        .map(item => {
+          // 如果是武器类别，获取武器详情
+          if (category.id === 'weapons' && item.weaponType) {
+            const weaponInfo = WEAPONS.get(item.weaponType);
+            return {
+              ...item,
+              // 修改组合武器名称的逻辑
+              name: `${item.name} - ${item.subType || item.weaponType}${weaponInfo?.properties ? ` - ${weaponInfo.properties}` : ''}`,
+              // 从武器信息中获取重量
+              weight: weaponInfo?.weight || null
+            };
+          }
+          return item;
+        });
+      result.set(category.id, items);
     }
   });
   
   // 特殊处理工具类别
   const computedTools = (props.computedStats?.statusDetails?.TOOLS || []);
-  const mockTools = mockItems
+  const inventoryTools = inventoryItem
     .filter(item => item.categoryId === 'tools')
     .map(item => item.name);
   
-  const uniqueTools = [...new Set([...computedTools, ...mockTools])];
+  const uniqueTools = [...new Set([...computedTools, ...inventoryTools])];
   result.set('tools', uniqueTools.map((tool, index) => ({
     id: index + 1,
     name: tool,
@@ -143,9 +148,9 @@ const currentWeight = computed(() => {
   let total = 0;
   
   inventoryCategories.forEach(category => {
-    const items = itemsByCategory.value.get(category.id) || []; 
+    const items = itemsByCategory.value.get(category.id) || [];
     items.forEach(item => {
-      if (item.weight) { 
+      if (item.weight) {
         total += item.weight * item.quantity;
       }
     });
