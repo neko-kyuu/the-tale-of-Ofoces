@@ -82,6 +82,13 @@ export interface CharacterClass {
     knownCantrips: number;
     knownSpells: number;
     spellSlots: number[];
+    martialArts: string; //武艺
+    ki: number; //气
+    unarmoredMovement: number; //无甲移动
+    sneakAttack: string; //偷袭
+    knownInvocations: number; //已知祈唤
+    rageCount: number; //狂暴次数
+    rageDamage: number; //狂暴伤害
   }
   
   export interface classFeatures {
@@ -128,6 +135,7 @@ export interface CharacterClass {
 
   export interface ComputedCharacterStats extends Character {
     race: string;
+    subRace: string;
     background: string;
     mainClass: string;
     basicInfo: Partial<BasicInfo>;
@@ -135,6 +143,10 @@ export interface CharacterClass {
     level: number;
     levelClass: string;
     mainLevel: number;
+    classLevelMap: {
+      class: string;
+      level: number;
+    }[];
     proficiencyAbilities: number[];
     attributes: { [key: number]: number };
     doubleProficientSkills: number[];
@@ -145,6 +157,7 @@ export interface CharacterClass {
     otherACBonus: number;
     statusDetails: Partial<StatusDetails>;
     classFeatureInfo: Partial<classFeatureInfo>;
+    mainClassFeatureInfo: Partial<classFeatureInfo>;
     inventoryItem: Partial<InventoryItem>[];
     
     // 计算属性

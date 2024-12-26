@@ -847,6 +847,32 @@ export const notes: Notes = [
     references: {
       characters: [2]
     }
+  },
+  {
+    id: 4,
+    type: CONTENT_TYPES.NOTE,
+    title: 'dnd5e人物卡模板v1.81β-lewenhart',
+    tags: ['车卡'],
+    displayType: 'character',
+    noteCategory: 'character',
+    path: '',
+    referenceId: 3,
+    references: {
+      characters: [3]
+    }
+  },
+  {
+    id: 5,
+    type: CONTENT_TYPES.NOTE,
+    title: 'dnd5e人物卡模板v1.81β-elvis',
+    tags: ['车卡'],
+    displayType: 'character',
+    noteCategory: 'character',
+    path: '',
+    referenceId: 4,
+    references: {
+      characters: [4]
+    }
   }
   // ...其他备忘录
 ]

@@ -71,7 +71,7 @@ const props = defineProps<{
 // 将特性按职业和等级分组
 const groupedFeatures = computed(() => {
   const groups = {};
-  
+  console.log(props.computedStats.classFeatures)
   props.computedStats.classFeatures.forEach(({ className, level, feature }) => {
     if (feature && feature !== '属性值提升') {
       if (!groups[className]) {

@@ -67,7 +67,7 @@ export const RACE_ATTRIBUTES: RaceAttributes = {
     },
     proficientSkills:[10],
     statusDetails: {
-      VISION: ['黑暗视觉 120 ft'],
+      VISION: '黑暗视觉 120 ft',
       LANGUAGES: ['通用语', '天界语', '心灵感应 120 ft'],
       DAMAGE_IMMUNITY: ['疾病'],
       DAMAGE_RESISTANCE: ['光耀', '死灵'],
@@ -87,6 +87,24 @@ export const RACE_ATTRIBUTES: RaceAttributes = {
     statusDetails: {
       VISION: '黑暗视觉 60 ft',
       LANGUAGES: ['通用语', '精灵语'],
+    },
+  }
+}
+export const SUB_RACE_ATTRIBUTES: RaceAttributes = {
+  卓尔:{
+    basicInfo:{
+      size: "中型",
+      type: '类人生物',
+    },
+    combatStats: {
+      speed: "30 ft",
+    },
+    proficientSkills:[10],
+    statusDetails: {
+      VISION: '黑暗视觉 120 ft',
+      LANGUAGES: ['通用语', '地底通用语'],
+      VULNERABILITY: ['光耀'],
+      DAMAGE_RESISTANCE: ['毒素'],
     },
   }
 }
@@ -473,6 +491,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 5,
     },
+    classFeatureInfo:new Map([
+      [1, { proficiencyBonus: 2, classFeature: "施法，神圣领域", spellSlots: [3, 0, 0, 0, 0, 0, 0, 0, 0] }],
+      [2, { proficiencyBonus: 2, classFeature: "引导神力 (1/休)，领域特性", spellSlots: [3, 0, 0, 0, 0, 0, 0, 0, 0] }],
+      [3, { proficiencyBonus: 2, classFeature: "", spellSlots: [3, 2, 0, 0, 0, 0, 0, 0, 0] }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升", spellSlots: [4, 3, 0, 0, 0, 0, 0, 0, 0] }],
+      [5, { proficiencyBonus: 3, classFeature: "摧毁不死生物 (CR 1/2)", spellSlots: [4, 3, 2, 0, 0, 0, 0, 0, 0] }],
+      [6, { proficiencyBonus: 3, classFeature: "引导神力 (2/休)，领域特性", spellSlots: [4, 3, 3, 0, 0, 0, 0, 0, 0] }],
+      [7, { proficiencyBonus: 3, classFeature: "", spellSlots: [4, 3, 3, 1, 0, 0, 0, 0, 0] }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升，摧毁不死生物 (CR 1)，领域特性", spellSlots: [4, 3, 3, 2, 0, 0, 0, 0, 0] }],
+      [9, { proficiencyBonus: 4, classFeature: "", spellSlots: [4, 3, 3, 3, 1, 0, 0, 0, 0] }],
+      [10, { proficiencyBonus: 4, classFeature: "神圣干预", spellSlots: [4, 3, 3, 3, 2, 0, 0, 0, 0] }],
+      [11, { proficiencyBonus: 4, classFeature: "摧毁不死生物 (CR 2)", spellSlots: [4, 3, 3, 3, 2, 1, 0, 0, 0] }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", spellSlots: [4, 3, 3, 3, 2, 1, 0, 0, 0] }],
+      [13, { proficiencyBonus: 5, classFeature: "", spellSlots: [4, 3, 3, 3, 2, 1, 1, 0, 0] }],
+      [14, { proficiencyBonus: 5, classFeature: "摧毁不死生物 (CR 3)", spellSlots: [4, 3, 3, 3, 2, 1, 1, 0, 0] }],
+      [15, { proficiencyBonus: 5, classFeature: "", spellSlots: [4, 3, 3, 3, 2, 1, 1, 1, 0] }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", spellSlots: [4, 3, 3, 3, 2, 1, 1, 1, 0] }],
+      [17, { proficiencyBonus: 6, classFeature: "摧毁不死生物 (CR 4)，领域特性", spellSlots: [4, 3, 3, 3, 2, 1, 1, 1, 1] }],
+      [18, { proficiencyBonus: 6, classFeature: "引导神力 (3/休)", spellSlots: [4, 3, 3, 3, 3, 1, 1, 1, 1] }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", spellSlots: [4, 3, 3, 3, 3, 2, 1, 1, 1] }],
+      [20, { proficiencyBonus: 6, classFeature: "神圣干预增效", spellSlots: [4, 3, 3, 3, 3, 2, 2, 1, 1] }]
+    ])
   },
   德鲁伊: {
     proficiencyAbilities: [4, 5],
@@ -483,6 +523,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 5,
     },
+    classFeatureInfo:new Map([
+      [1, { proficiencyBonus: 2, classFeature: "德鲁伊语, 施法", knownCantrips: 2, spellSlots: [2, 0, 0, 0, 0, 0, 0, 0, 0] }],
+      [2, { proficiencyBonus: 2, classFeature: "荒野形态，选择德鲁伊环", knownCantrips: 2, spellSlots: [3, 0, 0, 0, 0, 0, 0, 0, 0] }],
+      [3, { proficiencyBonus: 2, classFeature: "", knownCantrips: 2, spellSlots: [4, 2, 0, 0, 0, 0, 0, 0, 0] }],
+      [4, { proficiencyBonus: 2, classFeature: "荒野形态增效，属性值提升", knownCantrips: 3, spellSlots: [4, 3, 0, 0, 0, 0, 0, 0, 0] }],
+      [5, { proficiencyBonus: 3, classFeature: "", knownCantrips: 3, spellSlots: [4, 3, 2, 0, 0, 0, 0, 0, 0] }],
+      [6, { proficiencyBonus: 3, classFeature: "结社特性", knownCantrips: 3, spellSlots: [4, 3, 3, 0, 0, 0, 0, 0, 0] }],
+      [7, { proficiencyBonus: 3, classFeature: "", knownCantrips: 3, spellSlots: [4, 3, 3, 1, 0, 0, 0, 0, 0] }],
+      [8, { proficiencyBonus: 3, classFeature: "荒野形态增效，属性值提升", knownCantrips: 3, spellSlots: [4, 3, 3, 2, 0, 0, 0, 0, 0] }],
+      [9, { proficiencyBonus: 4, classFeature: "", knownCantrips: 3, spellSlots: [4, 3, 3, 3, 1, 0, 0, 0, 0] }],
+      [10, { proficiencyBonus: 4, classFeature: "结社特性", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 0, 0, 0, 0] }],
+      [11, { proficiencyBonus: 4, classFeature: "", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 0, 0, 0] }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 0, 0, 0] }],
+      [13, { proficiencyBonus: 5, classFeature: "", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 1, 0, 0] }],
+      [14, { proficiencyBonus: 5, classFeature: "结社特性", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 1, 0, 0] }],
+      [15, { proficiencyBonus: 5, classFeature: "", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 1, 1, 0] }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 1, 1, 0] }],
+      [17, { proficiencyBonus: 6, classFeature: "", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2, 1, 1, 1, 1] }],
+      [18, { proficiencyBonus: 6, classFeature: "不朽身，野兽施法", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 3, 1, 1, 1, 1] }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 3, 2, 1, 1, 1] }],
+      [20, { proficiencyBonus: 6, classFeature: "大德鲁伊", knownCantrips: 4, spellSlots: [4, 3, 3, 3, 3, 2, 2, 1, 1] }]
+    ])
   },
   武僧: {
     proficiencyAbilities: [1, 2],
@@ -493,6 +555,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 5,
     },
+    classFeatureInfo: new Map([
+      [1, { proficiencyBonus: 2, classFeature: "武艺，气", martialArts: "1d4", ki: 0, unarmoredMovement: 0 }],
+      [2, { proficiencyBonus: 2, classFeature: "气，无甲移动", martialArts: "1d4", ki: 2, unarmoredMovement: 10 }],
+      [3, { proficiencyBonus: 2, classFeature: "武僧传统", martialArts: "1d4", ki: 3, unarmoredMovement: 10 }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升，轻身敏捷", martialArts: "1d4", ki: 4, unarmoredMovement: 10 }],
+      [5, { proficiencyBonus: 3, classFeature: "额外攻击，震慑拳", martialArts: "1d6", ki: 5, unarmoredMovement: 10 }],
+      [6, { proficiencyBonus: 3, classFeature: "气导打击，武僧传统特性", martialArts: "1d6", ki: 6, unarmoredMovement: 15 }],
+      [7, { proficiencyBonus: 3, classFeature: "反射闪避，心如止水", martialArts: "1d6", ki: 7, unarmoredMovement: 15 }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升", martialArts: "1d6", ki: 8, unarmoredMovement: 15 }],
+      [9, { proficiencyBonus: 4, classFeature: "无甲移动增效", martialArts: "1d6", ki: 9, unarmoredMovement: 15 }],
+      [10, { proficiencyBonus: 4, classFeature: "百病不侵", martialArts: "1d6", ki: 10, unarmoredMovement: 20 }],
+      [11, { proficiencyBonus: 4, classFeature: "武僧传统特性", martialArts: "1d8", ki: 11, unarmoredMovement: 20 }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", martialArts: "1d8", ki: 12, unarmoredMovement: 20 }],
+      [13, { proficiencyBonus: 5, classFeature: "天语通", martialArts: "1d8", ki: 13, unarmoredMovement: 20 }],
+      [14, { proficiencyBonus: 5, classFeature: "金刚魂", martialArts: "1d8", ki: 14, unarmoredMovement: 25 }],
+      [15, { proficiencyBonus: 5, classFeature: "不朽身", martialArts: "1d8", ki: 15, unarmoredMovement: 25 }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", martialArts: "1d8", ki: 16, unarmoredMovement: 25 }],
+      [17, { proficiencyBonus: 6, classFeature: "武僧传统特性", martialArts: "1d10", ki: 17, unarmoredMovement: 25 }],
+      [18, { proficiencyBonus: 6, classFeature: "空灵体", martialArts: "1d10", ki: 18, unarmoredMovement: 30 }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", martialArts: "1d10", ki: 19, unarmoredMovement: 30 }],
+      [20, { proficiencyBonus: 6, classFeature: "超凡入圣", martialArts: "1d10", ki: 20, unarmoredMovement: 30 }]
+    ])
   },
   游荡者: {
     proficiencyAbilities: [2, 4],
@@ -503,6 +587,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 2,
     },
+    classFeatureInfo: new Map([
+      [1, { proficiencyBonus: 2, classFeature: "专精，偷袭，盗贼黑话", sneakAttack: "1d6" }],
+      [2, { proficiencyBonus: 2, classFeature: "灵巧动作", sneakAttack: "1d6" }],
+      [3, { proficiencyBonus: 2, classFeature: "选择游荡者范型", sneakAttack: "2d6" }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升", sneakAttack: "2d6" }],
+      [5, { proficiencyBonus: 3, classFeature: "灵敏闪避", sneakAttack: "3d6" }],
+      [6, { proficiencyBonus: 3, classFeature: "专精", sneakAttack: "3d6" }],
+      [7, { proficiencyBonus: 3, classFeature: "反射闪避", sneakAttack: "4d6" }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升", sneakAttack: "4d6" }],
+      [9, { proficiencyBonus: 4, classFeature: "范型特性", sneakAttack: "5d6" }],
+      [10, { proficiencyBonus: 4, classFeature: "属性值提升", sneakAttack: "5d6" }],
+      [11, { proficiencyBonus: 4, classFeature: "可靠才能", sneakAttack: "6d6" }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", sneakAttack: "6d6" }],
+      [13, { proficiencyBonus: 5, classFeature: "范型特性", sneakAttack: "7d6" }],
+      [14, { proficiencyBonus: 5, classFeature: "听声辨位", sneakAttack: "7d6" }],
+      [15, { proficiencyBonus: 5, classFeature: "灵敏心智", sneakAttack: "8d6" }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", sneakAttack: "8d6" }],
+      [17, { proficiencyBonus: 6, classFeature: "范型特性", sneakAttack: "9d6" }],
+      [18, { proficiencyBonus: 6, classFeature: "难觅不定", sneakAttack: "9d6" }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", sneakAttack: "10d6" }],
+      [20, { proficiencyBonus: 6, classFeature: "一击必杀", sneakAttack: "10d6" }]
+    ])
   },
   邪术师: {
     proficiencyAbilities: [5, 6],
@@ -513,6 +619,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 6,
     },
+    classFeatureInfo: new Map([
+      [1, { proficiencyBonus: 2, classFeature: "选择异界宗主，契约魔法", knownSpells: 2, knownCantrips: 2, spellSlots: [1, 0, 0, 0, 0, 0, 0, 0, 0], knownInvocations: 0 }],
+      [2, { proficiencyBonus: 2, classFeature: "魔能祈唤", knownSpells: 3, knownCantrips: 2, spellSlots: [2, 0, 0, 0, 0, 0, 0, 0, 0], knownInvocations: 2 }],
+      [3, { proficiencyBonus: 2, classFeature: "魔契恩泽", knownSpells: 4, knownCantrips: 2, spellSlots: [0, 2, 0, 0, 0, 0, 0, 0, 0], knownInvocations: 2 }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升", knownSpells: 5, knownCantrips: 3, spellSlots: [0, 2, 0, 0, 0, 0, 0, 0, 0], knownInvocations: 2 }],
+      [5, { proficiencyBonus: 3, classFeature: "", knownSpells: 6, knownCantrips: 3, spellSlots: [0, 0, 2, 0, 0, 0, 0, 0, 0], knownInvocations: 3 }],
+      [6, { proficiencyBonus: 3, classFeature: "异界宗主特性", knownSpells: 7, knownCantrips: 3, spellSlots: [0, 0, 2, 0, 0, 0, 0, 0, 0], knownInvocations: 3 }],
+      [7, { proficiencyBonus: 3, classFeature: "", knownSpells: 8, knownCantrips: 3, spellSlots: [0, 0, 0, 2, 0, 0, 0, 0, 0], knownInvocations: 4 }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升", knownSpells: 9, knownCantrips: 3, spellSlots: [0, 0, 0, 2, 0, 0, 0, 0, 0], knownInvocations: 4 }],
+      [9, { proficiencyBonus: 4, classFeature: "", knownSpells: 10, knownCantrips: 3, spellSlots: [0, 0, 0, 0, 2, 0, 0, 0, 0], knownInvocations: 5 }],
+      [10, { proficiencyBonus: 4, classFeature: "异界宗主特性", knownSpells: 10, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 2, 0, 0, 0, 0], knownInvocations: 5 }],
+      [11, { proficiencyBonus: 4, classFeature: "玄奥秘法 (6环)", knownSpells: 11, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 3, 0, 0, 0, 0], knownInvocations: 5 }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", knownSpells: 11, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 3, 0, 0, 0, 0], knownInvocations: 6 }],
+      [13, { proficiencyBonus: 5, classFeature: "玄奥秘法 (7环)", knownSpells: 12, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 3, 0, 0, 0, 0], knownInvocations: 6 }],
+      [14, { proficiencyBonus: 5, classFeature: "异界宗主特性", knownSpells: 12, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 3, 0, 0, 0, 0], knownInvocations: 6 }],
+      [15, { proficiencyBonus: 5, classFeature: "玄奥秘法 (8环)", knownSpells: 13, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 3, 0, 0, 0, 0], knownInvocations: 7 }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", knownSpells: 13, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 3, 0, 0, 0, 0], knownInvocations: 7 }],
+      [17, { proficiencyBonus: 6, classFeature: "玄奥秘法 (9环)", knownSpells: 14, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 4, 0, 0, 0, 0], knownInvocations: 7 }],
+      [18, { proficiencyBonus: 6, classFeature: "", knownSpells: 14, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 4, 0, 0, 0, 0], knownInvocations: 8 }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", knownSpells: 15, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 4, 0, 0, 0, 0], knownInvocations: 8 }],
+      [20, { proficiencyBonus: 6, classFeature: "魔能宗控", knownSpells: 15, knownCantrips: 4, spellSlots: [0, 0, 0, 0, 4, 0, 0, 0, 0], knownInvocations: 8 }]
+    ])
   },
   奇械师: {
     proficiencyAbilities: [3, 4],
@@ -523,6 +651,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 4,
     },
+    classFeatureInfo: new Map([
+      [1, { proficiencyBonus: 2, classFeature: "魔法工艺，施法", knownSpells: 0, knownCantrips: 2, spellSlots: [2, 0, 0, 0, 0] }],
+      [2, { proficiencyBonus: 2, classFeature: "物品注法", knownSpells: 4, knownCantrips: 2, spellSlots: [2, 0, 0, 0, 0] }],
+      [3, { proficiencyBonus: 2, classFeature: "奇械师专业，称手工具", knownSpells: 4, knownCantrips: 2, spellSlots: [3, 0, 0, 0, 0] }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升", knownSpells: 4, knownCantrips: 2, spellSlots: [3, 0, 0, 0, 0] }],
+      [5, { proficiencyBonus: 3, classFeature: "奇械师专业特性", knownSpells: 4, knownCantrips: 2, spellSlots: [4, 2, 0, 0, 0] }],
+      [6, { proficiencyBonus: 3, classFeature: "工具专精", knownSpells: 6, knownCantrips: 2, spellSlots: [4, 2, 0, 0, 0] }],
+      [7, { proficiencyBonus: 3, classFeature: "灵光一闪", knownSpells: 6, knownCantrips: 2, spellSlots: [4, 3, 0, 0, 0] }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升", knownSpells: 6, knownCantrips: 2, spellSlots: [4, 3, 0, 0, 0] }],
+      [9, { proficiencyBonus: 4, classFeature: "奇械师专业特性", knownSpells: 6, knownCantrips: 2, spellSlots: [4, 3, 2, 0, 0] }],
+      [10, { proficiencyBonus: 4, classFeature: "魔法物品黑格", knownSpells: 8, knownCantrips: 3, spellSlots: [4, 3, 2, 0, 0] }],
+      [11, { proficiencyBonus: 4, classFeature: "储法物品", knownSpells: 8, knownCantrips: 3, spellSlots: [4, 3, 3, 0, 0] }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", knownSpells: 8, knownCantrips: 3, spellSlots: [4, 3, 3, 0, 0] }],
+      [13, { proficiencyBonus: 5, classFeature: "", knownSpells: 8, knownCantrips: 3, spellSlots: [4, 3, 3, 1, 0] }],
+      [14, { proficiencyBonus: 5, classFeature: "魔法物品专家", knownSpells: 10, knownCantrips: 4, spellSlots: [4, 3, 3, 1, 0] }],
+      [15, { proficiencyBonus: 5, classFeature: "奇械师专业特性", knownSpells: 10, knownCantrips: 4, spellSlots: [4, 3, 3, 2, 0] }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", knownSpells: 10, knownCantrips: 4, spellSlots: [4, 3, 3, 2, 0] }],
+      [17, { proficiencyBonus: 6, classFeature: "", knownSpells: 10, knownCantrips: 4, spellSlots: [4, 3, 3, 3, 1] }],
+      [18, { proficiencyBonus: 6, classFeature: "魔法物品大师", knownSpells: 12, knownCantrips: 4, spellSlots: [4, 3, 3, 3, 1] }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", knownSpells: 12, knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2] }],
+      [20, { proficiencyBonus: 6, classFeature: "奇械之魂", knownSpells: 12, knownCantrips: 4, spellSlots: [4, 3, 3, 3, 2] }]
+    ])
   },
   战士: {
     proficiencyAbilities: [1, 3],
@@ -533,6 +683,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{ 
       keyAttribute: 1,
     },
+    classFeatureInfo: new Map([
+      [1, { proficiencyBonus: 2, classFeature: "战斗风格，回气" }],
+      [2, { proficiencyBonus: 2, classFeature: "动作如潮 (一次)" }],
+      [3, { proficiencyBonus: 2, classFeature: "武术范型" }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升" }],
+      [5, { proficiencyBonus: 3, classFeature: "额外攻击" }],
+      [6, { proficiencyBonus: 3, classFeature: "属性值提升" }],
+      [7, { proficiencyBonus: 3, classFeature: "范型特性" }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升" }],
+      [9, { proficiencyBonus: 4, classFeature: "不屈 (一次)" }],
+      [10, { proficiencyBonus: 4, classFeature: "范型特性" }],
+      [11, { proficiencyBonus: 4, classFeature: "额外攻击 (2)" }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升" }],
+      [13, { proficiencyBonus: 5, classFeature: "不屈 (二次)" }],
+      [14, { proficiencyBonus: 5, classFeature: "属性值提升" }],
+      [15, { proficiencyBonus: 5, classFeature: "范型特性" }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升" }],
+      [17, { proficiencyBonus: 6, classFeature: "动作如潮 (两次)，不屈 (三次)" }],
+      [18, { proficiencyBonus: 6, classFeature: "范型特性" }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升" }],
+      [20, { proficiencyBonus: 6, classFeature: "额外攻击 (3)" }]
+    ])
   },
   圣武士: {
     proficiencyAbilities: [5, 6],
@@ -607,6 +779,28 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
     combatStats:{
       keyAttribute: 3,
     },
+    classFeatureInfo: new Map([
+      [1, { proficiencyBonus: 2, classFeature: "狂暴，无甲防御", rageCount: 2, rageDamage: 2 }],
+      [2, { proficiencyBonus: 2, classFeature: "鲁莽攻击，险境感知", rageCount: 2, rageDamage: 2 }],
+      [3, { proficiencyBonus: 2, classFeature: "选择原初道途", rageCount: 3, rageDamage: 2 }],
+      [4, { proficiencyBonus: 2, classFeature: "属性值提升", rageCount: 3, rageDamage: 2 }],
+      [5, { proficiencyBonus: 3, classFeature: "额外攻击，快速移动", rageCount: 3, rageDamage: 2 }],
+      [6, { proficiencyBonus: 3, classFeature: "道途特性", rageCount: 4, rageDamage: 2 }],
+      [7, { proficiencyBonus: 3, classFeature: "野性直觉", rageCount: 4, rageDamage: 2 }],
+      [8, { proficiencyBonus: 3, classFeature: "属性值提升", rageCount: 4, rageDamage: 2 }],
+      [9, { proficiencyBonus: 4, classFeature: "凶蛮重击 (1级)", rageCount: 4, rageDamage: 3 }],
+      [10, { proficiencyBonus: 4, classFeature: "道途特性", rageCount: 4, rageDamage: 3 }],
+      [11, { proficiencyBonus: 4, classFeature: "坚韧狂暴", rageCount: 4, rageDamage: 3 }],
+      [12, { proficiencyBonus: 4, classFeature: "属性值提升", rageCount: 5, rageDamage: 3 }],
+      [13, { proficiencyBonus: 5, classFeature: "凶蛮重击 (2级)", rageCount: 5, rageDamage: 3 }],
+      [14, { proficiencyBonus: 5, classFeature: "道途特性", rageCount: 5, rageDamage: 3 }],
+      [15, { proficiencyBonus: 5, classFeature: "持久狂暴", rageCount: 5, rageDamage: 3 }],
+      [16, { proficiencyBonus: 5, classFeature: "属性值提升", rageCount: 5, rageDamage: 4 }],
+      [17, { proficiencyBonus: 6, classFeature: "凶蛮重击 (3级)", rageCount: 6, rageDamage: 4 }],
+      [18, { proficiencyBonus: 6, classFeature: "不屈力量", rageCount: 6, rageDamage: 4 }],
+      [19, { proficiencyBonus: 6, classFeature: "属性值提升", rageCount: 6, rageDamage: 4 }],
+      [20, { proficiencyBonus: 6, classFeature: "原初斗士", rageCount: Infinity, rageDamage: 4 }]
+    ])
   },
   兼职施法者: {
     classFeatureInfo:new Map([

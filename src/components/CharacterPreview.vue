@@ -54,7 +54,8 @@ import {
   CLASS_HIT_DICE, 
   RACE_ATTRIBUTES,
   BACKGROUND_ATTRIBUTES,
-  CLASS_ATTRIBUTES
+  CLASS_ATTRIBUTES,
+  SUB_RACE_ATTRIBUTES
 } from '@/constants/dnd5e';
 import { deepMerge } from '@/utils/mergeHelper';
 import CharacterHeader from '@/components/CharacterHeader.vue';
@@ -85,10 +86,47 @@ const computedStats = computed(() => {
   // 首先计算基础属性值
   const baseStats = {
     race: character.basicInfo.race,
+    subRace: character.basicInfo.subrace,
     background: character.basicInfo.background,
-    mainClass: character.class[0].class,
     basicInfo: character.basicInfo,
+
+    armorBonus: character.combatStats.armorBonus || 0,
+    shieldBonus: character.combatStats.shieldBonus || 0,
+    otherACBonus: character.combatStats.otherACBonus || 0,
+    
+    statusDetails: character.statusDetails,
+    classFeatureInfo: {},
+    
+    inventoryItem: character.inventoryItem,
+
     classList: character.class,
+    classLevelMap: (() => {
+      const levelArray = [];
+      const processedClasses = new Set();
+      
+      character.class.forEach(classItem => {
+        if (!processedClasses.has(classItem.class)) {
+          const totalLevel = character.class
+            .filter(c => c.class === classItem.class)
+            .reduce((sum, c) => sum + c.level, 0);
+          
+          levelArray.push({
+            class: classItem.class,
+            level: totalLevel
+          });
+          
+          processedClasses.add(classItem.class);
+        }
+      });
+      
+      return levelArray;
+    })(),
+  }
+
+  const levelStats = {
+    ...baseStats,
+
+    mainClass: character.class[0].class,
     combatStats: character.combatStats,
 
     // 等级计算
@@ -102,10 +140,7 @@ const computedStats = computed(() => {
       return classList.reduce((total, item) => total.concat(`${item.subClass} ${item.level}`), []).join(' / ');
     })(),
 
-    mainLevel: (() => {
-      const classList = character.class;
-      return classList[0].level || 0;
-    })(),
+    mainLevel: baseStats.classLevelMap[0].level || 0,
 
     // 熟练属性计算
     proficiencyAbilities: [],
@@ -128,20 +163,13 @@ const computedStats = computed(() => {
       return character.class.some(item => item.class === '吟游诗人') ? 
         [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] : [];
     })(),
-
-    armorBonus: character.combatStats.armorBonus || 0,
-    shieldBonus: character.combatStats.shieldBonus || 0,
-    otherACBonus: character.combatStats.otherACBonus || 0,
-    
-    statusDetails: character.statusDetails,
-    classFeatureInfo: {},
-    
-    inventoryItem: character.inventoryItem,
   };
   // 合并特性
-  const raceEnhancedStats = deepMerge(baseStats, RACE_ATTRIBUTES[baseStats.race]);
-  const backgroundEnhancedStats = deepMerge(raceEnhancedStats, BACKGROUND_ATTRIBUTES[baseStats.background]);
-  const enhancedStatus = deepMerge(backgroundEnhancedStats,CLASS_ATTRIBUTES[baseStats.mainClass])
+  const raceEnhancedStats = deepMerge(levelStats, RACE_ATTRIBUTES[levelStats.race]);
+  const subRaceEnhancedStats = deepMerge(raceEnhancedStats, SUB_RACE_ATTRIBUTES[levelStats.subRace]);
+  const backgroundEnhancedStats = deepMerge(subRaceEnhancedStats, BACKGROUND_ATTRIBUTES[levelStats.background]);
+  const enhancedStatus = deepMerge(backgroundEnhancedStats,CLASS_ATTRIBUTES[levelStats.mainClass])
+
 
   // 基于属性值的计算结果
   const computed = {
@@ -164,9 +192,11 @@ const computedStats = computed(() => {
       if(enhancedStatus.classList.length > 1){
         return CLASS_ATTRIBUTES['兼职施法者'].classFeatureInfo.get(enhancedStatus.level)
       } else {
-        return CLASS_ATTRIBUTES[baseStats.mainClass].classFeatureInfo.get(enhancedStatus.level)
+        return CLASS_ATTRIBUTES[levelStats.mainClass].classFeatureInfo.get(enhancedStatus.level)
       }
-    })()
+    })(),
+
+    mainClassFeatureInfo: CLASS_ATTRIBUTES[levelStats.mainClass].classFeatureInfo.get(enhancedStatus.mainLevel)
   };
 
   // 依赖前面计算结果的计算
@@ -252,7 +282,7 @@ const computedStats = computed(() => {
       const features: ClassFeatureInfo[] = [];
       
       // 遍历每个职业
-      character.class.forEach(classInfo => {
+      levelStats.classLevelMap.forEach(classInfo => {
         const className = classInfo.class;
         const classLevel = classInfo.level;
         

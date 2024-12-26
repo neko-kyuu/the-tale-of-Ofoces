@@ -43,7 +43,7 @@
         <span>攻击调整值: {{ spellAttackMod }}</span>
       </div>
       <div class="prepared-spells">
-        已知法术：{{ props.computedStats.classFeatureInfo.knownSpells || '-' }}
+        已知法术：{{ props.computedStats.mainClassFeatureInfo.knownSpells || '-' }}
         <span class="separator">|</span>
         可准备法术：{{ maxPrepared }}
       </div>
@@ -145,17 +145,17 @@ const spellDC = 8
   + Number(keyMod);
 const spellAttackMod = `+${Number(props.computedStats.proficiencyBonus) 
   + Number(keyMod)}`;
-const mainClass = props.computedStats.mainClass;
-// 可准备法术 关键属性调整值＋施法职业等级/圣武游侠的一半/战士游荡者的三分之一
-let maxPrepared = 0;
-if (['圣武士', '游侠'].includes(mainClass)) {
-  maxPrepared = keyMod + Math.floor(props.computedStats.mainLevel / 2); 
-} else if (['吟游诗人', '牧师', '德鲁伊', '法师', '术士'].includes(mainClass)) {
-  maxPrepared = keyMod + props.computedStats.mainLevel; 
-} else if (['战士', '游荡者'].includes(mainClass)) {
-  maxPrepared = keyMod + Math.floor(props.computedStats.mainLevel / 3); 
-}
-
+let maxPrepared = keyMod;
+const classList = props.computedStats.classList;
+classList.forEach(item => {
+  if (['圣武士', '游侠'].includes(item.class)) {
+    maxPrepared += Math.floor(item.level / 2); 
+  } else if (['吟游诗人', '牧师', '德鲁伊', '法师', '术士'].includes(item.class)) {
+    maxPrepared += item.level; 
+  } else if (['战士', '游荡者'].includes(item.class)) {
+    maxPrepared += Math.floor(item.level / 3); 
+  }
+})
 
 </script>
 
