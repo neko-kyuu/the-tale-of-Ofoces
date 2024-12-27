@@ -716,11 +716,11 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
       keyAttribute: 6,
     },
     classFeatureInfo:new Map([
-      [1, { proficiencyBonus: 2, classFeature: "神圣感知, 圣疗", spellSlots: [0, 0, 0, 0, 0] }],
-      [2, { proficiencyBonus: 2, classFeature: "至圣斩, 战斗风格, 施法", spellSlots: [2, 0, 0, 0, 0] }],
+      [1, { proficiencyBonus: 2, classFeature: "神圣感知, 圣疗", spellSlots: [0, 0, 0, 0, 0]}],
+      [2, { proficiencyBonus: 2, classFeature: "至圣斩, 战斗风格, 施法", spellSlots: [2, 0, 0, 0, 0], alwaysPreparedSpells: ['至圣斩'] }],
       [3, { proficiencyBonus: 2, classFeature: "神佑, 选择神圣誓言", spellSlots: [3, 0, 0, 0, 0] }],
       [4, { proficiencyBonus: 2, classFeature: "属性值提升", spellSlots: [3, 0, 0, 0, 0] }],
-      [5, { proficiencyBonus: 3, classFeature: "额外攻击", spellSlots: [4, 2, 0, 0, 0] }],
+      [5, { proficiencyBonus: 3, classFeature: "额外攻击", spellSlots: [4, 2, 0, 0, 0], alwaysPreparedSpells: ['寻获坐骑'] }],
       [6, { proficiencyBonus: 3, classFeature: "守护灵光", spellSlots: [4, 2, 0, 0, 0] }],
       [7, { proficiencyBonus: 3, classFeature: "圣誓特性", spellSlots: [4, 3, 0, 0, 0] }],
       [8, { proficiencyBonus: 3, classFeature: "属性值提升", spellSlots: [4, 3, 0, 0, 0] }],
@@ -748,7 +748,7 @@ export const CLASS_ATTRIBUTES: Record<string, OptionalClassAttributes> = {
       keyAttribute: 5,
     },
     classFeatureInfo:new Map([
-      [1, { proficiencyBonus: 2, classFeature: "宿敌, 自然探索者", knownSpells: 1, spellSlots: [1, 0, 0, 0, 0] }],
+      [1, { proficiencyBonus: 2, classFeature: "宿敌, 自然探索者", knownSpells: 1, spellSlots: [1, 0, 0, 0, 0], alwaysPreparedSpells: ['猎人印记'] }],
       [2, { proficiencyBonus: 2, classFeature: "战斗风格, 施法", knownSpells: 2, spellSlots: [2, 0, 0, 0, 0] }],
       [3, { proficiencyBonus: 2, classFeature: "选择游侠范型, 原初意识", knownSpells: 3, spellSlots: [3, 0, 0, 0, 0] }],
       [4, { proficiencyBonus: 2, classFeature: "属性值提升", knownSpells: 3, spellSlots: [3, 0, 0, 0, 0] }],

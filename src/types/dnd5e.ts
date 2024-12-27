@@ -89,6 +89,7 @@ export interface CharacterClass {
     knownInvocations: number; //已知祈唤
     rageCount: number; //狂暴次数
     rageDamage: number; //狂暴伤害
+    alwaysPreparedSpells: string[]; //始终准备法术
   }
   
   export interface classFeatures {
@@ -143,6 +144,7 @@ export interface CharacterClass {
     level: number;
     levelClass: string;
     mainLevel: number;
+    spellcastingLevel: number;
     classLevelMap: {
       class: string;
       level: number;
@@ -175,6 +177,7 @@ export interface CharacterClass {
       level: number;
       feature: string;
     }[];
+    alwaysPreparedSpells: string[];
   }
 
   export type OptionalComputedStats = Partial<ComputedCharacterStats>;

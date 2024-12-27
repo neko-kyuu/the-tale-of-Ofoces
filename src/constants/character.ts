@@ -164,7 +164,7 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
       },
       {
         id: 2,
-        name: '机械弩',
+        name: '重弩',
         weaponType: '重弩',
         usage: '1动作',
         quantity: 1,
@@ -223,7 +223,7 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
     inventoryItem: [
       {
         id: 1,
-        name: '军刺 Lady Vorha',
+        name: '军刺 Lady Volei',
         weaponType: '刺剑',
         usage: '1动作',
         quantity: 1,

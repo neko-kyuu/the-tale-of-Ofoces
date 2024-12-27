@@ -15,8 +15,8 @@
         </div>
         <div class="header-VnS"><i class="fi fi-br-play-circle"></i></div>
         <div class="header-M"><i class="fi fi-sr-plate-wheat"></i></div>
-        <div class="header-time">时间</div>
-        <div class="header-usage">用法</div>
+        <div class="header-time">施法时间</div>
+        <div class="header-usage">持续时间</div>
       </div>
       <div class="spell-list">
         <div 
@@ -55,6 +55,7 @@
 import { computed } from 'vue';
 import type { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 import { ATTRIBUTES } from '@/constants/dnd5e';
+import { SPELLS } from '@/constants/spells';
 
 const props = defineProps<{
   character: OptionalCharacter;
@@ -84,36 +85,10 @@ const spellCategories = [
   { id: '9th', name: '9环', level: 9 },
 ];
 
+const alwaysPreparedSpells = props.computedStats.alwaysPreparedSpells;
+
 // 虚拟数据
-const mockSpells: Spell[] = [
-  {
-    id: 1,
-    name: '魔法伎俩 Prestidigitation',
-    VnS: 'V、S',
-    M: 'M',
-    time: '1动作',
-    usage: '自发',
-    categoryId: 'cantrips'
-  },
-  {
-    id: 2,
-    name: '舞光术 Dancing Lights',
-    VnS: 'V、S',
-    M: 'M',
-    time: '1动作',
-    usage: '专注',
-    categoryId: 'cantrips'
-  },
-  {
-    id: 3,
-    name: '法师护甲 Mage Armor',
-    VnS: 'V、S',
-    M: 'M',
-    time: '1动作',
-    usage: '8小时',
-    categoryId: '1st'
-  }
-];
+const mockSpells: Spell[] = [];
 
 const spellsByCategory = computed(() => {
   const result = new Map();
@@ -129,7 +104,47 @@ const spellsByCategory = computed(() => {
 });
 
 const getSpellsByCategory = (categoryId: string) => {
-  return spellsByCategory.value.get(categoryId) || [];
+  const spells = spellsByCategory.value.get(categoryId) || [];
+  const categoryLevel = spellCategories.find(c => c.id === categoryId)?.level || 0;
+  
+  // 如果不是戏法，且该环阶没有法术位，直接返回空数组
+  if (categoryId !== 'cantrips' && getSpellSlots(categoryLevel - 1) === 0) {
+    return [];
+  }
+  
+  if (alwaysPreparedSpells?.length) {
+    const preparedSpellsInCategory = alwaysPreparedSpells
+      .map(spellName => {
+        const spellData = SPELLS.get(spellName);
+        if (!spellData) return null;
+
+        const isBaseLevel = spellData.level === categoryLevel;
+        const canUpcast = categoryLevel > spellData.level;
+
+        // 只有在有法术位的环阶才显示法术
+        if ((isBaseLevel || (canUpcast && 
+            (spellData.upcastable === undefined || categoryLevel <= spellData.upcastable)))) {
+          return {
+            id: `always-${spellName}-${categoryLevel}`,
+            name: spellName,
+            VnS: [
+              spellData.verbal ? 'V' : '',
+              spellData.somatic ? 'S' : ''
+            ].filter(Boolean).join(','),
+            M: spellData.material ? 'M' : '',
+            time: spellData.castingTime,
+            usage: spellData.duration,
+            categoryId
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    return [...spells, ...preparedSpellsInCategory];
+  }
+
+  return spells;
 };
 
 // 获取指定环级的法术位数量
@@ -172,7 +187,7 @@ classList.forEach(item => {
 
 .column-headers {
   display: grid;
-  grid-template-columns: 1fr auto auto auto auto;
+  grid-template-columns: 1fr auto auto 100px 100px;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8rem;
@@ -187,7 +202,7 @@ classList.forEach(item => {
 
 .spell-row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto auto;
+  grid-template-columns: 1fr auto auto 100px 100px;
   gap: 0.5rem;
   padding: 0.5rem;
   font-size: 0.9rem;

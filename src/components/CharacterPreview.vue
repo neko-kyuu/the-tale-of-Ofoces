@@ -141,6 +141,21 @@ const computedStats = computed(() => {
     })(),
 
     mainLevel: baseStats.classLevelMap[0].level || 0,
+    // 施法等级
+    spellcastingLevel: (() => {
+      const classList = baseStats.classLevelMap;
+      let level = 0;
+      classList.forEach(item => {
+      if (['圣武士', '游侠'].includes(item.class)) {
+        level += Math.floor(item.level / 2); 
+      } else if (['吟游诗人', '牧师', '德鲁伊', '法师', '术士'].includes(item.class)) {
+        level += item.level; 
+      } else if (['战士', '游荡者'].includes(item.class)) {
+        level += Math.floor(item.level / 3); 
+      }
+      })
+      return level;
+    })(),
 
     // 熟练属性计算
     proficiencyAbilities: [],
@@ -190,7 +205,7 @@ const computedStats = computed(() => {
 
     classFeatureInfo:(() =>{
       if(enhancedStatus.classList.length > 1){
-        return CLASS_ATTRIBUTES['兼职施法者'].classFeatureInfo.get(enhancedStatus.level)
+        return CLASS_ATTRIBUTES['兼职施法者'].classFeatureInfo.get(enhancedStatus.spellcastingLevel)
       } else {
         return CLASS_ATTRIBUTES[levelStats.mainClass].classFeatureInfo.get(enhancedStatus.level)
       }
@@ -320,7 +335,41 @@ const computedStats = computed(() => {
 
       return features;
     })(),
+
+    // 计算法术
+    alwaysPreparedSpells: (() => {
+      const preparedSpells = new Set<string>();
+      
+      // 遍历每个职业
+      levelStats.classLevelMap.forEach(classInfo => {
+        const className = classInfo.class;
+        const classLevel = classInfo.level;
+        
+        // 获取职业特性信息
+        const classAttributes = CLASS_ATTRIBUTES[className];
+        if (!classAttributes) return;
+
+        // 获取该职业的特性Map
+        const featureInfo = classAttributes.classFeatureInfo;
+        if (!featureInfo) return;
+
+        // 从1级开始，遍历到当前等级
+        for (let level = 1; level <= classLevel; level++) {
+          const levelFeatures = featureInfo.get(level);
+          if (levelFeatures?.alwaysPreparedSpells) {
+            // 将该等级的始终准备法术添加到集合中
+            levelFeatures.alwaysPreparedSpells.forEach(spell => 
+              preparedSpells.add(spell)
+            );
+          }
+        }
+      });
+
+      return Array.from(preparedSpells);
+    })(),
   };
+
+  console.log(finalComputed);
   // 与角色中的显式设置合并
   return deepMerge(finalComputed, character.overrides);
 });
