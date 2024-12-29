@@ -44,7 +44,7 @@
           <div class="gallery-grid-small">
             <div v-for="note in galleryNotes" :key="note.id" class="gallery-item">
               <img 
-                :src="note.path" 
+                :src="getStaticPath(note.path)" 
                 alt="图片"
                 @click="handleImageClick(note.path)"
               />
@@ -55,7 +55,7 @@
       <template v-else-if="currentTab === 'gallery'">
         <div v-for="note in displayNotes" :key="note.id" class="gallery-item">
           <img 
-            :src="note.path" 
+            :src="getStaticPath(note.path)" 
             alt="图片"
             @click="handleImageClick(note.path)"
           />
