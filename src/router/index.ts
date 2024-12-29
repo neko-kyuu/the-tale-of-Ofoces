@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CharacterView from '../views/CharacterView.vue'
 import GalleryView from '@/views/GalleryView.vue'
-import NoteView from '@/views/NoteView.vue'
+import VaultView from '@/views/VaultView.vue'
 import LocationView from '@/views/LocationView.vue'
 import EventView from '@/views/EventView.vue'
 
@@ -32,7 +32,7 @@ const router = createRouter({
     {
       path: '/vault',
       name: 'vault',
-      component: NoteView
+      component: VaultView
     },
     {
       path: '/event',
