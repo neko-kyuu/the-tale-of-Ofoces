@@ -34,12 +34,21 @@
           </div>
         </div>
         <div class="column">
-          <div v-for="note in notes" :key="note.id">
+          <div v-for="note in normalNotes" :key="note.id">
             <DocumentItem 
               :item="note"
               icon="📄"
               @click="handleFileOpen"
             />
+          </div>
+          <div class="gallery-grid-small">
+            <div v-for="note in galleryNotes" :key="note.id" class="gallery-item">
+              <img 
+                :src="note.path" 
+                alt="图片"
+                @click="handleImageClick(note.path)"
+              />
+            </div>
           </div>
         </div>
       </template>
@@ -67,6 +76,9 @@
       v-model="showPreview"
       :image-src="previewImage"
       alt="图片预览"
+      :enable-navigation="true"
+      :on-previous="canNavigatePrevious ? handlePrevious : undefined"
+      :on-next="canNavigateNext ? handleNext : undefined"
     />
   </div>
 </template>
@@ -105,11 +117,48 @@ const handleFileOpen = (file) => {
 
 const showPreview = ref(false);
 const previewImage = ref('');
+const currentImageIndex = ref(0);
+
+const currentGalleryItems = computed(() => {
+  return currentTab.value === 'all' ? galleryNotes.value : displayNotes.value;
+});
+
+const canNavigatePrevious = computed(() => currentImageIndex.value > 0);
+
+const canNavigateNext = computed(() => {
+  return currentImageIndex.value < currentGalleryItems.value.length - 1;
+});
+
+const navigateToImage = (index: number) => {
+  currentImageIndex.value = index;
+  previewImage.value = currentGalleryItems.value[index].path;
+};
 
 const handleImageClick = (imagePath: string) => {
-  previewImage.value = imagePath;
+  const index = currentGalleryItems.value.findIndex(note => note.path === imagePath);
+  navigateToImage(index);
   showPreview.value = true;
-}
+};
+
+const handlePrevious = () => {
+  if (canNavigatePrevious.value) {
+    navigateToImage(currentImageIndex.value - 1);
+  }
+};
+
+const handleNext = () => {
+  if (canNavigateNext.value) {
+    navigateToImage(currentImageIndex.value + 1);
+  }
+};
+
+const normalNotes = computed(() => {
+  return notes.filter(note => note.displayType !== 'gallery');
+});
+
+const galleryNotes = computed(() => {
+  return notes.filter(note => note.displayType === 'gallery');
+});
 </script>
 
 <style scoped>
@@ -209,5 +258,13 @@ const handleImageClick = (imagePath: string) => {
 
 .gallery-item img:hover {
   transform: scale(1.05);
+}
+
+.gallery-grid-small {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  max-width: 350px;
+  margin-top: 1rem;
 }
 </style>

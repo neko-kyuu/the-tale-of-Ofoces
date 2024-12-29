@@ -17,6 +17,22 @@
         @error="handleImageError"
       >
       <button class="close-button" @click="closePreview">&times;</button>
+      <template v-if="enableNavigation">
+        <button 
+          class="nav-button prev" 
+          @click.stop="onPrevious"
+          v-if="onPrevious"
+        >
+          <i class="fi fi-rr-angle-left"></i>
+        </button>
+        <button 
+          class="nav-button next" 
+          @click.stop="onNext"
+          v-if="onNext"
+        >
+          <i class="fi fi-rr-angle-right"></i>
+        </button>
+      </template>
     </div>
     <div class="zoom-controls" @click.stop>
       <button @click="adjustScale(-0.1)">-</button>
@@ -28,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { getStaticPath } from '@/utils/assets';
 
 const props = defineProps<{
@@ -36,6 +52,9 @@ const props = defineProps<{
   imageSrc: string;
   alt?: string;
   defaultImage?: string;
+  enableNavigation?: boolean;
+  onPrevious?: () => void;
+  onNext?: () => void;
 }>();
 
 const emit = defineEmits<{
@@ -98,6 +117,24 @@ const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement;
   target.src = getStaticPath(props.defaultImage || '/images/default-item.png');
 };
+
+const handleKeydown = (e: KeyboardEvent) => {
+  if (!props.enableNavigation) return;
+  
+  if (e.key === 'ArrowLeft' && props.onPrevious) {
+    props.onPrevious();
+  } else if (e.key === 'ArrowRight' && props.onNext) {
+    props.onNext();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <style scoped>
@@ -241,5 +278,39 @@ const handleImageError = (e: Event) => {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
   }
+}
+
+.nav-button {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.nav-button:hover {
+  background: var(--color-background-soft);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-button.prev {
+  left: 1rem;
+}
+
+.nav-button.next {
+  right: 1rem;
 }
 </style> 
