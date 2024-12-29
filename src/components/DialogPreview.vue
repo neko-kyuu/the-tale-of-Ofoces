@@ -262,6 +262,10 @@ const toggleMessage = (message: Message) => {
   background: var(--color-background-soft);
   border-radius: 8px;
 }
+.dialog-container .markdown-preview {
+  padding: 0;
+  background: none;
+}
 
 .messages {
   display: flex;
@@ -287,189 +291,20 @@ const toggleMessage = (message: Message) => {
   justify-content: center;
 }
 
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-
-
-.message-name {
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.markdown-preview {
-  margin-bottom: 4px;
-}
-
-.markdown-preview :deep(.markdown-bold) {
-  font-weight: 600;
-  color: var(--color-background-highlight);
-}
-.markdown-preview :deep(p),
-.markdown-preview :deep(ul),
-.markdown-preview :deep(ol) {
-  padding: 0;
-  margin: 1.2em 0;
-}
-
-.markdown-preview :deep(li) {
-  margin-top: 1.2em;
-  margin-bottom: 1.2em;
-  margin-left: 1.5em;
-}
-
-.markdown-preview :deep(em) {
-  font-style: italic;
-  display: inline-block;
-  color: var(--color-text-light);
-  font-size: 0.95rem;
-}
-
-.markdown-preview :deep(u) {
-  text-decoration: underline;
-}
-
-.markdown-preview :deep(del) {
-  text-decoration: line-through;
-}
-
-.markdown-preview :deep(.code-block) {
-  background-color: var(--color-background-soft);
-  color: var(--color-text);
-  padding: 1em;
-  border-radius: 4px;
-  margin: 0.5em 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  word-break: break-all;
-  max-width: 100%;
-  font-family: 'Noto Sans SC', 'Consolas', 'Monaco', monospace;
-  line-height: 1.2;
-}
-
-.markdown-preview :deep(.code-block br) {
-    height: 0.5rem;
-    line-height: 0;
-    margin: 0;
-    padding: 0;
-    display: block;
-    content: "";
-}
-
-.markdown-preview :deep(code) {
-  background-color: rgba(var(--color-background-soft-rgb), 0.1);
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-family: inherit;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.markdown-preview :deep(blockquote) {
-  margin: 1.5em 0;
-  padding: 0.8em 1.2em;
-  border-left: 4px solid var(--color-border);
-  background-color: var(--color-background-mute);
-  border-radius: 0 4px 4px 0;
-}
-
-.markdown-preview :deep(h1),
-.markdown-preview :deep(h2),
-.markdown-preview :deep(h3),
-.markdown-preview :deep(h4) {
-  font-weight: 600;
-  line-height: 1.4;
-  margin: 2rem 0 1.2rem;
-  position: relative;
-  color: var(--color-background-highlight);
-}
-
-.markdown-preview :deep(h1) {
-  font-size: 2.2em;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 0.3em;
-}
-
-.markdown-preview :deep(h2) {
-  font-size: 1.8em;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 0.3em;
-}
-
-.markdown-preview :deep(h3) {
-  font-size: 1.5em;
-}
-
-.markdown-preview :deep(h4) {
-  font-size: 1.25em;
-}
-.markdown-preview :deep(h5) { font-size: 1em; margin: 0.5em 0; }
-.markdown-preview :deep(h6) { font-size: 0.9em; margin: 0.5em 0; }
-
-
-
-.markdown-preview :deep(a) {
-  color: var(--color-primary);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--color-primary);
-  transition: all 0.3s ease;
-}
-
-.markdown-preview :deep(a:hover) {
-  color: var(--color-primary-dark);
-  border-bottom-style: solid;
-}
-.markdown-preview :deep(a::after) {
-  content: '';
-  display: inline-block;
-  margin-left: 0.5rem;
-  width: 1em;
-  height: 1em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230366d6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'%3E%3C/path%3E%3Cpolyline points='15 3 21 3 21 9'%3E%3C/polyline%3E%3Cline x1='10' y1='14' x2='21' y2='3'%3E%3C/line%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.7;
-}
-.markdown-preview :deep(a:hover::after) {
-  opacity: 1;
-}
-.markdown-preview :deep(.markdown-tag) {
-  display: inline-block;
-  padding: 0.2em 0.8em;
-  margin: 0 0.2em;
-  background-color: transparent;
-  color: var(--color-background-soft-mute);
-  border: 1px solid rgba(125, 125, 125, 0.3);
-  border-radius: 12px;
-  font-size: 0.9em;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.markdown-preview :deep(.markdown-tag:hover) {
-  border-color: var(--color-background-soft-mute);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.tags-line {
-  padding: 8px;
-}
-
 .message-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
-  position: sticky;  /* 添加 sticky 定位 */
-  top: 0;           /* 固定在顶部 */
+  position: sticky;
+  top: 0;
   background: var(--color-background);
-  z-index: 1;       
+  z-index: 1;
+}
+
+.message-name {
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .message-details {
@@ -479,7 +314,12 @@ const toggleMessage = (message: Message) => {
   border-radius: 8px;
   max-width: 80%;
   min-width: 80%;
-  position: relative;  /* 为 sticky header 创建定位上下文 */
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.message-details.collapsed .markdown-preview {
+  display: none;
 }
 
 .collapse-button {
@@ -493,13 +333,5 @@ const toggleMessage = (message: Message) => {
 
 .collapse-button:hover {
   background: var(--color-background-mute);
-}
-
-.message-details.collapsed .markdown-preview {
-  display: none;
-}
-
-.message-details {
-  transition: all 0.3s ease;
 }
 </style>
