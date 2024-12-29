@@ -5,7 +5,6 @@
         ref="preloadImage"
         :src="imageSrc" 
         @load="handlePreloadImageLoad"
-        @error="handleImageError"
         style="display: none;"
       >
       <img 
@@ -14,7 +13,6 @@
         :alt="alt" 
         :style="{ transform: `scale(${imageScale})` }"
         @wheel.prevent="handleWheel"
-        @error="handleImageError"
       >
       <button class="close-button" @click="closePreview">&times;</button>
       <template v-if="enableNavigation">
@@ -111,11 +109,6 @@ const resetScale = () => {
 
 const closePreview = () => {
   emit('update:modelValue', false);
-};
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement;
-  target.src = getStaticPath(props.defaultImage || '/images/default-item.png');
 };
 
 const handleKeydown = (e: KeyboardEvent) => {
