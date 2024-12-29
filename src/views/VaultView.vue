@@ -19,22 +19,42 @@
       </div>
     </div>
 
-    <div class="note-list">
-      <div v-for="note in displayNotes" :key="note.id">
-        <template v-if="note.displayType !== 'gallery'">
+    <div class="note-list" :class="{ 'two-columns': currentTab === 'all' }">
+      <template v-if="currentTab === 'all'">
+        <div class="column">
+          <div v-for="doc in documents" :key="doc.id">
+            <DocumentItem 
+              :item="doc"
+              icon="📄"
+              @click="handleFileOpen"
+            />
+          </div>
+        </div>
+        <div class="column">
+          <div v-for="note in notes" :key="note.id">
+            <DocumentItem 
+              :item="note"
+              icon="📄"
+              @click="handleFileOpen"
+            />
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div v-for="note in displayNotes" :key="note.id">
           <DocumentItem 
             :item="note"
             icon="📄"
             @click="handleFileOpen"
           />
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { notes } from '@/constants/entities';
+import { documents, notes } from '@/constants/entities';
 import { computed, ref } from 'vue';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
 import DocumentItem from '@/components/DocumentItem.vue'
@@ -42,14 +62,22 @@ import DocumentItem from '@/components/DocumentItem.vue'
 
 const tabs = [
   { icon:'fi fi-rr-border-all', value:'all' }, 
+  { icon:'fi fi-rr-file-medical', value:'md' },
   { icon:'fi fi-rr-graphic-style', value:'gallery' },
   { icon:'fi fi-rr-features', value:'document' },
 ]
 const currentTab = ref('all');
 
 const displayNotes = computed(() => {
-    return currentTab.value === 'all' ? notes 
-      : notes.filter(note => note.displayType == currentTab.value)
+    if (currentTab.value === 'md') {
+        return documents;
+    }
+    
+    if (currentTab.value === 'gallery' || currentTab.value === 'document') {
+        return notes.filter(note => note.displayType === currentTab.value);
+    }
+    
+    return [...documents, ...notes];
 })
 
 const handleFileOpen = (file) => {
@@ -101,6 +129,19 @@ const handleFileOpen = (file) => {
 .note-list {
   max-width: 360px;
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.note-list.two-columns {
+  flex-direction: row;
+  max-width: 800px;
+  gap: 2rem;
+}
+
+.column {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
