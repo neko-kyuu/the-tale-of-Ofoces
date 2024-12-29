@@ -873,6 +873,18 @@ export const notes: Notes = [
     references: {
       characters: [4]
     }
+  },
+  {
+    id: 6,
+    type: CONTENT_TYPES.NOTE,
+    title: 'claude3.5-sonnet-2024-12-29',
+    tags: ['车卡'],
+    displayType: 'gallery',
+    noteCategory: 'character',
+    path: '/static/vault/PixPin_2024-11-16_16-59-30.png',
+    references: {
+      characters: [1,2]
+    }
   }
   // ...其他备忘录
 ]
