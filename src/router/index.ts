@@ -4,6 +4,7 @@ import CharacterView from '../views/CharacterView.vue'
 import GalleryView from '@/views/GalleryView.vue'
 import NoteView from '@/views/NoteView.vue'
 import LocationView from '@/views/LocationView.vue'
+import EventView from '@/views/EventView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,14 +30,14 @@ const router = createRouter({
       component: LocationView
     },
     {
-      path: '/note',
-      name: 'note',
+      path: '/vault',
+      name: 'vault',
       component: NoteView
     },
     {
       path: '/event',
       name: 'event',
-      component: () => import('@/views/EventView.vue')
+      component: EventView
     },
     {
       path: '/test',

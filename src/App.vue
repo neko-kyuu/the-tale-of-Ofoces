@@ -38,21 +38,21 @@
           </RouterLink>
           
           <!-- 地图 -->
-          <!-- <RouterLink 
+          <RouterLink 
             to="/location" 
             class="nav-link view-mode-button" 
             :class="{ active: $route.path === '/location' }"
             title="地图"
           >
             <i class="fi fi-rr-earth-americas"></i>
-          </RouterLink> -->
+          </RouterLink>
 
-          <!-- notes备忘录/杂物箱 -->
+          <!-- doc & notes备忘录/杂物箱 -->
           <RouterLink 
-            to="/note" 
+            to="/vault" 
             class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/note' }"
-            title="备忘录/杂物箱"
+            :class="{ active: $route.path === '/vault' }"
+            title="储物箱"
           >
             <i class="fi fi-rs-box-alt"></i>
           </RouterLink>
