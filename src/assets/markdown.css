@@ -85,7 +85,7 @@
 
 /* 代码样式 */
 .markdown-preview code {
-  font-family: 'Fira Code', monospace;
+  font-family: Noto Sans SC, Consolas, Monaco, monospace;
   background-color: var(--color-background-mute);
   padding: 0.2em 0.4em;
   border-radius: 3px;
