@@ -89,6 +89,7 @@ import { computed, ref } from 'vue';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
 import DocumentItem from '@/components/DocumentItem.vue'
 import ImagePreview from '@/components/ImagePreview.vue';
+import { getStaticPath } from '@/utils/assets';
 
 
 const tabs = [
@@ -131,7 +132,7 @@ const canNavigateNext = computed(() => {
 
 const navigateToImage = (index: number) => {
   currentImageIndex.value = index;
-  previewImage.value = currentGalleryItems.value[index].path;
+  previewImage.value = getStaticPath(currentGalleryItems.value[index].path);
 };
 
 const handleImageClick = (imagePath: string) => {
