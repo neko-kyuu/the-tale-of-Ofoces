@@ -366,7 +366,6 @@ const entityGraphStore = useEntityGraphStore()
 .dice-menu {
   position: relative;
   margin-top: auto;
-  padding-bottom: 1rem;
 }
 
 .dice-trigger {
