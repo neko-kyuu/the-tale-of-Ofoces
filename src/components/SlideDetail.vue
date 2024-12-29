@@ -80,7 +80,7 @@
         }"
       >
         <div class="file-detail-header">
-            <h2 class="file-title">{{ characterStore.currentFile.name }}</h2>
+            <h2 class="file-title">{{ characterStore.currentFile.title }}</h2>
             <div class="file-controls">
               <button 
                   class="control-button"
@@ -100,7 +100,7 @@
         </div>
         
         <div class="file-content">
-            <MarkdownPreview :file-path="getStaticPath(characterStore.currentFile.path)" />
+            <component :is="previewComponent" />
         </div>
       </div>
     </Teleport>
@@ -117,6 +117,9 @@ import { getStaticPath } from '@/utils/assets'
 import FilterPanel from '@/components/FilterPanel.vue'
 import { DATE_TYPE_KEYS } from '@/utils/filterUtils'
 import { openEntityPreviewModal } from '@/utils/modalHelper'
+import DialogPreview from '@/components/DialogPreview.vue'
+import CharacterPreview from '@/components/CharacterPreview.vue'
+import EmptyPreview from '@/components/EmptyPreview.vue'
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
 
@@ -230,6 +233,25 @@ const filteredEntities = computed(() => {
       return selectedValues.includes(entityValue)
     })
   })
+})
+
+// 根据内容类型返回对应的预览组件
+const previewComponent = computed(() => {
+  const file = characterStore.currentFile
+  if (!file) return h(EmptyPreview)
+
+  const type = characterStore.currentContentType
+  
+  switch (type) {
+    case 'document':
+      return h(MarkdownPreview, { filePath: getStaticPath(file.path) })
+    case 'chat':
+      return h(DialogPreview, { filePath: getStaticPath(file.path) })
+    case 'character':
+      return h(CharacterPreview, { characterId: file.referenceId })
+    default:
+      return h(EmptyPreview)
+  }
 })
 </script>
 
