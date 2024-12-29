@@ -23,10 +23,11 @@
           >
             <div class="item-name">
               <i 
+                v-if="item.image"
                 class="fi fi-rr-picture item-icon"
-                :class="{ 'no-image': !item.image }"
-                @click="item.image && showItemImage(item)"
+                @click="showItemImage(item)"
               ></i>
+              <span v-else class="item-icon-placeholder"></span>
               {{ item.name }}
             </div>
             <div class="item-weight">{{ item.weight ? `${item.weight} lb` : '-' }}</div>
@@ -401,23 +402,12 @@ const showItemImage = (item: InventoryItem) => {
   position: relative;
 }
 
-.item-icon.no-image {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.item-icon.no-image::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 1px;
-  height: 100%;
-  background-color: currentColor;
-  transform: rotate(45deg);
-}
-
 .item-icon:hover {
   opacity: 0.8;
+}
+
+.item-icon-placeholder {
+  display: inline-block;
+  width: 0.9rem; 
 }
 </style>
