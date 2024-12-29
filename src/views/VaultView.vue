@@ -19,7 +19,10 @@
       </div>
     </div>
 
-    <div class="note-list" :class="{ 'two-columns': currentTab === 'all' }">
+    <div class="note-list" :class="{ 
+      'two-columns': currentTab === 'all',
+      'gallery-grid': currentTab === 'gallery' 
+    }">
       <template v-if="currentTab === 'all'">
         <div class="column">
           <div v-for="doc in documents" :key="doc.id">
@@ -40,6 +43,15 @@
           </div>
         </div>
       </template>
+      <template v-else-if="currentTab === 'gallery'">
+        <div v-for="note in displayNotes" :key="note.id" class="gallery-item">
+          <img 
+            :src="note.path" 
+            alt="图片"
+            @click="handleImageClick(note.path)"
+          />
+        </div>
+      </template>
       <template v-else>
         <div v-for="note in displayNotes" :key="note.id">
           <DocumentItem 
@@ -50,6 +62,12 @@
         </div>
       </template>
     </div>
+
+    <ImagePreview
+      v-model="showPreview"
+      :image-src="previewImage"
+      alt="图片预览"
+    />
   </div>
 </template>
 
@@ -58,6 +76,7 @@ import { documents, notes } from '@/constants/entities';
 import { computed, ref } from 'vue';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
 import DocumentItem from '@/components/DocumentItem.vue'
+import ImagePreview from '@/components/ImagePreview.vue';
 
 
 const tabs = [
@@ -82,6 +101,14 @@ const displayNotes = computed(() => {
 
 const handleFileOpen = (file) => {
   openEntityPreviewModal(file)
+}
+
+const showPreview = ref(false);
+const previewImage = ref('');
+
+const handleImageClick = (imagePath: string) => {
+  previewImage.value = imagePath;
+  showPreview.value = true;
 }
 </script>
 
@@ -156,5 +183,31 @@ const handleFileOpen = (file) => {
   text-align: center;
   line-height: 1rem;
   padding: 0 3px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  max-width: 600px;
+  margin-top: 1rem;
+}
+
+.gallery-item {
+  aspect-ratio: 1;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img:hover {
+  transform: scale(1.05);
 }
 </style>
