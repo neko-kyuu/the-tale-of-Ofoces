@@ -109,17 +109,11 @@
 <script setup lang="ts">
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { ref, onMounted, onUnmounted, computed, h } from 'vue'
-import { ModalManager } from '@/utils/ModalManager'
 import { useRelatedResourcesStore } from '@/stores/relatedResourcesStore'
-import MarkdownPreview from '@/components/MarkdownPreview.vue'
 import RelatedResources from '@/components/RelatedResources.vue'
-import { getStaticPath } from '@/utils/assets'
 import FilterPanel from '@/components/FilterPanel.vue'
 import { DATE_TYPE_KEYS } from '@/utils/filterUtils'
-import { openEntityPreviewModal } from '@/utils/modalHelper'
-import DialogPreview from '@/components/DialogPreview.vue'
-import CharacterPreview from '@/components/CharacterPreview.vue'
-import EmptyPreview from '@/components/EmptyPreview.vue'
+import { openEntityPreviewModal, getPreviewComponent } from '@/utils/modalHelper'
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
 
@@ -235,23 +229,9 @@ const filteredEntities = computed(() => {
   })
 })
 
-// 根据内容类型返回对应的预览组件
+// 使用公共的 getPreviewComponent 函数
 const previewComponent = computed(() => {
-  const file = characterStore.currentFile
-  if (!file) return h(EmptyPreview)
-
-  const type = characterStore.currentContentType
-  
-  switch (type) {
-    case 'document':
-      return h(MarkdownPreview, { filePath: getStaticPath(file.path) })
-    case 'chat':
-      return h(DialogPreview, { filePath: getStaticPath(file.path) })
-    case 'character':
-      return h(CharacterPreview, { characterId: file.referenceId })
-    default:
-      return h(EmptyPreview)
-  }
+  return getPreviewComponent(characterStore.currentFile)
 })
 </script>
 

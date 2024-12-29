@@ -21,7 +21,9 @@ const isMobile = computed(() => window.innerWidth <= 768)
  * @param {Object} entity - 实体对象
  * @returns {VNode} Vue 组件虚拟节点
  */
-const getPreviewComponent = (entity) => {
+export const getPreviewComponent = (entity) => {
+  if (!entity) return h(EmptyPreview)
+  
   const type = entity.displayType ?? entity.type
   switch (type) {
     case 'document':
@@ -30,7 +32,6 @@ const getPreviewComponent = (entity) => {
       return h(DialogPreview, { filePath: getStaticPath(entity.path) })
     case 'character':
       return h(CharacterPreview, { characterId: entity.referenceId })
-    // 可以在这里添加更多类型的处理
     default:
       return h(EmptyPreview)
   }
