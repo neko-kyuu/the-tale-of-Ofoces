@@ -22,16 +22,11 @@
     <div class="note-list">
       <div v-for="note in displayNotes" :key="note.id">
         <template v-if="note.displayType !== 'gallery'">
-          <div class="note-item"
-            @click="handleFileOpen(note)">
-            <div class="note-icon">📄</div>
-            <div class="note-info">
-              <span class="note-name">{{ note.title }}</span>
-              <div class="note-tags" v-if="note.tags">
-                <span v-for="tag in note.tags" :key="tag" class="tag">{{ tag }}</span>
-              </div>
-            </div>
-          </div>
+          <DocumentItem 
+            :item="note"
+            icon="📄"
+            @click="handleFileOpen"
+          />
         </template>
       </div>
     </div>
@@ -40,16 +35,11 @@
 
 <script setup lang="ts">
 import { notes } from '@/constants/entities';
-import { ModalManager } from '@/utils/ModalManager';
-import { computed, ref, h } from 'vue';
-import { useCharacterDetailStore } from '@/stores/characterDetail'
-import MarkdownPreview from '@/components/MarkdownPreview.vue'
-import { getStaticPath } from '@/utils/assets'
+import { computed, ref } from 'vue';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
+import DocumentItem from '@/components/DocumentItem.vue'
 
-const store = useCharacterDetailStore()
 
-// const tabs = ['all', 'character', 'settings'];
 const tabs = [
   { icon:'fi fi-rr-border-all', value:'all' }, 
   { icon:'fi fi-rr-graphic-style', value:'gallery' },
@@ -62,7 +52,6 @@ const displayNotes = computed(() => {
       : notes.filter(note => note.displayType == currentTab.value)
 })
 
-const isMobile = computed(() => window.innerWidth <= 768)
 const handleFileOpen = (file) => {
   openEntityPreviewModal(file)
 }
@@ -110,69 +99,11 @@ const handleFileOpen = (file) => {
 }
 
 .note-list {
+  max-width: 360px;
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-
-.note-item {
-  max-width: 360px;
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  background: var(--color-background-light);
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 0.5rem;
-}
-
-.note-item:hover {
-  background: var(--color-background-mute);
-}
-
-.note-icon {
-  font-size: 1.25rem;
-  color: var(--color-text-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  border-radius: 4px;
-}
-
-.note-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding-left: 1rem;
-  border-left: 1px solid var(--color-background-mute);
-}
-
-.note-title {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
-.note-meta {
-  font-size: 0.75rem;
-  color: var(--color-text-light);
-}
-
-.note-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag {
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 12px;
-  background: var(--color-background-mute);
-  color: var(--color-text-light);
+  gap: 0.6rem;
 }
 
 .note-count {

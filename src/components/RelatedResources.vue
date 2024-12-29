@@ -35,19 +35,12 @@
         </div>
 
         <!-- 文档类型实体 -->
-        <div 
-          v-for="entity in documentEntities" 
-          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
-          class="artifact-item"
-          @click="handleEntityClick(entity)"
-        >
-          <div class="artifact-icon">{{ getEntityIcon(entity.type) }}</div>
-          <div class="artifact-info">
-            <span class="artifact-name">{{ entity.title || entity.name }}</span>
-            <div class="artifact-tags" v-if="entity.tags">
-              <span v-for="tag in entity.tags" :key="tag" class="tag">{{ tag }}</span>
-            </div>
-          </div>
+        <div v-for="entity in documentEntities" :key="`${props.currentTool}_${entity.type}_${entity.id}`">
+          <DocumentItem
+            :item="entity"
+            :icon="getEntityIcon(entity.type)"
+            @click="handleEntityClick"
+          />
         </div>
 
         <!-- 事件类型实体 -->
@@ -88,19 +81,11 @@
         >
           <!-- 文档类型note -->
           <template v-if="entity.displayType === 'document'">
-            <div 
-              class="artifact-item"
-              @click="handleEntityClick(entity)"
-            >
-              <div class="artifact-icon">{{ getEntityIcon(entity.displayType) }}</div>
-              <div class="artifact-info">
-                <span class="artifact-name">{{ entity.title || entity.name }}</span>
-                <div class="artifact-tags" v-if="entity.tags">
-                  <span v-for="tag in entity.tags" :key="tag" class="tag">{{ tag }}</span>
-                </div>
-              </div>
-            </div>
-            <!-- {{ entity.displayType }} -->
+            <DocumentItem
+              :item="entity"
+              :icon="getEntityIcon(entity.displayType)"
+              @click="handleEntityClick"
+            />
           </template>
         </div>
 
@@ -129,6 +114,7 @@ import { useEntityGraphStore } from '@/stores/entityGraph'
 import { CONTENT_TYPES } from '@/constants/types'
 import CharacterAvatarList from './CharacterAvatarList.vue'
 import { getStaticPath } from '@/utils/assets'
+import DocumentItem from '@/components/DocumentItem.vue'
 
 const props = defineProps<{
   currentTool: string
