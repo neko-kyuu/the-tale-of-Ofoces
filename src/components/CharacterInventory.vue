@@ -7,7 +7,9 @@
         class="inventory-category"
       >
         <div class="column-headers">
-          <div class="header-name">{{ category.name }} ({{ getItemCount(category.id) }})</div>
+          <div class="header-name">
+            {{ category.name }} ({{ getItemCount(category.id) }})
+          </div>
           <div class="header-weight">重量</div>
           <div class="header-usage">用法</div>
           <div class="header-quantity">数量</div>
@@ -19,7 +21,14 @@
             class="item-row"
             :class="{ 'striped': item.id % 2 === 0 }"
           >
-            <div class="item-name">{{ item.name }}</div>
+            <div class="item-name">
+              <i 
+                class="fi fi-rr-picture item-icon"
+                :class="{ 'no-image': !item.image }"
+                @click="item.image && showItemImage(item)"
+              ></i>
+              {{ item.name }}
+            </div>
             <div class="item-weight">{{ item.weight ? `${item.weight} lb` : '-' }}</div>
             <div class="item-usage">{{ item.usage }}</div>
             <div class="item-quantity">{{ item.quantity }}</div>
@@ -56,28 +65,41 @@
         <i class="fi fi-sr-backpack"></i>
       </div>
     </div>
+
+    <!-- 添加图片预览模态框 -->
+    <div v-if="previewImage" class="image-modal" @click="closeImagePreview">
+      <div class="modal-content" @click.stop>
+        <img 
+          :src="previewImage" 
+          alt="物品图片" 
+          @error="handleImageError"
+          :style="{ transform: `scale(${imageScale})` }"
+          @wheel.prevent="handleWheel"
+        >
+        <button class="close-button" @click="closeImagePreview">&times;</button>
+      </div>
+      <!-- 添加 @click.stop 阻止事件冒泡 -->
+      <div class="zoom-controls" @click.stop>
+        <button @click="adjustScale(-0.1)">-</button>
+        <span>{{ Math.round(imageScale * 100) }}%</span>
+        <button @click="adjustScale(0.1)">+</button>
+        <button @click="resetScale">重置</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { WEAPONS } from '@/constants/dnd5e';
 import type { InventoryItem } from '@/types/dnd5e';
+import { getStaticPath } from '@/utils/assets';
 
 const props = defineProps<{
   character: OptionalCharacter;
   computedStats: OptionalComputedStats;
 }>();
-
-interface InventoryItem {
-  id: number;
-  name: string;
-  weight: number | null;
-  usage: string;
-  quantity: number;
-  categoryId: string;
-}
 
 const inventoryCategories = [
   { id: 'weapons', name: '武器' },
@@ -186,6 +208,43 @@ const weightStatus = computed(() => {
     };
   }
 });
+
+// 图片预览相关
+const previewImage = ref<string | null>(null);
+
+const imageScale = ref(1);
+
+const handleWheel = (e: WheelEvent) => {
+  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+  adjustScale(delta);
+};
+
+const adjustScale = (delta: number) => {
+  const newScale = imageScale.value + delta;
+  if (newScale >= 0.1 && newScale <= 3) {
+    imageScale.value = newScale;
+  }
+};
+
+const resetScale = () => {
+  imageScale.value = 1;
+};
+
+const showItemImage = (item: InventoryItem) => {
+  if (item.image) {
+    previewImage.value = getStaticPath(item.image);
+  }
+};
+
+const closeImagePreview = () => {
+  previewImage.value = null;
+  resetScale(); // 关闭时重置缩放
+};
+
+const handleImageError = (e: Event) => {
+  const target = e.target as HTMLImageElement;
+  target.src = getStaticPath('/images/default-item.png');
+};
 </script>
 
 <style scoped>
@@ -238,6 +297,9 @@ const weightStatus = computed(() => {
 .item-name {
   color: var(--color-text);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .item-usage {
@@ -368,5 +430,153 @@ const weightStatus = computed(() => {
 [data-tooltip]:hover::after {
   opacity: 1;
   visibility: visible;
+}
+
+.header-name {
+  display: flex;
+  align-items: center;
+}
+
+.item-icon {
+  font-size: 0.9rem;
+  position: relative;
+}
+
+.item-icon.no-image {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.item-icon.no-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background-color: currentColor;
+  transform: rotate(45deg);
+}
+
+.item-icon:hover {
+  opacity: 0.8;
+}
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: transparent;
+  box-shadow: none;
+}
+
+.modal-content img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+.close-button {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: var(--color-background-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.close-button:active {
+  transform: translateY(0);
+}
+
+.zoom-controls {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-background-soft);
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+}
+
+.zoom-controls button {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.zoom-controls button:last-child {
+  width: auto;
+  padding: 0 0.75rem;
+}
+
+.zoom-controls button:hover {
+  background: var(--color-background-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.zoom-controls button:active {
+  transform: translateY(0);
+}
+
+.zoom-controls span {
+  min-width: 3.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-soft);
 }
 </style>

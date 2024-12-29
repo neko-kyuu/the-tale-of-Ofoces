@@ -106,6 +106,7 @@ export interface CharacterClass {
     usage: string;
     quantity: number;
     categoryId: string;
+    image: string;
   }
 
   export interface Character {

@@ -47,7 +47,8 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
         subType:'手半剑',
         usage: '1动作',
         quantity: 1,
-        categoryId: 'weapons'
+        categoryId: 'weapons',
+        image: "/static/token/mja.png",
       },
     ],
     overrides: {
