@@ -66,26 +66,11 @@
       </div>
     </div>
 
-    <!-- 添加图片预览模态框 -->
-    <div v-if="previewImage" class="image-modal" @click="closeImagePreview">
-      <div class="modal-content" @click.stop>
-        <img 
-          :src="previewImage" 
-          alt="物品图片" 
-          @error="handleImageError"
-          :style="{ transform: `scale(${imageScale})` }"
-          @wheel.prevent="handleWheel"
-        >
-        <button class="close-button" @click="closeImagePreview">&times;</button>
-      </div>
-      <!-- 添加 @click.stop 阻止事件冒泡 -->
-      <div class="zoom-controls" @click.stop>
-        <button @click="adjustScale(-0.1)">-</button>
-        <span>{{ Math.round(imageScale * 100) }}%</span>
-        <button @click="adjustScale(0.1)">+</button>
-        <button @click="resetScale">重置</button>
-      </div>
-    </div>
+    <ImagePreview
+      v-model="showPreview"
+      :image-src="previewImage"
+      alt="物品图片"
+    />
   </div>
 </template>
 
@@ -95,6 +80,7 @@ import { computed, ref } from 'vue';
 import { WEAPONS } from '@/constants/dnd5e';
 import type { InventoryItem } from '@/types/dnd5e';
 import { getStaticPath } from '@/utils/assets';
+import ImagePreview from '@/components/ImagePreview.vue';
 
 const props = defineProps<{
   character: OptionalCharacter;
@@ -209,41 +195,14 @@ const weightStatus = computed(() => {
   }
 });
 
-// 图片预览相关
-const previewImage = ref<string | null>(null);
-
-const imageScale = ref(1);
-
-const handleWheel = (e: WheelEvent) => {
-  const delta = e.deltaY > 0 ? -0.1 : 0.1;
-  adjustScale(delta);
-};
-
-const adjustScale = (delta: number) => {
-  const newScale = imageScale.value + delta;
-  if (newScale >= 0.1 && newScale <= 3) {
-    imageScale.value = newScale;
-  }
-};
-
-const resetScale = () => {
-  imageScale.value = 1;
-};
+const showPreview = ref(false);
+const previewImage = ref('');
 
 const showItemImage = (item: InventoryItem) => {
   if (item.image) {
     previewImage.value = getStaticPath(item.image);
+    showPreview.value = true;
   }
-};
-
-const closeImagePreview = () => {
-  previewImage.value = null;
-  resetScale(); // 关闭时重置缩放
-};
-
-const handleImageError = (e: Event) => {
-  const target = e.target as HTMLImageElement;
-  target.src = getStaticPath('/images/default-item.png');
 };
 </script>
 
@@ -460,123 +419,5 @@ const handleImageError = (e: Event) => {
 
 .item-icon:hover {
   opacity: 0.8;
-}
-
-.image-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(3px);
-}
-
-.modal-content {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: transparent;
-  box-shadow: none;
-}
-
-.modal-content img {
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: 4px;
-  transition: transform 0.2s ease;
-}
-
-.close-button {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  line-height: 1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-}
-
-.close-button:hover {
-  background: var(--color-background-soft);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.close-button:active {
-  transform: translateY(0);
-}
-
-.zoom-controls {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-background-soft);
-  padding: 0.5rem 0.75rem;
-  border-radius: 20px;
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  border: 1px solid var(--color-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1001;
-}
-
-.zoom-controls button {
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  padding: 0;
-  transition: all 0.2s ease;
-}
-
-.zoom-controls button:last-child {
-  width: auto;
-  padding: 0 0.75rem;
-}
-
-.zoom-controls button:hover {
-  background: var(--color-background-soft);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.zoom-controls button:active {
-  transform: translateY(0);
-}
-
-.zoom-controls span {
-  min-width: 3.5rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--color-text-soft);
 }
 </style>

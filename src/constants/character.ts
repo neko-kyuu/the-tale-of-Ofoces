@@ -48,7 +48,7 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
         usage: '1动作',
         quantity: 1,
         categoryId: 'weapons',
-        image: "/static/token/mja.png",
+        image: "/static/inventory/judex.png",
       },
     ],
     overrides: {
@@ -104,7 +104,8 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
         weaponType: '短剑',
         usage: '1动作',
         quantity: 1,
-        categoryId: 'weapons'
+        categoryId: 'weapons',
+        image: "/static/inventory/sting.png",
       },
     ],
     overrides: {
@@ -161,7 +162,8 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
         weaponType: '刺剑',
         usage: '1动作',
         quantity: 1,
-        categoryId: 'weapons'
+        categoryId: 'weapons',
+        image: "/static/inventory/lady virna.png",
       },
       {
         id: 2,
@@ -169,7 +171,8 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
         weaponType: '重弩',
         usage: '1动作',
         quantity: 1,
-        categoryId: 'weapons'
+        categoryId: 'weapons',
+        image: "/static/inventory/crossbow.png",
       }
     ],
     overrides: {
