@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      // 获取当前 pathname
+      const pathname = window.location.pathname;
+      // 仓库名称
+      const repoName = '/the-tale-of-Ofoces';
+      
+      // 如果 pathname 包含仓库名，则重定向到主页
+      if (pathname.includes(repoName)) {
+        const redirectUrl = window.location.origin + repoName;
+        window.location.replace(redirectUrl);
+      }
+    </script>
+  </head>
+  <body></body>
+</html> 
