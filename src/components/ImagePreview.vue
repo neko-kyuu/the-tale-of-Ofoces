@@ -249,30 +249,6 @@ onUnmounted(() => {
   transform: translateY(0);
 }
 
-.modal-content::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30px;
-  height: 30px;
-  border: 3px solid var(--color-border);
-  border-top-color: var(--color-text);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  display: none;
-}
-
-.modal-content:not(:has(img[style*="display: block"])):before {
-  display: block;
-}
-
-@keyframes spin {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
 .nav-button {
   position: fixed;
   top: 50%;
