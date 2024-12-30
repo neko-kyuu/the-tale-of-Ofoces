@@ -30,6 +30,7 @@
               :src="getStaticPath(entity.path)" 
               :alt="entity.title || entity.name"
               class="gallery-image"
+              @click="handleImagePreview(entity)"
             >
           </div>
         </div>
@@ -262,9 +263,12 @@ const locationPointEntities = computed(() => {
 
 // 获取所有图片类型note的路径数组用于导航
 const galleryImages = computed(() => {
-  return noteEntities.value
+  const galleryNotes = noteEntities.value
     .filter(entity => entity.displayType === 'gallery')
     .map(entity => entity.path)
+  const gallerys = galleryEntities.value.map(entity => entity.path)
+  return props.currentTool === 'overview' ? [...gallerys, ...galleryNotes] : 
+        props.currentTool === 'gallerys' ? gallerys : galleryNotes
 })
 
 // 处理图片预览
