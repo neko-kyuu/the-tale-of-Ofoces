@@ -74,21 +74,23 @@
         </div>
 
         <!-- 备忘录类型实体 -->
-        <div 
-          v-for="entity in noteEntities" 
-          :key="`${props.currentTool}_${entity.type}_${entity.id}`"
-        >
+        <div>
           <!-- 文档类型note -->
-          <template v-if="entity.displayType === 'document'">
+          <div v-for="entity in documentTypeNotes" :key="`${props.currentTool}_${entity.type}_${entity.id}`">
             <DocumentItem
               :item="entity"
               :icon="getEntityIcon(entity.displayType)"
               @click="handleEntityClick"
             />
-          </template>
+          </div>
+          
           <!-- 图片类型note -->
-          <template v-else-if="entity.displayType === 'gallery'">
-            <div class="gallery-grid-small">
+          <div class="gallery-grid">
+            <div 
+              v-for="entity in galleryTypeNotes" 
+              :key="`${props.currentTool}_${entity.type}_${entity.id}`"
+              class="gallery-item"
+            >
               <img 
                 :src="entity.path" 
                 alt="图片"
@@ -96,7 +98,7 @@
                 @click="handleImagePreview(entity)"
               />
             </div>
-          </template>
+          </div>
         </div>
 
         <!-- 位置点类型实体 -->
@@ -148,7 +150,7 @@ const getEntityIcon = (type: string) => {
     document: '📄',
     ebook: '📚'
   }
-  return icons[type] || '📎'
+  return icons[type] || '📄'
 }
 
 // 处理实体点击
@@ -269,6 +271,15 @@ const galleryImages = computed(() => {
 const handleImagePreview = (entity: any) => {
   imagePreviewStore.openPreview(entity.path, galleryImages.value)
 }
+
+// 分别获取文档类型和图片类型的 notes
+const documentTypeNotes = computed(() => {
+  return noteEntities.value.filter(entity => entity.displayType !== 'gallery')
+})
+
+const galleryTypeNotes = computed(() => {
+  return noteEntities.value.filter(entity => entity.displayType === 'gallery')
+})
 </script>
 
 <style scoped>
