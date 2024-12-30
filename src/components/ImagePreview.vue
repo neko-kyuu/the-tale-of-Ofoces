@@ -3,13 +3,13 @@
     <div class="modal-content" @click.stop>
       <img 
         ref="preloadImage"
-        :src="imageSrc" 
+        :src="getStaticPath(imageSrc)" 
         @load="handlePreloadImageLoad"
         style="display: none;"
       >
       <img 
         v-if="isReady"
-        :src="imageSrc" 
+        :src="getStaticPath(imageSrc)" 
         :alt="alt" 
         :style="{ transform: `scale(${imageScale})` }"
         @wheel.prevent="handleWheel"

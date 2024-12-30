@@ -132,7 +132,7 @@ const canNavigateNext = computed(() => {
 
 const navigateToImage = (index: number) => {
   currentImageIndex.value = index;
-  previewImage.value = getStaticPath(currentGalleryItems.value[index].path);
+  previewImage.value = currentGalleryItems.value[index].path;
 };
 
 const handleImageClick = (imagePath: string) => {

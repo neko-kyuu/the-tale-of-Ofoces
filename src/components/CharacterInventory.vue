@@ -201,7 +201,7 @@ const previewImage = ref('');
 
 const showItemImage = (item: InventoryItem) => {
   if (item.image) {
-    previewImage.value = getStaticPath(item.image);
+    previewImage.value = item.image;
     showPreview.value = true;
   }
 };
