@@ -77,7 +77,6 @@
         <div 
           v-for="entity in noteEntities" 
           :key="`${props.currentTool}_${entity.type}_${entity.id}`"
-          
         >
           <!-- 文档类型note -->
           <template v-if="entity.displayType === 'document'">
@@ -86,6 +85,17 @@
               :icon="getEntityIcon(entity.displayType)"
               @click="handleEntityClick"
             />
+          </template>
+          <!-- 图片类型note -->
+          <template v-else-if="entity.displayType === 'gallery'">
+            <div class="gallery-grid-small">
+              <img 
+                :src="entity.path" 
+                alt="图片"
+                class="gallery-image"
+                @click="handleImagePreview(entity)"
+              />
+            </div>
           </template>
         </div>
 
@@ -115,6 +125,7 @@ import { CONTENT_TYPES } from '@/constants/types'
 import CharacterAvatarList from './CharacterAvatarList.vue'
 import { getStaticPath } from '@/utils/assets'
 import DocumentItem from '@/components/DocumentItem.vue'
+import { useImagePreviewStore } from '@/stores/imagePreviewStore'
 
 const props = defineProps<{
   currentTool: string
@@ -129,6 +140,7 @@ const emit = defineEmits<{
 }>()
 
 const entityGraphStore = useEntityGraphStore()
+const imagePreviewStore = useImagePreviewStore()
 
 // 获取实体图标
 const getEntityIcon = (type: string) => {
@@ -245,6 +257,18 @@ const noteEntities = computed(() => {
 const locationPointEntities = computed(() => {
   return displayedEntities.value.filter(entity => entity.type === CONTENT_TYPES.LOCATION_POINT)
 })
+
+// 获取所有图片类型note的路径数组用于导航
+const galleryImages = computed(() => {
+  return noteEntities.value
+    .filter(entity => entity.displayType === 'gallery')
+    .map(entity => entity.path)
+})
+
+// 处理图片预览
+const handleImagePreview = (entity: any) => {
+  imagePreviewStore.openPreview(entity.path, galleryImages.value)
+}
 </script>
 
 <style scoped>
@@ -390,5 +414,26 @@ const locationPointEntities = computed(() => {
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.gallery-grid-small {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  max-width: 350px;
+  margin: 0.5rem 0;
+}
+
+.gallery-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.gallery-image:hover {
+  transform: scale(1.05);
 }
 </style> 

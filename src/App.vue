@@ -117,14 +117,25 @@
         </div>
     </div>
     
+    <!-- 添加 ImagePreview 组件 -->
+    <ImagePreview
+      v-model="imagePreviewStore.showPreview"
+      :image-src="imagePreviewStore.currentImage"
+      :enable-navigation="imagePreviewStore.imageList.length > 1"
+      :on-previous="canNavigatePrevious ? imagePreviewStore.previousImage : undefined"
+      :on-next="canNavigateNext ? imagePreviewStore.nextImage : undefined"
+      alt="图片预览"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, provide, onMounted, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import SlideDetails from '@/components/SlideDetail.vue'
 import { useEntityGraphStore } from '@/stores/entityGraph'
+import ImagePreview from '@/components/ImagePreview.vue'
+import { useImagePreviewStore } from '@/stores/imagePreviewStore'
 
 const diceResult = ref(null)
 const modifier = ref(0)
@@ -205,6 +216,13 @@ onMounted(() => {
 })
 
 const entityGraphStore = useEntityGraphStore()
+const imagePreviewStore = useImagePreviewStore()
+
+const canNavigatePrevious = computed(() => imagePreviewStore.currentIndex > 0);
+
+const canNavigateNext = computed(() => {
+  return imagePreviewStore.currentIndex < imagePreviewStore.imageList.length - 1;
+});
 
 </script>
 
@@ -470,6 +488,12 @@ const entityGraphStore = useEntityGraphStore()
     padding: 0.5rem;
     margin: 0;
   }
+}
+
+/* 添加图片预览相关样式 */
+:deep(.image-preview) {
+  position: fixed;
+  z-index: 9999;
 }
 
 </style>
