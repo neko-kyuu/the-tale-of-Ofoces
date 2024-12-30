@@ -92,8 +92,8 @@
               class="gallery-item"
             >
               <img 
-                :src="entity.path" 
-                alt="图片"
+                :src="getStaticPath(entity.path)" 
+                :alt="entity.title || entity.name"
                 class="gallery-image"
                 @click="handleImagePreview(entity)"
               />
