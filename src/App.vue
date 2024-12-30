@@ -9,6 +9,7 @@
           <RouterLink to="/" class="nav-link">
             <i class="fi fi-rr-home"></i>
           </RouterLink>
+
           <!-- 角色页面 -->
           <RouterLink 
             to="/characters" 
@@ -18,6 +19,7 @@
           >
           <i class="fi fi-rr-dot-circle"></i>
           </RouterLink>
+
           <!-- 画廊 -->
           <RouterLink 
             to="/gallery" 
@@ -27,6 +29,17 @@
           >
             <i class="fi fi-sr-layout-fluid"></i>
           </RouterLink>
+
+          <!-- doc & notes备忘录/杂物箱 -->
+          <RouterLink 
+            to="/vault" 
+            class="nav-link view-mode-button" 
+            :class="{ active: $route.path === '/vault' }"
+            title="储物箱"
+          >
+            <i class="fi fi-rs-box-alt"></i>
+          </RouterLink>
+
           <!-- 事件 -->
           <RouterLink 
             to="/event" 
@@ -46,23 +59,10 @@
           >
             <i class="fi fi-rr-earth-americas"></i>
           </RouterLink>
-
-          <!-- doc & notes备忘录/杂物箱 -->
-          <RouterLink 
-            to="/vault" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/vault' }"
-            title="储物箱"
-          >
-            <i class="fi fi-rs-box-alt"></i>
-          </RouterLink>
         </div>
-        
         
         <!-- 工具栏 -->
         <div class="tool-section">
-          
-        
           <!-- 主题切换按钮 -->
           <button 
             class="nav-link theme-toggle" 
