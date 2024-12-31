@@ -162,29 +162,61 @@ const toggleTheme = () => {
 const updateThemeColors = () => {
   const root = document.documentElement
   if (isDarkMode.value) {
+    // 深色主题 - 主要使用深灰色调配合紫红色点缀
     root.style.setProperty('--color-background', '#1a1a1a')
-    root.style.setProperty('--color-background-light', '#1a1a1a')
+    root.style.setProperty('--color-background-light', '#242424')
+    root.style.setProperty('--color-background-lighter', '#2a2a2a')
     root.style.setProperty('--color-background-soft', '#242424')
     root.style.setProperty('--color-background-soft-rgb', '36, 36, 36')
     root.style.setProperty('--color-background-mute', '#2f2f2f')
     root.style.setProperty('--color-background-dark', '#2f2f2f')
+    
+    // 强调色
     root.style.setProperty('--color-background-highlight', '#de6193')
+    root.style.setProperty('--color-background-highlight-soft', '#cc5483')
     root.style.setProperty('--color-background-highlight-rgb', '222, 97, 147')
+    root.style.setProperty('--color-accent-1', '#bd93f6')
+    root.style.setProperty('--color-accent-2', '#ff79c6')
+    root.style.setProperty('--color-accent-3', '#8be9fd')
+    
+    // 边框和分割线
     root.style.setProperty('--color-border', '#3f3f3f')
+    root.style.setProperty('--color-border-light', '#4a4a4a')
+    root.style.setProperty('--color-border-dark', '#333333')
+    
+    // 文字
     root.style.setProperty('--color-text', '#ffffff')
     root.style.setProperty('--color-text-soft', '#ffffffb3')
+    root.style.setProperty('--color-text-muted', '#999999')
+    root.style.setProperty('--color-text-light', '#cccccc')
   } else {
+    // 浅色主题 - 温暖的米色调配合柔和的紫色
     root.style.setProperty('--color-background', '#fffdf6')
     root.style.setProperty('--color-background-light', '#f8f8f8')
+    root.style.setProperty('--color-background-lighter', '#ffffff')
     root.style.setProperty('--color-background-soft', '#F8F5F1')
     root.style.setProperty('--color-background-soft-rgb', '248, 245, 241')
     root.style.setProperty('--color-background-mute', '#C2C1C0')
     root.style.setProperty('--color-background-dark', '#EEE7DD')
+    
+    // 强调色
     root.style.setProperty('--color-background-highlight', '#bd93f6')
+    root.style.setProperty('--color-background-highlight-soft', '#d3b4f7')
     root.style.setProperty('--color-background-highlight-rgb', '189, 147, 246')
+    root.style.setProperty('--color-accent-1', '#9d7cd8')
+    root.style.setProperty('--color-accent-2', '#ff85a1')
+    root.style.setProperty('--color-accent-3', '#7dcfff')
+    
+    // 边框和分割线
     root.style.setProperty('--color-border', '#CEC8BF')
+    root.style.setProperty('--color-border-light', '#E5E0D8')
+    root.style.setProperty('--color-border-dark', '#B8B2A9')
+    
+    // 文字
     root.style.setProperty('--color-text', '#213547')
     root.style.setProperty('--color-text-soft', '#213547bf')
+    root.style.setProperty('--color-text-muted', '#666666')
+    root.style.setProperty('--color-text-light', '#444444')
   }
 }
 

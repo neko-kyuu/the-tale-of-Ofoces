@@ -54,7 +54,7 @@ defineEmits<{
   flex-direction: column;
   gap: 0.25rem;
   padding-left: 1rem;
-  border-left: 1px solid var(--color-background-mute);
+  border-left: 1px solid var(--color-border-light);
 }
 
 .document-name {
