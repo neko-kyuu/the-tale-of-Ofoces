@@ -10,12 +10,12 @@
             <i class="fi fi-rr-home"></i>
           </RouterLink>
 
-          <!-- 角色页面 -->
+          <!-- 总览页面 -->
           <RouterLink 
-            to="/characters" 
+            to="/overview" 
             class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/characters' }"
-            title="角色"
+            :class="{ active: $route.path === '/overview' }"
+            title="总览"
           >
           <i class="fi fi-rr-dot-circle"></i>
           </RouterLink>

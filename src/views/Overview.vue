@@ -11,14 +11,19 @@
         <div class="list-panel">
           <ListView />
         </div>
-        <div class="network-panel">
-          <div class="network-upper">
+        <div class="right-panel">
+          <div class="panel-toolbar">
+            
           </div>
-          <div class="network-divider"></div>
-          <div class="network-toolbar">
-            <!-- 这里放工具栏内容 -->
+          <div class="upper-container">
           </div>
-          <div class="network-container">
+          <div class="panel-divider"></div>
+          <div class="panel-toolbar">
+            <button class="nav-link" title="关系图">
+              <i class="fi fi-ss-chart-network"></i>
+            </button>
+          </div>
+          <div class="lower-container">
             <NetworkView />
           </div>
         </div>
@@ -61,18 +66,18 @@ onUnmounted(() => {
   width: calc(100% - 400px);
 }
 
-.network-panel {
+.right-panel {
   width: 400px;
   display: flex;
   flex-direction: column;
 }
 
-.network-upper {
+.upper-container {
   height: 33.33%; 
   min-height: 100px; 
   padding: 1rem;
 }
-.network-toolbar {
+.panel-toolbar {
   height: 40px;
   padding: 0.5rem;
   display: flex;
@@ -80,13 +85,13 @@ onUnmounted(() => {
   gap: 0.5rem;
 }
 
-.network-divider {
+.panel-divider {
   height: 1px;
   background-color: var(--color-border);
   margin: 0;
 }
 
-.network-container {
+.lower-container {
   height: 66.67%; 
   flex-grow: 1; 
   position: relative; 
@@ -104,7 +109,7 @@ onUnmounted(() => {
     width: 100%;
   }
 
-  .network-panel {
+  .right-panel {
     display: none;
   }
 }
@@ -140,4 +145,20 @@ onUnmounted(() => {
   height: 100%;
 }
 
+.nav-link {
+  width: auto;
+  padding: 0.25rem 0.35rem;
+  background-color: var(--color-background-soft);
+  font-weight: bold;
+  box-shadow: inset 0 -2px var(--color-background-mute);
+  transform: translateY(2px);
+  border: 1px solid var(--color-background-highlight);
+  color: var(--color-background-highlight);
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  border-radius: var(--vt-rem-2);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
 </style> 
