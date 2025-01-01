@@ -197,7 +197,6 @@ const ebookImages = computed(() => {
 .gallery-container {
   min-height: 100%;
   padding: 16px;
-  background: var(--color-background);
 }
 
 .gallery-header {
