@@ -95,8 +95,6 @@ const showCharacterDetail = (char) => {
   padding: 2rem;
   overflow-y: auto;
   background: var(--color-background-soft);
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
 }
 
 .character-groups {
