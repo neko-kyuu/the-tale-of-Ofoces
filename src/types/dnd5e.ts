@@ -58,6 +58,7 @@ export interface CharacterClass {
   
   export interface CharacterOverrides {
     level: number;
+    background: string;
     attributes: CharacterAttributes;
     proficiencyAbilities: number[];
     proficiencyBonus: number;

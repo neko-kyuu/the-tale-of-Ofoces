@@ -17,7 +17,7 @@
             {{ calculateModifier(attr.id) }}
         </span>
         <div class="main-score">
-            {{ character.attributes[attr.id] }}
+            {{ computedStats.attributes[attr.id] }}
             <div class="proficiency-dot" :class="{ active: getProficiencyAbility().includes(attr.id) }"
               :data-tooltip="`豁免熟练项的作用与技能熟练项一样，具有某属性豁免熟练项的角色进行相应属性豁免时，可以将其熟练加值加入豁免检定结果中。`"
             ></div>
@@ -73,25 +73,25 @@
         <div class="info-group">
         <div class="info-row">
             <div class="info-label">种族</div>
-            <div class="info-value">{{ character.basicInfo.race }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.race }}</div>
             <div class="info-label">亚种</div>
-            <div class="info-value">{{ character.basicInfo.subrace }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.subrace }}</div>
         </div>
         <div class="info-row">
             <div class="info-label">性别</div>
-            <div class="info-value">{{ character.basicInfo.gender }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.gender }}</div>
             <div class="info-label">年龄</div>
-            <div class="info-value">{{ character.basicInfo.age }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.age }}</div>
         </div>
         <div class="info-row">
             <div class="info-label">背景</div>
-            <div class="info-value">{{ character.basicInfo.background }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.background }}</div>
         </div>
         <div class="info-row">
             <div class="info-label">身高</div>
-            <div class="info-value">{{ character.basicInfo.appearance.height }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.appearance.height }}</div>
             <div class="info-label">体重</div>
-            <div class="info-value">{{ character.basicInfo.appearance.weight }}</div>
+            <div class="info-value">{{ computedStats.basicInfo.appearance.weight }}</div>
         </div>
         </div>
 
@@ -100,19 +100,19 @@
         <div class="info-row">
             <div class="info-label">发色</div>
             <div class="info-value">
-            <div class="color-box" :style="{ backgroundColor: character.basicInfo.appearance.hairColor }"></div>
+            <div class="color-box" :style="{ backgroundColor: computedStats.basicInfo.appearance.hairColor }"></div>
             </div>
         </div>
         <div class="info-row">
             <div class="info-label">肤色</div>
             <div class="info-value">
-            <div class="color-box" :style="{ backgroundColor: character.basicInfo.appearance.skinColor }"></div>
+            <div class="color-box" :style="{ backgroundColor: computedStats.basicInfo.appearance.skinColor }"></div>
             </div>
         </div>
         <div class="info-row">
             <div class="info-label">瞳色</div>
             <div class="info-value">
-            <div class="color-box" :style="{ backgroundColor: character.basicInfo.appearance.eyeColor }"></div>
+            <div class="color-box" :style="{ backgroundColor: computedStats.basicInfo.appearance.eyeColor }"></div>
             </div>
         </div>
         <div class="info-row">
@@ -120,8 +120,8 @@
             <div class="info-value">
             <div 
                 class="color-box" 
-                :class="{ 'disabled': !character.basicInfo.appearance.nailColor }"
-                :style="{ backgroundColor: character.basicInfo.appearance.nailColor || '#ffffff' }"
+                :class="{ 'disabled': !computedStats.basicInfo.appearance.nailColor }"
+                :style="{ backgroundColor: computedStats.basicInfo.appearance.nailColor || '#ffffff' }"
             ></div>
             </div>
         </div>

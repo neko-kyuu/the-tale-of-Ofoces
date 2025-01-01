@@ -176,6 +176,9 @@ export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([
       }
     ],
     overrides: {
+      basicInfo:{
+        background:'领航员'
+      },
       skillModifiers: {
         12: '+7',
         15: '+7',

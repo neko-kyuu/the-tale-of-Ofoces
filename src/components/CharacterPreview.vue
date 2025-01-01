@@ -369,7 +369,6 @@ const computedStats = computed(() => {
     })(),
   };
 
-  console.log(finalComputed);
   // 与角色中的显式设置合并
   return deepMerge(finalComputed, character.overrides);
 });
