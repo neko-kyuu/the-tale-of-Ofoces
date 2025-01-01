@@ -10,7 +10,6 @@
             :key="realm.id"
             class="realm-group"
           >
-            <h2 class="realm-title">{{ realm.name }}</h2>
             <div class="race-groups-container">
               <!-- 按 race 分组 -->
               <div 
@@ -77,9 +76,6 @@ const showCharacterDetail = (char) => {
 
 <style scoped>
 .character-list {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -93,11 +89,14 @@ const showCharacterDetail = (char) => {
 
 /* 调整列表视图的样式以适应新布局 */
 .character-list {
-  display: block;
-  max-width: none;
+  display: flex;
+  align-items: center;
   margin: 0;
   padding: 2rem;
   overflow-y: auto;
+  background: var(--color-background-soft);
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
 }
 
 .character-groups {

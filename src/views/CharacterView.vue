@@ -7,56 +7,33 @@
         'detail-open--mobile': store.currentChar && isMobile
       }"
     >
-      <!-- 视图切换按钮 -->
-      <div class="view-mode">
-        <button 
-          class="view-button"
-          :class="{ active: currentView === 'network' }"
-          @click="switchView('network')"
-          title="关系图"
-        >
-        </button>
-        <button 
-          class="view-button"
-          :class="{ active: currentView === 'list' }"
-          @click="switchView('list')"
-          title="列表视图"
-        >
-        </button>
-      </div>
-    
-        <!-- 视图内容 -->
-      <div class="view-content">
-        <NetworkView v-if="currentView === 'network'" />
-        <ListView v-else />
+      <div class="split-view">
+        <div class="list-panel">
+          <ListView />
+        </div>
+        <div class="network-panel">
+          <div class="network-upper">
+          </div>
+          <div class="network-divider"></div>
+          <div class="network-toolbar">
+            <!-- 这里放工具栏内容 -->
+          </div>
+          <div class="network-container">
+            <NetworkView />
+          </div>
+        </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
-import { Network } from 'vis-network'
-import {  characters } from '@/constants/entities'
-import { RACES, REALMS } from '@/constants/types'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useCharacterDetailStore } from '@/stores/characterDetail'
-import { getStaticPath } from '@/utils/assets'
 import NetworkView from '@/components/NetworkView.vue'
 import ListView from '@/components/ListView.vue'
 
-const currentView = ref('network')
-
-const switchView = (view: 'network' | 'list') => {
-  currentView.value = view
-}
-
 const store = useCharacterDetailStore()
-
-const showCharacterDetail = (char) => {
-  store.showCharacter(char)
-}
-// 检测是否为移动设备
 const isMobile = ref(false)
 
 const checkMobile = () => {
@@ -72,44 +49,66 @@ onUnmounted(() => {
   window.removeEventListener('resize', checkMobile)
 })
 </script>
+
 <style scoped>
-.view-mode {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 10;
+.split-view {
   display: flex;
-  gap: 0.5rem;
-  background: var(--color-background-soft);
-  padding: 4px;
-  border-radius: 8px;
-}
-
-.view-mode button {
-  height: 1rem;
-  width: 1rem;
-  border-radius: 8px;
-  background: var(--color-background);
-  border: none;
-}
-.view-mode button.active {
-  background: var(--color-background-mute);
-  border: 1px solid var(--color-background-highlight);
-}
-
-.view-content {
   height: 100%;
+  padding: 1rem;
+}
+
+.list-panel {
+  width: calc(100% - 400px);
+}
+
+.network-panel {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.network-upper {
+  height: 33.33%; 
+  min-height: 100px; 
+  padding: 1rem;
+}
+.network-toolbar {
+  height: 40px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.network-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0;
+}
+
+.network-container {
+  height: 66.67%; 
+  flex-grow: 1; 
+  position: relative; 
+  padding: 1rem;
 }
 
 /* 移动端适配 */
 @media (max-width: 768px) {
-  .view-mode {
-    top: 0.5rem;
-    right: 0.5rem;
+  .split-view {
+    flex-direction: column;
+  }
+  
+  .list-panel{
+    flex: none;
+    width: 100%;
+  }
+
+  .network-panel {
+    display: none;
   }
 }
-</style>
-<style scoped>
+
 .view-container {
   position: relative;
   width: 100%;

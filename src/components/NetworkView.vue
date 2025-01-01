@@ -13,14 +13,41 @@ import { Network } from 'vis-network'
 import { onMounted, onUnmounted } from 'vue';
 let network = null
 
+// 添加固定位置数组
+const positions = {
+  'Eyzin': { x: 200, y: 30 },
+  'Fjel': { x: 200, y: 100 },
+  'Mja': { x: 200, y: 250 },
+  'Belladonna': { x: 200, y: 380 },
+  'Wiro': { x: 270, y: 170 },
+  'Ilse': { x: 270, y: 250 },
+  'Lewenhart': { x: 370, y: 310 },
+  'Elvis': { x: 370, y: 250 },
+  'Syor': { x: 370, y: 190 },
+  'Fel\'rekt': { x: 370, y: 70 },
+  'Calimar': { x: 370, y: 130 },
+  'Mondo': { x: 30, y: 170 },
+  'Selakorvo': { x: 30, y: 250 },
+  'Karnacio': { x: 130, y: 100 },
+  'Lumo': { x: 130, y: 170 },
+  'Leslie': { x: 130, y: 380 },
+  'Herudis': { x: 30, y: 100 },
+  'Mervargr': { x: 130, y: 320 },
+  'Rey': { x: 270, y: 380 },
+  'Vee': { x: 370, y: 380 },
+  'Hyacinth': { x: 200, y: 450 }
+}
 // 准备节点和边的数据
 const nodes = characters.map(char => ({
   id: char.id,
-  label: char.name,
+  // label: char.name,
   image: getStaticPath(char.path),
+  x: positions[char.name]?.x,
+  y: positions[char.name]?.y,
+  fixed: true, // 固定节点位置
   shape: 'circularImage',
-  size: 30,
-  imageSize: 30,
+  size: 20,
+  imageSize: 20,
   imagePadding: 0,
   color: {
     border: '#848484',
@@ -51,32 +78,23 @@ const options = {
   nodes: {
     borderWidth: 2,
     borderWidthSelected: 3,
-    size: 30, // 默认大小
+    size: 20, // 默认大小
     shape: 'circularImage',
     brokenImage: undefined,
     imagePadding: 0,
     chosen: {
       node: (values, id, selected, hovering) => {
         if (hovering) {
-          values.size = 30; // 悬浮时放大节点
           values.borderWidth = 3;
           values.shadow = true;
           values.shadowColor = 'rgba(0,0,0,0.3)';
           values.shadowSize = 10;
           values.shadowX = 0;
           values.shadowY = 0;
-          
-          values.imageSize = 45;
-          values.imagePadding = 0;
-        } else {
-          values.size = 30;
-          values.imageSize = 30;
-          values.imagePadding = 0;
-        }
+        } 
       },
       label: (values, id, selected, hovering) => {
         if (hovering) {
-          // values.size = 16;
           values.color = getComputedStyle(document.documentElement)
             .getPropertyValue('--color-text').trim();
         }
@@ -94,15 +112,6 @@ const options = {
       useBorderWithImage: true,
       interpolation: true // 启用图片平滑缩放
     },
-    scaling: {
-      min: 30,
-      max: 45,
-      label: {
-        enabled: true,
-        min: 14,
-        max: 16
-      }
-    },
     transition: {
       duration: 200, // 动画过渡时间
       easing: 'easeInOutQuad' // 过渡效果
@@ -119,14 +128,14 @@ const options = {
     },
     smooth: {
       enabled: true,
-      type: 'continuous',
-      roundness: 0.5
+      type: 'cubicBezier',
+      roundness: 0.3
     },
     font: {
-      size: 12,
-      align: 'middle',
+      size: 9,
+      align: 'horizontal',
       strokeWidth: 2,
-      strokeColor: '#ffffff'
+      strokeColor: '#ffffff',
     },
     chosen: {
       edge: function(values, id, selected, hovering) {
@@ -142,36 +151,19 @@ const options = {
     selectionWidth: 2,
     arrows: {
       to: {
-        enabled: true,
+        enabled: false,
         scaleFactor: 0.3,
         type: 'arrow'
       },
       from: {
-        enabled: true,
+        enabled: false,
         scaleFactor: 0.3,
         type: 'arrow'
       }
     }
   },
   physics: {
-    enabled: true,
-    solver: 'forceAtlas2Based',  // 使用 forceAtlas2Based 布局
-    forceAtlas2Based: {
-      gravitationalConstant: -100,  // 引力常数
-      centralGravity: 0.015,       // 中心引力
-      springLength: 150,           // 弹簧长度
-      springConstant: 0.1,         // 弹簧常数
-      damping: 0.4,               // 阻尼
-      avoidOverlap: 1             // 避免重叠
-    },
-    stabilization: {
-      enabled: true,
-      iterations: 1000,
-      updateInterval: 50,
-      fit: true
-    },
-    minVelocity: 0.75,
-    maxVelocity: 30
+    enabled: false,
   },
   layout: {
     improvedLayout: true,
@@ -226,9 +218,6 @@ onUnmounted(() => {
 
 <style scoped>
 .network-view {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -241,7 +230,6 @@ onUnmounted(() => {
 }
 /* 调整网络视图的样式 */
 .network-view {
-  height: calc(100vh - 2rem);
   border-radius: 8px;
   overflow: hidden;
 }
