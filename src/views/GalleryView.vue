@@ -20,6 +20,20 @@
         >
           <i class="fi fi-rr-filter-list"></i>
         </button>
+        <button 
+          v-if="viewMode === 'waterfall'"
+          class="calendar-button"
+          :class="{ active: showCalendar }"
+          @click.stop="toggleCalendar"
+        >
+          <i class="fi fi-rr-calendar"></i>
+          <CalendarPopover
+            v-if="showCalendar"
+            :dates="galleryDates"
+            class="calendar-popover"
+            v-click-outside="closeCalendar"
+          />
+        </button>
       </div>
     </div>
 
@@ -84,6 +98,8 @@ import EbookViewer from '@/components/EbookViewer.vue'
 import { getStaticPath, getAssetUrl } from '@/utils/assets'
 import { collectFilterGroups } from '@/utils/filterUtils'
 import { openEntityPreviewModal } from '@/utils/modalHelper'
+import CalendarPopover from '@/components/CalendarPopover.vue'
+import { vClickOutside } from '@/utils/clickOutside'
 
 const store = useCharacterDetailStore()
 const isMobile = ref(false)
@@ -190,6 +206,21 @@ const ebookImages = computed(() => {
     return []
   }
 })
+
+const showCalendar = ref(false)
+
+// 收集所有画廊日期
+const galleryDates = computed(() => {
+  return gallerys.map(item => item.finishedDate)
+})
+
+const toggleCalendar = () => {
+  showCalendar.value = !showCalendar.value
+}
+
+const closeCalendar = () => {
+  showCalendar.value = false
+}
 
 </script>
 
@@ -320,5 +351,33 @@ const ebookImages = computed(() => {
   padding: 2px 4px;
   background: var(--color-background-mute);
   border-radius: 4px;
+}
+
+.calendar-button {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: var(--color-background-soft);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: all 0.2s;
+  position: relative;
+}
+
+.calendar-popover {
+  position: absolute;
+  top: 100%;
+  transform: translateX(-10%);
+  margin-top: 8px;
+  z-index: 100;
+}
+
+.calendar-button.active {
+  background: var(--color-background-mute);
+  color: var(--color-primary);
 }
 </style>
