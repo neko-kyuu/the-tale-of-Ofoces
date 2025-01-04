@@ -34,7 +34,7 @@
     <div class="stats-container">
       <div class="stat-item">
         <span class="stat-number"
-          :data-tooltip="`角色: 通常被认为是一个好故事的生命，使用此模块来组织他们的信息。`">{{ characterCount }} · 
+          :data-tooltip="`角色: 通常被认为是一个故事的生命，使用此模块来组织他们的信息。`">{{ characterCount }} · 
             <i class="fi fi-sr-following"></i></span>
       </div>
       <div class="stat-item">
