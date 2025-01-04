@@ -33,31 +33,38 @@
     <!-- 统计信息部分 -->
     <div class="stats-container">
       <div class="stat-item">
-        <span class="stat-number">{{ characterCount }} · 
+        <span class="stat-number"
+          :data-tooltip="`角色: 通常被认为是一个好故事的生命，使用此模块来组织他们的信息。`">{{ characterCount }} · 
             <i class="fi fi-sr-following"></i></span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ imageCount }} ·
+        <span class="stat-number"
+          :data-tooltip="`画廊: 用于存储有关项目的图像。`">{{ imageCount }} ·
             <i class="fi fi-rr-graphic-style"></i></span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ documentCount }} ·
+        <span class="stat-number"
+          :data-tooltip="`百科全书: 用于存储有关项目的信息，这些信息并不完全适合其他部分。`">{{ documentCount }} ·
             <i class="fi fi-rr-features"></i></span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ eventCount }} ·
+        <span class="stat-number"
+          :data-tooltip="`事件: 使用时间线创建事件序列，使用此模块规划组织头脑风暴、故事线及其他`">{{ eventCount }} ·
             <i class="fi fi-br-calendar-day"></i></span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ locationCount }} ·
+        <span class="stat-number"
+          :data-tooltip="`地点: 用于存储位置的详细信息。`">{{ locationCount }} ·
             <i class="fi fi-rr-map-marker"></i></span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ mediaCount }} ·
+        <span class="stat-number"
+          :data-tooltip="`媒体: 用于存储有关项目的媒体文件。`">{{ mediaCount }} ·
             <i class="fi fi-rr-play"></i></span>
       </div>
       <div class="stat-item">
-        <span class="stat-number">{{ noteCount }} ·
+        <span class="stat-number tooltip-right"
+          :data-tooltip="`杂项: 存储值得注意的物品，无论是随笔记录还是对角色具有情感价值的东西。`">{{ noteCount }} ·
             <i class="fi fi-rr-notebook"></i></span>
       </div> 
     </div>

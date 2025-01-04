@@ -282,39 +282,4 @@ const getTooltipContent = (featureName: string): string => {
 .feature-tag.feature-archetype {
   background-color: rgba(156, 39, 176, 0.15);
 }
-/* 添加通用的 tooltip 样式 */
-[data-tooltip]::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  padding: 4px 8px;
-  background-color: var(--color-background-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  white-space: pre-line;
-  width: max-content;
-  max-width: 300px;
-  text-align: left;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
-  text-shadow: 
-    -1px -1px 0 var(--color-background-soft),
-    1px -1px 0 var(--color-background-soft),
-    -1px 1px 0 var(--color-background-soft),
-    1px 1px 0 var(--color-background-soft);
-}
-
-[data-tooltip] {
-  position: relative;
-  cursor: help;
-}
-
-[data-tooltip]:hover::after {
-  opacity: 1;
-  visibility: visible;
-}
 </style>
