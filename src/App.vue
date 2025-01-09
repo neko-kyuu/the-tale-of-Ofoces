@@ -41,14 +41,14 @@
           </RouterLink>
 
           <!-- 事件 -->
-          <RouterLink 
+          <!-- <RouterLink 
             to="/event" 
             class="nav-link view-mode-button" 
             :class="{ active: $route.path === '/event' }"
             title="事件"
           >
             <i class="fi fi-rr-calendar-days"></i>
-          </RouterLink>
+          </RouterLink> -->
           
           <!-- 地图 -->
           <RouterLink 
