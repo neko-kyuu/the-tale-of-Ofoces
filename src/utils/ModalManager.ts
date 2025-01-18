@@ -49,7 +49,8 @@ export class ModalManager {
       initialPosition: { x: 0.6, y: 0.3 },
       initialWidth: 800,
       initialHeight: 600,
-      initialZIndex: this.currentZIndex++
+      initialZIndex: this.currentZIndex++,
+      isEditing: false
     }
 
     const app = createApp({
@@ -63,14 +64,18 @@ export class ModalManager {
           visible: true,
           onClose: () => manager.close(id),
           onActivate: (isDrag = false) => manager.activateModal(id, isDrag),
+          'onUpdate:isEditing': (value) => manager.updateEditing(id, value),
           onReady: (exposed) => {
-            // 保存组件暴露的方法
             const modal = manager.modals.get(id)
             if (modal) {
               modal.exposed = exposed
             }
           }
-        }, () => options.content)
+        }, {
+          default: (slotProps) => h(options.content, {
+            isEditing: slotProps.isEditing
+          })
+        })
       }
     })
 
@@ -116,6 +121,13 @@ export class ModalManager {
       if (!isDrag) {
         modal.exposed.expand()
       }
+    }
+  }
+
+  updateEditing(id: string, isEditing: boolean = false) {
+    const modal = this.modals.get(id)
+    if (modal) {
+      modal.exposed.updateEditing(isEditing)
     }
   }
 } 

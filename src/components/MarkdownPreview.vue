@@ -1,14 +1,10 @@
 <template>
   <div class="markdown-preview">
-    <div v-if="isElectron" class="edit-controls">
-      <button @click="toggleEdit">{{ isEditing ? '保存' : '编辑' }}</button>
-    </div>
-    <textarea
-      v-if="isElectron && isEditing"
-      v-model="editableContent"
-      class="markdown-editor"
-    ></textarea>
-    <div v-else v-html="renderedContent"></div>
+    <div 
+      v-html="renderedContent"
+      class="preview-content"
+      :contenteditable="isElectron && isEditing"
+    ></div>
   </div>
 </template>
 
@@ -20,13 +16,19 @@ const props = defineProps({
   filePath: {
     type: String,
     required: true
+  },
+  isEditing: {
+    type: Boolean,
+    default: false
   }
 })
 
 const renderedContent = ref('')
 const isElectron = ref(false)
-const isEditing = ref(false)
-const editableContent = ref('')
+
+watch(() => props.isEditing, (newValue) => {
+  console.log('markdownPreview isEditing changed:', newValue)
+})
 
 // 创建新的渲染器实例
 const renderer = {
@@ -145,17 +147,6 @@ const saveContent = async () => {
   } catch (error) {
     console.error('保存文件失败:', error)
   }
-}
-
-// 切换编辑模式
-const toggleEdit = async () => {
-  if (isEditing.value) {
-    await saveContent()
-  } else {
-    const response = await fetch(props.filePath)
-    editableContent.value = await response.text()
-  }
-  isEditing.value = !isEditing.value
 }
 
 onMounted(() => {

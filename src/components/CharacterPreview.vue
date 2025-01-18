@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { CHARACTER_TEMPLATE } from '@/constants/character';
 import { characters } from '@/constants/entities';
 import { 
@@ -65,8 +65,13 @@ import CharacterSpellbook from '@/components/CharacterSpellbook.vue';
 import CharacterFeatures from '@/components/CharacterFeatures.vue';
 
 const props = defineProps<{
-  characterId: number
+  characterId: number,
+  isEditing: boolean
 }>();
+
+watch(() => props.isEditing, (newValue) => {
+  console.log('CharacterPreview isEditing changed:', newValue)
+})
 
 const character = CHARACTER_TEMPLATE.get(props.characterId);
 

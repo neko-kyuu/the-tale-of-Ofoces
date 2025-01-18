@@ -24,6 +24,13 @@
         <div class="modal-controls">
           <button 
             class="control-button" 
+            @click="toggleEdit"
+            title="isEditing ? '保存' : '编辑'"
+          >
+            <i :class="isEditing ? 'fi fi-rr-disk' : 'fi fi-rr-edit'"></i>
+          </button>
+          <button 
+            class="control-button" 
             @click="closeModal"
             title="关闭"
           >
@@ -37,7 +44,7 @@
         class="modal-content"
         :style="{ display: isCollapsed ? 'none' : '' }"
       >
-        <slot></slot>
+        <slot :isEditing="isEditing"></slot>
       </div>
 
       <!-- 关联实体滑窗 -->
@@ -195,7 +202,7 @@
 </style>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick, h } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import RelatedPanel from '@/components/RelatedPanel.vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
@@ -243,6 +250,10 @@ const props = defineProps({
   initialZIndex: {
     type: Number,
     default: 2000
+  },
+  isEditing: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -254,7 +265,16 @@ const handleFileOpen = (file) => {
   openEntityPreviewModal(file)
 }
 
-const emit = defineEmits(['close', 'update:visible', 'activate'])
+const emit = defineEmits(['close', 'activate', 'update:isEditing'])
+
+const isEditing = ref(props.isEditing)
+const toggleEdit = () => {
+  emit('update:isEditing', !isEditing.value)
+}
+
+watch(() => isEditing.value, (newValue) => {
+  console.log('isEditing changed:', newValue)
+})
 
 const { width: windowWidth } = useWindowSize()
 const isMobile = computed(() => windowWidth.value <= 768)
@@ -391,11 +411,16 @@ const updateZIndex = (newZIndex) => {
   currentZIndex.value = newZIndex
 }
 
+const updateEditing = (newVal) => {
+  isEditing.value = newVal
+}
+
 // 确保在组件挂载后暴露方法
 const exposed = {
   triggerClose: () => isClosing.value = true,
   updateZIndex,
-  expand
+  expand,
+  updateEditing
 }
 
 defineExpose(exposed)
