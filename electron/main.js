@@ -1,35 +1,58 @@
-import { app, BrowserWindow } from 'electron'
-import path from 'path'
-import { fileURLToPath } from 'url'
+// 从 'electron' 模块中导入所需的类和函数
+import { app, BrowserWindow, Tray, Menu } from 'electron';
+// 从 'path' 模块中导入 'path'，用于处理文件和目录路径
+import path from 'path';
+// 从 'url' 模块中导入 'fileURLToPath'，用于将 file URL 转换为路径
+import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
+// 定义 __filename 和 __dirname，用于获取当前文件的路径和目录
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 声明主窗口和托盘图标的变量
+let mainWindow;
+let tray;
+
+// 创建应用程序的主窗口
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
+    const win = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      icon: path.join(__dirname, '../electron/img/favicon.png'), // 窗口图标
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    })
+  
+    // 开发环境下连接 vite 服务器
+    if (process.env.VITE_DEV_SERVER_URL) {
+      win.loadURL(process.env.VITE_DEV_SERVER_URL)
+    } else {
+      // 生产环境下加载打包后的文件
+      win.loadFile(path.join(__dirname, '../dist/index.html'))
     }
-  })
-
-  // 开发环境下连接 vite 服务器
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(process.env.VITE_DEV_SERVER_URL)
-  } else {
-    // 生产环境下加载打包后的文件
-    win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
-}
-
+ 
+// 当 Electron 初始化完成时，调用 createWindow 和 createTray 函数
 app.whenReady().then(() => {
-  createWindow()
-})
+  createWindow(); // 创建主窗口
 
+  // 当应用被激活时（例如，点击应用图标或从其他窗口切换回来）
+  app.on('activate', () => {
+    // 如果没有打开的窗口，则创建一个新的窗口
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+// 当所有窗口都关闭时，退出应用程序（除非是在 macOS 上）
 app.on('window-all-closed', () => {
+  // 在 macOS 上，通常应用会保持活跃，直到用户明确退出
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit(); // 退出应用程序
   }
-}) 
+});
+ 
