@@ -1,5 +1,11 @@
-// 所有Node.js API都可以在预加载过程中使用。
-// 它拥有与Chrome扩展一样的沙盒。
+const { contextBridge, ipcRenderer } = require('electron')
+
+// 通过 contextBridge 暴露 API
+contextBridge.exposeInMainWorld('electronAPI', {
+  saveFile: (data) => ipcRenderer.invoke('saveFile', data),
+  test: () => console.log('electron bridge is working')
+})
+
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {
         const element = document.getElementById(selector)
@@ -10,3 +16,5 @@ window.addEventListener('DOMContentLoaded', () => {
         replaceText(`${dependency}-version`, process.versions[dependency])
     }
 })
+
+console.log('Preload script is running')

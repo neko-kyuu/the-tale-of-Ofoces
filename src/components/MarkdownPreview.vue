@@ -1,5 +1,15 @@
 <template>
-  <div class="markdown-preview" v-html="renderedContent"></div>
+  <div class="markdown-preview">
+    <div v-if="isElectron" class="edit-controls">
+      <button @click="toggleEdit">{{ isEditing ? '保存' : '编辑' }}</button>
+    </div>
+    <textarea
+      v-if="isElectron && isEditing"
+      v-model="editableContent"
+      class="markdown-editor"
+    ></textarea>
+    <div v-else v-html="renderedContent"></div>
+  </div>
 </template>
 
 <script setup>
@@ -14,6 +24,9 @@ const props = defineProps({
 })
 
 const renderedContent = ref('')
+const isElectron = ref(false)
+const isEditing = ref(false)
+const editableContent = ref('')
 
 // 创建新的渲染器实例
 const renderer = {
@@ -119,7 +132,38 @@ const fetchAndRenderContent = async () => {
   }
 }
 
+// 添加保存功能
+const saveContent = async () => {
+  if (!isElectron.value) return
+  
+  try {
+    await window.electronAPI.saveFile({
+      filePath: props.filePath,
+      content: editableContent.value
+    })
+    await fetchAndRenderContent()
+  } catch (error) {
+    console.error('保存文件失败:', error)
+  }
+}
+
+// 切换编辑模式
+const toggleEdit = async () => {
+  if (isEditing.value) {
+    await saveContent()
+  } else {
+    const response = await fetch(props.filePath)
+    editableContent.value = await response.text()
+  }
+  isEditing.value = !isEditing.value
+}
+
 onMounted(() => {
+  isElectron.value = !!window.electronAPI
+  
+  // 测试连接
+  window.electronAPI?.test?.()
+  
   fetchAndRenderContent()
 })
 
@@ -127,3 +171,16 @@ watch(() => props.filePath, () => {
   fetchAndRenderContent()
 })
 </script>
+
+<style scoped>
+.markdown-editor {
+  width: 100%;
+  min-height: 400px;
+  padding: 1rem;
+  font-family: monospace;
+}
+
+.edit-controls {
+  margin-bottom: 1rem;
+}
+</style>

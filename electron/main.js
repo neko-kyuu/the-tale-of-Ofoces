@@ -1,14 +1,16 @@
 // 从 'electron' 模块中导入所需的类和函数
-import { app, BrowserWindow, Tray, Menu } from 'electron';
+import { app, BrowserWindow, Tray, Menu, ipcMain } from 'electron';
 // 从 'path' 模块中导入 'path'，用于处理文件和目录路径
 import path from 'path';
 // 从 'url' 模块中导入 'fileURLToPath'，用于将 file URL 转换为路径
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 
 // 定义 __filename 和 __dirname，用于获取当前文件的路径和目录
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const rootPath = path.join(__dirname, '..');
 
 // 创建应用程序的主窗口
 function createWindow() {
@@ -18,9 +20,13 @@ function createWindow() {
       icon: path.join(__dirname, '../electron/img/icons8-butterfly-100.png'), // 窗口图标
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false
+        contextIsolation: true,
+        preload: path.join(__dirname, '../electron/preload.cjs')
       }
     })
+  
+    // 自动打开开发者工具
+    win.webContents.openDevTools()
   
     // 开发环境下连接 vite 服务器
     if (process.env.VITE_DEV_SERVER_URL) {
@@ -64,4 +70,25 @@ app.on('window-all-closed', () => {
     app.quit(); // 退出应用程序
   }
 });
+
+ipcMain.handle('saveFile', async (event, { filePath, content }) => {
+  try {
+    // 从 /static/md/xxx.md 转换为实际的文件路径
+    const relativePath = filePath.replace('/static/', '/public/static/')
+    const absolutePath = path.join(rootPath, relativePath)
+    
+    console.log('保存路径:', absolutePath) // 调试用
+    
+    // 确保目录存在
+    const dir = path.dirname(absolutePath)
+    await fs.promises.mkdir(dir, { recursive: true })
+    
+    // 保存文件
+    await fs.promises.writeFile(absolutePath, content, 'utf8')
+    return { success: true }
+  } catch (error) {
+    console.error('保存文件失败:', error)
+    throw error
+  }
+})
  
