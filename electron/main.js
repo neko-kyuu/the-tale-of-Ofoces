@@ -10,16 +10,12 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 声明主窗口和托盘图标的变量
-let mainWindow;
-let tray;
-
 // 创建应用程序的主窗口
 function createWindow() {
     const win = new BrowserWindow({
       width: 1200,
       height: 800,
-      icon: path.join(__dirname, '../electron/img/favicon.png'), // 窗口图标
+      icon: path.join(__dirname, '../electron/img/icons8-butterfly-100.png'), // 窗口图标
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false
@@ -35,9 +31,20 @@ function createWindow() {
     }
   }
  
+// function createTray() {
+//   const menubarPic = process.platform === 'darwin' ? 
+//     path.join(__dirname, '../electron/img/favicon.icns') : 
+//     path.join(__dirname, '../electron/img/favicon.png')
+//   const tray = new Tray(menubarPic)
+//   const contextMenu = Menu.buildFromTemplate([
+//     { label: '退出', click: () => app.quit() }
+//   ])
+//   tray.setContextMenu(contextMenu)
+// }
 // 当 Electron 初始化完成时，调用 createWindow 和 createTray 函数
 app.whenReady().then(() => {
   createWindow(); // 创建主窗口
+  // createTray(); // 创建托盘图标
 
   // 当应用被激活时（例如，点击应用图标或从其他窗口切换回来）
   app.on('activate', () => {
@@ -46,6 +53,8 @@ app.whenReady().then(() => {
       createWindow();
     }
   });
+  
+  app.dock.setIcon(path.join(__dirname, '../electron/img/icons8-butterfly-100.png'))
 });
 
 // 当所有窗口都关闭时，退出应用程序（除非是在 macOS 上）
