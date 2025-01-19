@@ -29,3 +29,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Electron 构建文件
+dist-electron
+release
