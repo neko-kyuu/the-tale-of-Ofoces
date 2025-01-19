@@ -146,6 +146,7 @@ const nextYear = () => {
   background: var(--color-background-soft);
   border-radius: 8px;
   padding: 6px;
+  cursor: default;
 }
 
 .month-header {
