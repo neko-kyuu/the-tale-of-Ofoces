@@ -1,5 +1,5 @@
 <template>
-  <div class="character-sheet">
+  <div class="character-sheet" v-if="character">
     <CharacterHeader 
       :character="character"
       :computed-stats="computedStats"
@@ -45,8 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { CHARACTER_TEMPLATE } from '@/constants/character';
+import { ref, computed, watch, onMounted } from 'vue';
 import { characters } from '@/constants/entities';
 import { 
   ATTRIBUTES, 
@@ -63,17 +62,33 @@ import CharacterAttributes from '@/components/CharacterAttributes.vue';
 import CharacterInventory from '@/components/CharacterInventory.vue';
 import CharacterSpellbook from '@/components/CharacterSpellbook.vue';
 import CharacterFeatures from '@/components/CharacterFeatures.vue';
+import { getStaticPath } from '@/utils/assets'
 
 const props = defineProps<{
   characterId: number,
   isEditing: boolean
 }>();
 
+const character = ref(null);
+
+const loadCharacterTemplate = async () => {
+  try {
+    const response = await fetch(getStaticPath('/static/json/character_template.json'));
+    const data = await response.json();
+    character.value = data[props.characterId];
+  } catch (error) {
+    console.error('加载角色模板失败:', error);
+  }
+};
+
+// 加载json数据
+onMounted(() => {
+  loadCharacterTemplate();
+})
+
 watch(() => props.isEditing, (newValue) => {
   console.log('CharacterPreview isEditing changed:', newValue)
 })
-
-const character = CHARACTER_TEMPLATE.get(props.characterId);
 
 // 获取角色头像路径
 const getCharacterAvatarPath = computed(() => 
@@ -88,30 +103,34 @@ interface ClassFeatureInfo {
 
 // 计算角色属性
 const computedStats = computed(() => {
+  if (!character.value) {
+    return null;
+  }
+
   // 首先计算基础属性值
   const baseStats = {
-    race: character.basicInfo.race,
-    subRace: character.basicInfo.subrace,
-    background: character.basicInfo.background,
-    basicInfo: character.basicInfo,
+    race: character.value.basicInfo.race,
+    subRace: character.value.basicInfo.subrace,
+    background: character.value.basicInfo.background,
+    basicInfo: character.value.basicInfo,
 
-    armorBonus: character.combatStats.armorBonus || 0,
-    shieldBonus: character.combatStats.shieldBonus || 0,
-    otherACBonus: character.combatStats.otherACBonus || 0,
+    armorBonus: character.value.combatStats.armorBonus || 0,
+    shieldBonus: character.value.combatStats.shieldBonus || 0,
+    otherACBonus: character.value.combatStats.otherACBonus || 0,
     
-    statusDetails: character.statusDetails,
+    statusDetails: character.value.statusDetails,
     classFeatureInfo: {},
     
-    inventoryItem: character.inventoryItem,
+    inventoryItem: character.value.inventoryItem,
 
-    classList: character.class,
+    classList: character.value.class,
     classLevelMap: (() => {
       const levelArray = [];
       const processedClasses = new Set();
       
-      character.class.forEach(classItem => {
+      character.value.class.forEach(classItem => {
         if (!processedClasses.has(classItem.class)) {
-          const totalLevel = character.class
+          const totalLevel = character.value.class
             .filter(c => c.class === classItem.class)
             .reduce((sum, c) => sum + c.level, 0);
           
@@ -131,17 +150,17 @@ const computedStats = computed(() => {
   const levelStats = {
     ...baseStats,
 
-    mainClass: character.class[0].class,
-    combatStats: character.combatStats,
+    mainClass: character.value.class[0].class,
+    combatStats: character.value.combatStats,
 
     // 等级计算
     level: (() => {
-      const classList = character.class;
+      const classList = character.value.class;
       return classList.reduce((total, item) => total + item.level, 0);
     })(),
 
     levelClass: (() => {
-      const classList = character.class;
+      const classList = character.value.class;
       return classList.reduce((total, item) => total.concat(`${item.subClass} ${item.level}`), []).join(' / ');
     })(),
 
@@ -168,19 +187,19 @@ const computedStats = computed(() => {
     // 基础属性值
     attributes: (() => {
       const attrs: { [key: number]: number } = {};
-      for (const [id, score] of Object.entries(character.attributes)) {
+      for (const [id, score] of Object.entries(character.value.attributes)) {
         attrs[Number(id)] = score;
       }
       return attrs;
     })(),
 
     // 双倍熟练技能
-    doubleProficientSkills: character.doubleProficientSkills,
+    doubleProficientSkills: character.value.doubleProficientSkills,
     // 熟练技能
     proficientSkills: [],
     // 一半熟练
     halfProficentSkills: (() => {
-      return character.class.some(item => item.class === '吟游诗人') ? 
+      return character.value.class.some(item => item.class === '吟游诗人') ? 
         [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] : [];
     })(),
   };
@@ -239,7 +258,7 @@ const computedStats = computed(() => {
 
     // 生命骰计算
     hitDice: (() => {
-      const classList = character.class;
+      const classList = character.value.class;
       const conScore = enhancedStatus.attributes[3];
       const conModifier = Math.floor((conScore - 10) / 2);
       const conBonus = enhancedStatus.level * conModifier;
@@ -375,7 +394,7 @@ const computedStats = computed(() => {
   };
 
   // 与角色中的显式设置合并
-  return deepMerge(finalComputed, character.overrides);
+  return deepMerge(finalComputed, character.value.overrides);
 });
 
 

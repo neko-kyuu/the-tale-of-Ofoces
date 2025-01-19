@@ -6,8 +6,16 @@
         :key="category.id" 
         class="inventory-category"
       >
-        <div class="column-headers">
+        <div class="column-headers"> 
           <div class="header-name">
+            <button 
+              v-if="isElectron"
+              class="control-button" 
+              @click="addItem(category.id)"
+              title="添加物品"
+            >
+              <i class="fi fi-rr-plus"></i>
+            </button>
             {{ category.name }} ({{ getItemCount(category.id) }})
           </div>
           <div class="header-weight">重量</div>
@@ -83,10 +91,14 @@ import type { InventoryItem } from '@/types/dnd5e';
 import { getStaticPath } from '@/utils/assets';
 import ImagePreview from '@/components/ImagePreview.vue';
 
+const isElectron = !!window.electronAPI
+
 const props = defineProps<{
   character: OptionalCharacter;
   computedStats: OptionalComputedStats;
 }>();
+
+console.log(props)
 
 const inventoryCategories = [
   { id: 'weapons', name: '武器' },
@@ -143,6 +155,10 @@ const itemsByCategory = computed(() => {
   
   return result;
 });
+
+const addItem = (categoryId: string) => {
+  console.log(categoryId)
+}
 
 const getItemCount = (categoryId: string): number => {
   return itemsByCategory.value.get(categoryId)?.length || 0;
@@ -208,6 +224,31 @@ const showItemImage = (item: InventoryItem) => {
 </script>
 
 <style scoped>
+.control-button {
+  background: var(--color-danger-bg);
+  color: var(--vt-c-white);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 -2px var(--color-background-mute);
+}
+
+.control-button:hover {
+  background-color: var(--color-danger-bg);
+}
+
+.control-button i {
+  font-size: 0.6rem;
+}
+
 .inventory-content {
   margin-top: 1rem;
   position: relative;
@@ -359,6 +400,7 @@ const showItemImage = (item: InventoryItem) => {
 .header-name {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .item-icon {
