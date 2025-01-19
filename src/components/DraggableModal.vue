@@ -23,6 +23,7 @@
         <div class="modal-title">{{ title }}</div>
         <div class="modal-controls">
           <button 
+            v-if="isElectron"
             class="control-button" 
             @click="toggleEdit"
             title="isEditing ? '保存' : '编辑'"
@@ -207,6 +208,8 @@ import { useWindowSize } from '@vueuse/core'
 import RelatedPanel from '@/components/RelatedPanel.vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { openEntityPreviewModal } from '@/utils/modalHelper'
+
+const isElectron = !!window.electronAPI
 
 const store = useCharacterDetailStore()
 

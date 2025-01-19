@@ -13,6 +13,8 @@
 import { ref, onMounted, watch } from 'vue'
 import { marked } from 'marked'
 
+const isElectron = !!window.electronAPI
+
 const props = defineProps({
   filePath: {
     type: String,
@@ -26,7 +28,6 @@ const props = defineProps({
 
 const previewContent = ref(null)
 const renderedContent = ref('')
-const isElectron = ref(false)
 
 watch(() => props.isEditing, (newValue, oldValue) => {
   if (!newValue && oldValue) {
@@ -140,7 +141,7 @@ const fetchAndRenderContent = async () => {
 
 // 保存
 const saveContent = async () => {
-  if (!isElectron.value) return
+  if (!isElectron) return
 
   const content = previewContent.value.innerHTML
   try {
@@ -155,8 +156,6 @@ const saveContent = async () => {
 }
 
 onMounted(() => {
-  isElectron.value = !!window.electronAPI
-  
   // 测试连接
   window.electronAPI?.test?.()
   
