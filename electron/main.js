@@ -79,13 +79,18 @@ ipcMain.handle('saveFile', async (event, { filePath, content }) => {
     
     console.log('保存路径:', absolutePath) // 调试用
     
-    // 确保目录存在
-    const dir = path.dirname(absolutePath)
-    await fs.promises.mkdir(dir, { recursive: true })
+    // 检查文件是否存在
+    if (!fs.existsSync(absolutePath)) {
+      return { 
+        success: false, 
+        error: `未找到文件路径: ${absolutePath}` 
+      }
+    }
     
     // 保存文件
     await fs.promises.writeFile(absolutePath, content, 'utf8')
     return { success: true }
+    
   } catch (error) {
     console.error('保存文件失败:', error)
     throw error

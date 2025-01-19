@@ -1,6 +1,7 @@
 <template>
   <div class="markdown-preview">
-    <div 
+    <div
+      ref="previewContent"
       v-html="renderedContent"
       class="preview-content"
       :contenteditable="isElectron && isEditing"
@@ -23,11 +24,14 @@ const props = defineProps({
   }
 })
 
+const previewContent = ref(null)
 const renderedContent = ref('')
 const isElectron = ref(false)
 
-watch(() => props.isEditing, (newValue) => {
-  console.log('markdownPreview isEditing changed:', newValue)
+watch(() => props.isEditing, (newValue, oldValue) => {
+  if (!newValue && oldValue) {
+    saveContent()
+  }
 })
 
 // 创建新的渲染器实例
@@ -129,19 +133,20 @@ const fetchAndRenderContent = async () => {
     const parsed = marked.parse(markdown)
     renderedContent.value = parsed
   } catch (error) {
-    console.error('Error loading markdown file:', error)
+    console.error('markdownPreview 加载失败:', error)
     renderedContent.value = '加载失败'
   }
 }
 
-// 添加保存功能
+// 保存
 const saveContent = async () => {
   if (!isElectron.value) return
-  
+
+  const content = previewContent.value.innerHTML
   try {
     await window.electronAPI.saveFile({
       filePath: props.filePath,
-      content: editableContent.value
+      content: content
     })
     await fetchAndRenderContent()
   } catch (error) {
