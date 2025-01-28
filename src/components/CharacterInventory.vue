@@ -11,6 +11,7 @@
             <button 
               v-if="isElectron"
               class="control-button" 
+              :class="{ 'disabled': !isEditing }"
               @click="addItem(category.id)"
               title="添加物品"
             >
@@ -36,11 +37,25 @@
                 @click="showItemImage(item)"
               ></i>
               <span v-else class="item-icon-placeholder"></span>
-              {{ item.name }}
+              <span 
+                :contenteditable="isEditing" 
+                @blur="updateItem($event, item, 'name')"
+              >{{ item.name }}</span>
             </div>
-            <div class="item-weight">{{ item.weight ? `${item.weight} lb` : '-' }}</div>
-            <div class="item-usage">{{ item.usage }}</div>
-            <div class="item-quantity">{{ item.quantity }}</div>
+            <div 
+              class="item-weight" 
+              :contenteditable="isEditing"
+              @blur="updateItem($event, item, 'weight')"
+            >{{ item.weight ? `${item.weight} lb` : '-' }}</div>
+            <div 
+              class="item-usage" 
+              contenteditable="true" 
+              @blur="updateItem($event, item, 'usage')">
+            {{ item.usage }}</div>
+            <div class="item-quantity" 
+              contenteditable="true" 
+              @blur="updateItem($event, item, 'quantity')">
+            {{ item.quantity }}</div>
           </div>
         </div>
       </div>
@@ -96,9 +111,8 @@ const isElectron = !!window.electronAPI
 const props = defineProps<{
   character: OptionalCharacter;
   computedStats: OptionalComputedStats;
+  isEditing: boolean;
 }>();
-
-console.log(props)
 
 const inventoryCategories = [
   { id: 'weapons', name: '武器' },
@@ -109,8 +123,7 @@ const inventoryCategories = [
   { id: 'valuables', name: '贵重品' }
 ];
 
-const inventoryItem = props.character.inventoryItem || [];
-console.log(inventoryItem);
+const inventoryItem = ref(props.character.inventoryItem || []);
 
 const itemsByCategory = computed(() => {
   const result = new Map();
@@ -118,28 +131,33 @@ const itemsByCategory = computed(() => {
   // 先处理普通物品
   inventoryCategories.forEach(category => {
     if (category.id !== 'tools') {
-      const items = inventoryItem.filter(item => item.categoryId === category.id)
-        .map(item => {
+      const items = inventoryItem.value.filter(item => item.categoryId === category.id)
+        .map((item, index) => {
           // 如果是武器类别，获取武器详情
-          if (category.id === 'weapons' && item.weaponType) {
+          if (category.id === 'weapons') {
             const weaponInfo = WEAPONS.get(item.weaponType);
             return {
               ...item,
+              id: index + 1,
               // 修改组合武器名称的逻辑
-              name: `${item.name} - ${item.subType || item.weaponType}${weaponInfo?.properties ? ` - ${weaponInfo.properties}` : ''}`,
+              name: `${item.name || ''} - ${item.subType || item.weaponType}${weaponInfo?.properties ? ` - ${weaponInfo?.properties}` : ' - '}`,
               // 从武器信息中获取重量
-              weight: weaponInfo?.weight || null
+              weight: item.weight || weaponInfo?.weight || null
             };
           }
-          return item;
+          return {
+            ...item,
+            id: index + 1
+          };
         });
+      
       result.set(category.id, items);
     }
   });
   
   // 特殊处理工具类别
   const computedTools = (props.computedStats?.statusDetails?.TOOLS || []);
-  const inventoryTools = inventoryItem
+  const inventoryTools = inventoryItem.value
     .filter(item => item.categoryId === 'tools')
     .map(item => item.name);
   
@@ -152,22 +170,37 @@ const itemsByCategory = computed(() => {
     quantity: 1,
     categoryId: 'tools'
   })));
-  
+
   return result;
 });
 
 const addItem = (categoryId: string) => {
-  console.log(categoryId)
+  const newItem = categoryId === 'weapons' ? {
+    weaponType: "",
+    subType: "",
+    usage: "",
+    quantity: 1,
+    categoryId: "weapons",
+    image: "",
+    weight: null
+  } : {
+    name: "",
+    weight: null,
+    usage: "-",
+    quantity: 1,
+    categoryId: categoryId
+  };
+  
+  inventoryItem.value = [...inventoryItem.value, newItem];
 }
 
 const getItemCount = (categoryId: string): number => {
   return itemsByCategory.value.get(categoryId)?.length || 0;
 };
 
-const getItemsByCategory = (categoryId: string) => {
+const getItemsByCategory = computed(() => (categoryId: string) => {
   return itemsByCategory.value.get(categoryId) || [];
-};
-
+});
 
 const currentWeight = computed(() => {
   let total = 0;
@@ -221,6 +254,40 @@ const showItemImage = (item: InventoryItem) => {
     showPreview.value = true;
   }
 };
+
+const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
+  const target = event.target as HTMLElement;
+  const newValue = target.textContent || null
+
+  const formatValue = (value: string) => {
+    if (key === 'weight') return parseFloat(value.replace(/[^\d.]/g, ''));
+    if (key === 'usage') return value;
+    if (key === 'quantity') return parseInt(value);
+    return value;
+  }
+  const formatDisplay = (value: string | number) => {
+    if (key === 'weight') return value ? `${value} lb` : '-';
+    if (key === 'usage') return `${value}`;
+    if (key === 'quantity') return `${value}`;
+    return `${value}`;
+  }
+
+  const value = formatValue(newValue);
+  const name = item.categoryId === 'weapons' ? item.name.split(' - ')[0] : item.name;
+  const targetItem = inventoryItem.value.find(i => i.name === name && i.categoryId === item.categoryId);
+
+  if (targetItem) {
+    targetItem[key] = value;
+    // 强制更新数组以触发响应式
+    inventoryItem.value = [...inventoryItem.value];
+  }
+  // 更新显示格式
+  target.textContent = formatDisplay(value);
+
+  console.log(props.character.characterId)
+  console.log(inventoryItem.value)
+  props.character.inventoryItem = inventoryItem.value
+};
 </script>
 
 <style scoped>
@@ -247,6 +314,11 @@ const showItemImage = (item: InventoryItem) => {
 
 .control-button i {
   font-size: 0.6rem;
+}
+
+.control-button.disabled {
+  background-color: var(--color-background-mute);
+  cursor: not-allowed;
 }
 
 .inventory-content {
@@ -296,11 +368,13 @@ const showItemImage = (item: InventoryItem) => {
 }
 
 .item-name {
-  color: var(--color-text);
-  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.item-name span {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 .item-usage {

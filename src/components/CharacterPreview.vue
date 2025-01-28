@@ -28,12 +28,14 @@
       v-else-if="currentTab === 'inventory'"
       :character="character"
       :computed-stats="computedStats"
+      :isEditing="isEditing"
     />
 
     <CharacterSpellbook
       v-else-if="currentTab === 'spellbook'"
       :character="character"
       :computed-stats="computedStats"
+      :isEditing="isEditing"
     />
 
     <CharacterFeatures

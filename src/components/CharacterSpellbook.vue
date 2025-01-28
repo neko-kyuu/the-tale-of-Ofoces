@@ -60,6 +60,7 @@ import { SPELLS } from '@/constants/spells';
 const props = defineProps<{
   character: OptionalCharacter;
   computedStats: OptionalComputedStats;
+  isEditing: boolean;
 }>();
 
 interface Spell {

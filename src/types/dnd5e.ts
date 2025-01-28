@@ -108,6 +108,7 @@ export interface CharacterClass {
     quantity: number;
     categoryId: string;
     image: string;
+    weight: number | null;
   }
 
   export interface Character {
