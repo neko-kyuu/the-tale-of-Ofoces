@@ -139,15 +139,62 @@ const fetchAndRenderContent = async () => {
   }
 }
 
-// 保存
+// HTML转换回Markdown的方法
+const convertToMarkdown = (html) => {
+  let markdown = html
+
+  // 移除所有的 <p> 标签
+  markdown = markdown.replace(/<p>(.*?)<\/p>/g, '$1\n\n')
+  
+  // 转换标题标签
+  markdown = markdown.replace(/<h([1-6])>(.*?)<\/h\1>/g, (_, level, content) => {
+    return '#'.repeat(level) + ' ' + content + '\n'
+  })
+  
+  // 转换加粗
+  markdown = markdown.replace(
+    /<span class="markdown-bold">(.*?)<\/span>/g,
+    '**$1**'
+  )
+  
+  // 转换斜体
+  markdown = markdown.replace(
+    /<span class="markdown-italic">(.*?)<\/span>/g,
+    '*$1*'
+  )
+  
+  // 转换标签
+  markdown = markdown.replace(
+    /<span class="markdown-tag">#(.*?)<\/span>/g,
+    '#$1'
+  )
+  
+  // 转换链接
+  markdown = markdown.replace(
+    /<a href="(.*?)"(?:.*?)>(.*?)<\/a>/g,
+    '[$2]($1)'
+  )
+  
+  // 清理多余的空行
+  markdown = markdown.replace(/\n\s*\n\s*\n/g, '\n\n')
+  
+  // 移除开头和结尾的空白
+  markdown = markdown.trim()
+  
+  return markdown
+}
+
+// 修改现有的saveContent方法
 const saveContent = async () => {
   if (!isElectron) return
 
-  const content = previewContent.value.innerHTML
+  const htmlContent = previewContent.value.innerHTML
+  const markdownContent = convertToMarkdown(htmlContent)
+  
   try {
     await window.electronAPI.saveFile({
       filePath: props.filePath,
-      content: content
+      content: markdownContent
     })
     await fetchAndRenderContent()
   } catch (error) {
