@@ -1,5 +1,6 @@
 {
   "name": "the-tale-of-ofoces",
+  "productName": "the-tale-of-ofoces",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +10,7 @@
     "preview": "vite preview",
     "deploy": "gh-pages -d dist",
     "electron:dev": "vite --mode development",
-    "electron:build": "vue-tsc && vite build && electron-builder"
+    "electron:build": "vite build && electron-builder"
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.3.1",
