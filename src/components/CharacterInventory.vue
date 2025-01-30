@@ -22,6 +22,7 @@
           <div class="header-weight">重量</div>
           <div class="header-usage">用法</div>
           <div class="header-quantity">数量</div>
+          <div class="header-actions"></div>
         </div>
         <div class="item-list">
           <div 
@@ -49,13 +50,23 @@
             >{{ item.weight ? `${item.weight} lb` : '-' }}</div>
             <div 
               class="item-usage" 
-              contenteditable="true" 
+              :contenteditable="isEditing" 
               @blur="updateItem($event, item, 'usage')">
             {{ item.usage }}</div>
             <div class="item-quantity" 
-              contenteditable="true" 
+              :contenteditable="isEditing" 
               @blur="updateItem($event, item, 'quantity')">
             {{ item.quantity }}</div>
+            <div class="item-actions">
+              <button 
+                v-if="isElectron && isEditing"
+                class="control-button" 
+                @click="deleteItem(item)"
+                title="删除物品"
+              >
+                <i class="fi fi-rr-minus"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -100,7 +111,7 @@
 
 <script setup lang="ts">
 import { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { WEAPONS } from '@/constants/dnd5e';
 import type { InventoryItem } from '@/types/dnd5e';
 import { getStaticPath } from '@/utils/assets';
@@ -113,6 +124,7 @@ const props = defineProps<{
   computedStats: OptionalComputedStats;
   isEditing: boolean;
 }>();
+const emit = defineEmits(['update:inventoryItem']);
 
 const inventoryCategories = [
   { id: 'weapons', name: '武器' },
@@ -124,6 +136,10 @@ const inventoryCategories = [
 ];
 
 const inventoryItem = ref(props.character.inventoryItem || []);
+
+watch(()=>inventoryItem.value,()=>{
+  emit('update:inventoryItem', inventoryItem.value)
+})
 
 const itemsByCategory = computed(() => {
   const result = new Map();
@@ -194,6 +210,13 @@ const addItem = (categoryId: string) => {
   inventoryItem.value = [...inventoryItem.value, newItem];
 }
 
+const deleteItem = (item: InventoryItem) => {
+  const name = item.categoryId === 'weapons' ? item.name.split(' - ')[0] : item.name;
+  inventoryItem.value = inventoryItem.value.filter(i => 
+    !(i.name === name && i.categoryId === item.categoryId)
+  );
+};
+
 const getItemCount = (categoryId: string): number => {
   return itemsByCategory.value.get(categoryId)?.length || 0;
 };
@@ -257,7 +280,7 @@ const showItemImage = (item: InventoryItem) => {
 
 const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
   const target = event.target as HTMLElement;
-  const newValue = target.textContent || null
+  const newValue = target.textContent || null;
 
   const formatValue = (value: string) => {
     if (key === 'weight') return parseFloat(value.replace(/[^\d.]/g, ''));
@@ -283,10 +306,6 @@ const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
   }
   // 更新显示格式
   target.textContent = formatDisplay(value);
-
-  console.log(props.character.characterId)
-  console.log(inventoryItem.value)
-  props.character.inventoryItem = inventoryItem.value
 };
 </script>
 
@@ -345,7 +364,7 @@ const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
 
 .item-row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   gap: 0.5rem;
   padding: 0.5rem;
   font-size: 0.9rem;
@@ -388,7 +407,7 @@ const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
 
 .column-headers {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8rem;
@@ -399,7 +418,8 @@ const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
 
 .header-weight,
 .header-usage,
-.header-quantity {
+.header-quantity,
+.header-actions {
   text-align: left;
 }
 
@@ -416,6 +436,17 @@ const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
 .header-quantity,
 .item-quantity {
   min-width: 3rem;
+}
+
+.header-actions {
+  text-align: center;
+  min-width: 20px;
+}
+
+.item-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .inventory-status-bar {

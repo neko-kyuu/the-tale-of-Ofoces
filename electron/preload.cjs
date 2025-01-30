@@ -3,6 +3,8 @@ const { contextBridge, ipcRenderer } = require('electron')
 // 通过 contextBridge 暴露 API
 contextBridge.exposeInMainWorld('electronAPI', {
   saveFile: (data) => ipcRenderer.invoke('saveFile', data),
+  readJsonFile: (filePath) => ipcRenderer.invoke('readJsonFile', filePath),
+  updateCharacter: (data) => ipcRenderer.invoke('updateCharacter', data),
   test: () => console.log('electron bridge is working')
 })
 

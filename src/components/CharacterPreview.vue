@@ -29,6 +29,7 @@
       :character="character"
       :computed-stats="computedStats"
       :isEditing="isEditing"
+      @update:inventoryItem="updateInventoryItem"
     />
 
     <CharacterSpellbook
@@ -36,6 +37,7 @@
       :character="character"
       :computed-stats="computedStats"
       :isEditing="isEditing"
+      @update:spellbook="updateSpellbook"
     />
 
     <CharacterFeatures
@@ -65,13 +67,15 @@ import CharacterInventory from '@/components/CharacterInventory.vue';
 import CharacterSpellbook from '@/components/CharacterSpellbook.vue';
 import CharacterFeatures from '@/components/CharacterFeatures.vue';
 import { getStaticPath } from '@/utils/assets'
+import { InventoryItem, OptionalCharacter, Spell } from '@/types/dnd5e';
+import { deepToRaw } from '@/utils/serialization';
 
 const props = defineProps<{
   characterId: number,
   isEditing: boolean
 }>();
 
-const character = ref(null);
+const character = ref<OptionalCharacter>(null);
 
 const loadCharacterTemplate = async () => {
   try {
@@ -83,14 +87,39 @@ const loadCharacterTemplate = async () => {
   }
 };
 
+const updateInventoryItem = (inventoryItem: InventoryItem[]) => {
+  character.value.inventoryItem = inventoryItem;
+}
+
+const updateSpellbook = (spellbook: Spell[]) => {
+  character.value.spellbook = spellbook;
+}
+
 // 加载json数据
 onMounted(() => {
   loadCharacterTemplate();
 })
 
-watch(() => props.isEditing, (newValue) => {
-  console.log('CharacterPreview isEditing changed:', newValue)
-})
+watch(() => props.isEditing, async (newValue, oldValue) => {
+  if (!newValue && oldValue) {
+    try {
+      const plainCharacter = deepToRaw(character.value);
+      console.log(plainCharacter);
+
+      const result = await window.electronAPI.updateCharacter({
+        filePath: '/static/json/character_template.json',
+        characterId: props.characterId,
+        value: plainCharacter
+      });
+
+      if (!result.success) {
+        console.error('更新失败:', result.error);
+      }
+    } catch (error) {
+      console.error('更新角色失败:', error);
+    }
+  }
+});
 
 // 获取角色头像路径
 const getCharacterAvatarPath = computed(() => 

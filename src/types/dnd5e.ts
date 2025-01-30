@@ -111,6 +111,16 @@ export interface CharacterClass {
     weight: number | null;
   }
 
+  export interface Spell {
+    id: number;
+    name: string;
+    VnS: string;
+    M: string;
+    time: string;
+    usage: string;
+    categoryId: string;
+  }
+
   export interface Character {
     characterId: number;
     name: string;
@@ -126,6 +136,7 @@ export interface CharacterClass {
     specialAbilities: string[];
     statusDetails: Partial<StatusDetails>;
     inventoryItem: Partial<InventoryItem>[];
+    spellbook: Partial<Spell>[];
     overrides: Partial<CharacterOverrides>;
   }
 

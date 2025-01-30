@@ -96,4 +96,61 @@ ipcMain.handle('saveFile', async (event, { filePath, content }) => {
     throw error
   }
 })
+
+ipcMain.handle('readJsonFile', async (event, filePath) => {
+  try {
+    const relativePath = filePath.replace('/static/', '/public/static/')
+    const absolutePath = path.join(rootPath, relativePath)
+    
+    console.log('读取路径:', absolutePath)
+    
+    if (!fs.existsSync(absolutePath)) {
+      return { 
+        success: false, 
+        error: `未找到文件: ${absolutePath}` 
+      }
+    }
+    
+    const content = await fs.promises.readFile(absolutePath, 'utf8')
+    return { 
+      success: true, 
+      data: JSON.parse(content) 
+    }
+  } catch (error) {
+    console.error('读取JSON文件失败:', error)
+    throw error
+  }
+})
+
+ipcMain.handle('updateCharacter', async (event, { filePath, characterId, value }) => {
+  try {
+    const relativePath = filePath.replace('/static/', '/public/static/')
+    const absolutePath = path.join(rootPath, relativePath)
+    
+    console.log('更新角色物品路径:', absolutePath)
+    
+    // 读取文件
+    const content = await fs.promises.readFile(absolutePath, 'utf8')
+    const characters = JSON.parse(content)
+    
+    // 检查角色是否存在
+    if (!characters[characterId]) {
+      return {
+        success: false,
+        error: `未找到角色ID: ${characterId}`
+      }
+    }
+    
+    // 更新角色
+    characters[characterId] = value
+
+    // 保存更新后的文件
+    await fs.promises.writeFile(absolutePath, JSON.stringify(characters, null, 2), 'utf8')
+    
+    return { success: true }
+  } catch (error) {
+    console.error('更新角色失败:', error)
+    throw error
+  }
+})
  
