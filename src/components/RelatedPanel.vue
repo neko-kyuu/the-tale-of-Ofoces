@@ -86,10 +86,7 @@ const relatedEntities = computed(() => {
 .panel-content {
   position: absolute;
   right: 3rem;
-  background: var(--color-background);
-  border-radius: 8px;
-  padding: 0.5rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
   opacity: 0;
   transform: translateX(1rem);
   pointer-events: none;
@@ -97,6 +94,11 @@ const relatedEntities = computed(() => {
   min-width: 300px;
   max-height: 80vh;
   overflow-y: auto;
+}
+:deep(.panel-content .content-area) {
+  border-radius: 8px;
+  background: var(--color-background);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .related-panel.expanded .panel-content {
