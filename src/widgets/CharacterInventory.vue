@@ -115,7 +115,7 @@ import { computed, ref, watch } from 'vue';
 import { WEAPONS } from '@/constants/dnd5e';
 import type { InventoryItem } from '@/types/dnd5e';
 import { getStaticPath } from '@/utils/assets';
-import ImagePreview from '@/components/ImagePreview.vue';
+import ImagePreview from '@/widgets/ImagePreview.vue';
 
 const isElectron = !!window.electronAPI
 

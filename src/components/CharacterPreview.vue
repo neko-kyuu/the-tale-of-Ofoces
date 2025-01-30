@@ -61,11 +61,11 @@ import {
   SUB_RACE_ATTRIBUTES
 } from '@/constants/dnd5e';
 import { deepMerge } from '@/utils/mergeHelper';
-import CharacterHeader from '@/components/CharacterHeader.vue';
-import CharacterAttributes from '@/components/CharacterAttributes.vue';
-import CharacterInventory from '@/components/CharacterInventory.vue';
-import CharacterSpellbook from '@/components/CharacterSpellbook.vue';
-import CharacterFeatures from '@/components/CharacterFeatures.vue';
+import CharacterHeader from '@/widgets/CharacterHeader.vue';
+import CharacterAttributes from '@/widgets/CharacterAttributes.vue';
+import CharacterInventory from '@/widgets/CharacterInventory.vue';
+import CharacterSpellbook from '@/widgets/CharacterSpellbook.vue';
+import CharacterFeatures from '@/widgets/CharacterFeatures.vue';
 import { getStaticPath } from '@/utils/assets'
 import { InventoryItem, OptionalCharacter, Spell } from '@/types/dnd5e';
 import { deepToRaw } from '@/utils/serialization';

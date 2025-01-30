@@ -129,7 +129,7 @@ import { ref, onMounted, computed } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import SlideDetails from '@/components/SlideDetail.vue'
 import { useEntityGraphStore } from '@/stores/entityGraph'
-import ImagePreview from '@/components/ImagePreview.vue'
+import ImagePreview from '@/widgets/ImagePreview.vue'
 import { useImagePreviewStore } from '@/stores/imagePreviewStore'
 
 const diceResult = ref(null)
