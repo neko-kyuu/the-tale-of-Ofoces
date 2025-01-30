@@ -26,7 +26,7 @@
         <div class="header-M"><i class="fi fi-sr-plate-wheat"></i></div>
         <div class="header-time">施法时间</div>
         <div class="header-usage">持续时间</div>
-        <div class="header-actions">操作</div>
+        <div class="header-actions"></div>
       </div>
       <div class="spell-list">
         <div 
