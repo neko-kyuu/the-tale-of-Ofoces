@@ -6,7 +6,7 @@
         <div class="header-name">
           <button 
             v-if="isElectron"
-            class="control-button" 
+            class="shadow-button" 
             :class="{ 'disabled': !isEditing }"
             @click="addSpell(category.id)"
             title="添加法术"
@@ -58,7 +58,7 @@
           <div class="spell-actions">
             <button 
               v-if="isElectron && isEditing"
-              class="control-button" 
+              class="shadow-button" 
               @click="deleteSpell(spell)"
               title="删除法术"
             >
@@ -244,36 +244,6 @@ const updateSpell = (event: FocusEvent, spell: Spell, key: string) => {
 </script>
 
 <style scoped>
-.control-button {
-  background: var(--color-danger-bg);
-  color: var(--vt-c-white);
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: inset 0 -2px var(--color-background-mute);
-}
-
-.control-button:hover {
-  background-color: var(--color-danger-bg);
-}
-
-.control-button i {
-  font-size: 0.6rem;
-}
-
-.control-button.disabled {
-  background-color: var(--color-background-mute);
-  cursor: not-allowed;
-}
-
 .spellbook-content {
   margin-top: 1rem;
   position: relative;

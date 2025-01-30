@@ -2,7 +2,7 @@
   <div class="gallery-container">
     <div class="gallery-header">
       <div class="left-controls">
-        <div class="view-mode">
+        <div class="radio-group-box">
           <button 
             :class="{ active: viewMode === 'waterfall' }" 
             @click="viewMode = 'waterfall'"
@@ -14,7 +14,7 @@
         </div>
         <button 
           v-if="viewMode === 'waterfall'"
-          class="filter-button"
+          class="toggle-button"
           :class="{ active: showFilters }"
           @click="toggleFilters"
         >
@@ -22,7 +22,7 @@
         </button>
         <button 
           v-if="viewMode === 'waterfall'"
-          class="calendar-button"
+          class="toggle-button position-relative"
           :class="{ active: showCalendar }"
           @click.stop="toggleCalendar"
         >
@@ -242,44 +242,6 @@ const closeCalendar = () => {
   align-items: center;
 }
 
-.view-mode {
-  display: flex;
-  gap: 8px;
-  background: var(--color-background-soft);
-  padding: 4px;
-  border-radius: 8px;
-}
-.view-mode button {
-  height: 1rem;
-  width: 1rem;
-  border-radius: 8px;
-  background: var(--color-background);
-  border: none;
-}
-.view-mode button.active {
-  background: var(--color-background-mute);
-  border: 1px solid var(--color-background-highlight);
-}
-
-.filter-button {
-  height: 24px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
-  border: none;
-  background: var(--color-background-soft);
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--color-text);
-  transition: all 0.2s;
-}
-
-.filter-button.active {
-  background: var(--color-background-mute);
-  color: var(--color-primary);
-}
-
 .waterfall-container {
   height: calc(100% - 52px);
 }
@@ -353,31 +315,11 @@ const closeCalendar = () => {
   border-radius: 4px;
 }
 
-.calendar-button {
-  height: 24px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
-  border: none;
-  background: var(--color-background-soft);
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--color-text);
-  transition: all 0.2s;
-  position: relative;
-}
-
 .calendar-popover {
   position: absolute;
   top: 100%;
   transform: translateX(-10%);
   margin-top: 8px;
   z-index: 100;
-}
-
-.calendar-button.active {
-  background: var(--color-background-mute);
-  color: var(--color-primary);
 }
 </style>

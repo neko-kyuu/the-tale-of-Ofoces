@@ -13,8 +13,7 @@
           <!-- 总览页面 -->
           <RouterLink 
             to="/overview" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/overview' }"
+            class="nav-link" 
             title="总览"
           >
           <i class="fi fi-rr-dot-circle"></i>
@@ -23,8 +22,7 @@
           <!-- 画廊 -->
           <RouterLink 
             to="/gallery" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/gallery' }"
+            class="nav-link" 
             title="画廊"
           >
             <i class="fi fi-sr-layout-fluid"></i>
@@ -33,8 +31,7 @@
           <!-- doc & notes备忘录/杂物箱 -->
           <RouterLink 
             to="/vault" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/vault' }"
+            class="nav-link" 
             title="储物箱"
           >
             <i class="fi fi-rs-box-alt"></i>
@@ -43,8 +40,7 @@
           <!-- 事件 -->
           <!-- <RouterLink 
             to="/event" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/event' }"
+            class="nav-link" 
             title="事件"
           >
             <i class="fi fi-rr-calendar-days"></i>
@@ -53,8 +49,7 @@
           <!-- 地图 -->
           <RouterLink 
             to="/location" 
-            class="nav-link view-mode-button" 
-            :class="{ active: $route.path === '/location' }"
+            class="nav-link" 
             title="地图"
           >
             <i class="fi fi-rr-earth-americas"></i>
@@ -306,6 +301,7 @@ const canNavigateNext = computed(() => {
   width: 100%;
   opacity: 0.5;
   transition: opacity 0.2s;
+  font-size: 1.2rem;
 }
 .nav-link i{
   font-size: 1rem;
@@ -391,10 +387,6 @@ const canNavigateNext = computed(() => {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.view-mode-button {
-  font-size: 1.2rem;
 }
 
 .theme-toggle {

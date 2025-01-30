@@ -1,4 +1,7 @@
 @import './base.css';
+@import './fonts.css';
+@import './markdown.css';
+@import './ui.css';
 
 #app {
   width: 100%;

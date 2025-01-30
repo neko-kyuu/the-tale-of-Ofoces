@@ -53,7 +53,7 @@
           </div>
           <div class="panel-divider"></div>
           <div class="panel-toolbar">
-            <button class="nav-link" title="关系图">
+            <button class="adaptive-shadow-button" title="关系图">
               <i class="fi fi-ss-chart-network"></i>
             </button>
           </div>
@@ -205,23 +205,6 @@ const infoButton = ref<HTMLElement | null>(null)
 .over-view {
   position: relative;
   height: 100%;
-}
-
-.nav-link {
-  width: auto;
-  padding: 0.25rem 0.35rem;
-  background-color: var(--color-background-soft);
-  font-weight: bold;
-  box-shadow: inset 0 -2px var(--color-background-mute);
-  transform: translateY(2px);
-  border: 1px solid var(--color-background-highlight);
-  color: var(--color-background-highlight);
-  text-align: center;
-  display: block;
-  text-decoration: none;
-  border-radius: var(--vt-rem-2);
-  cursor: pointer;
-  transition: opacity 0.2s;
 }
 
 .reading-list {
