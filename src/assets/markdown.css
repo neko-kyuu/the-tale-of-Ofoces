@@ -9,6 +9,10 @@
   min-height: 100%;
 }
 
+.preview-content:focus-visible {
+  outline: none;
+}
+
 /* 标题样式 */
 .markdown-preview h1,
 .markdown-preview h2,

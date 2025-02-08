@@ -17,7 +17,7 @@
             </div>
             <div class="detail-controls">
             <button 
-                class="control-button"
+                class="plain-button"
                 @click="closeCharacterDetail"
                 title="关闭"
             >
@@ -83,14 +83,14 @@
             <h2 class="file-title">{{ characterStore.currentFile.title }}</h2>
             <div class="file-controls">
               <button 
-                  class="control-button"
+                  class="shadow-button"
                   @click="backToCharacter"
                   title="返回"
               >
                   <i class="fi fi-rr-arrow-left"></i>
               </button>
               <button 
-                  class="control-button"
+                  class="shadow-button"
                   @click="closeAllDetails"
                   title="关闭"
               >
@@ -391,30 +391,6 @@ const previewComponent = computed(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .control-button {
-      background: var(--color-danger-bg);
-      color: var(--vt-c-white);
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      box-shadow: inset 0 -2px var(--color-background-mute);
-    }
-
-    .control-button:hover {
-      background-color: var(--color-danger-bg);
-    }
-
-    .control-button i {
-      font-size: 0.6rem;
-    }
   }
 }
 
@@ -423,35 +399,6 @@ const previewComponent = computed(() => {
 .detail-controls {
   display: flex;
   justify-content: flex-end;
-}
-/* 控制按钮样式 */
-.control-button {
-  background: none;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  color: var(--color-text);
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.control-button:hover {
-  background: var(--color-background-mute);
-}
-
-.control-button:hover {
-  background: var(--color-background-soft);
-}
-
-.control-button i {
-  font-size: 1rem;
-  height: 1rem;
 }
 </style>
 

@@ -87,8 +87,8 @@
 import { documents, notes } from '@/constants/entities';
 import { computed, ref } from 'vue';
 import { openEntityPreviewModal } from '@/utils/modalHelper';
-import DocumentItem from '@/components/DocumentItem.vue'
-import ImagePreview from '@/components/ImagePreview.vue';
+import DocumentItem from '@/widgets/DocumentItem.vue'
+import ImagePreview from '@/widgets/ImagePreview.vue';
 import { getStaticPath } from '@/utils/assets';
 
 

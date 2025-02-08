@@ -34,39 +34,8 @@
 
   --color-danger: #dc3545;
   --color-danger-bg: rgba(220, 53, 69);
-}
-
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-cream);
-  --color-background-soft: var(--vt-c-cream-soft);
-  --color-background-mute: var(--vt-c-cream-mute);
-
-  --color-background-dark: var(--vt-c-cream-dark);
-  --color-background-highlight: var(--vt-c-cream-highlight);
-
-
-  --color-border: var(--vt-c-cream-dark);
-  --color-border-hover: var(--vt-c-cream-mute);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
 }
 
 /* px palette */

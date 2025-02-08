@@ -4,7 +4,16 @@
       <div class="column-headers" 
         v-if="getSpellSlots(category.level - 1) > 0 || category.id === 'cantrips'">
         <div class="header-name">
-            {{ category.name }}
+          <button 
+            v-if="isElectron"
+            class="shadow-button" 
+            :class="{ 'disabled': !isEditing }"
+            @click="addSpell(category.id)"
+            title="添加法术"
+          >
+            <i class="fi fi-rr-plus"></i>
+          </button>
+          {{ category.name }}
           <span v-if="category.level" class="spell-slots">
             <span 
               v-for="n in getSpellSlots(category.level - 1)" 
@@ -17,6 +26,7 @@
         <div class="header-M"><i class="fi fi-sr-plate-wheat"></i></div>
         <div class="header-time">施法时间</div>
         <div class="header-usage">持续时间</div>
+        <div class="header-actions"></div>
       </div>
       <div class="spell-list">
         <div 
@@ -25,11 +35,36 @@
           class="spell-row"
           :class="{ 'striped': spell.id % 2 === 0 }"
         >
-          <div class="spell-name">{{ spell.name }}</div>
-          <div class="spell-VnS">{{ spell.VnS }}</div>
-          <div class="spell-M">{{ spell.M }}</div>
-          <div class="spell-time">{{ spell.time }}</div>
-          <div class="spell-usage">{{ spell.usage }}</div>
+          <div class="spell-name"
+            :contenteditable="isEditing" 
+            @blur="updateSpell($event, spell, 'name')">
+          {{ spell.name }}</div>
+          <div class="spell-VnS"
+            :contenteditable="isEditing" 
+            @blur="updateSpell($event, spell, 'VnS')">
+          {{ spell.VnS }}</div>
+          <div class="spell-M"
+            :contenteditable="isEditing" 
+            @blur="updateSpell($event, spell, 'M')">
+          {{ spell.M }}</div>
+          <div class="spell-time"
+            :contenteditable="isEditing" 
+            @blur="updateSpell($event, spell, 'time')">
+          {{ spell.time }}</div>
+          <div class="spell-usage"
+            :contenteditable="isEditing" 
+            @blur="updateSpell($event, spell, 'usage')">
+          {{ spell.usage }}</div>
+          <div class="spell-actions">
+            <button 
+              v-if="isElectron && isEditing"
+              class="shadow-button" 
+              @click="deleteSpell(spell)"
+              title="删除法术"
+            >
+              <i class="fi fi-rr-minus"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -52,25 +87,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
 import { ATTRIBUTES } from '@/constants/dnd5e';
 import { SPELLS } from '@/constants/spells';
+import { Spell } from '@/types/dnd5e';
+
+const isElectron = !!window.electronAPI
 
 const props = defineProps<{
   character: OptionalCharacter;
   computedStats: OptionalComputedStats;
+  isEditing: boolean;
 }>();
-
-interface Spell {
-  id: number;
-  name: string;
-  VnS: string;
-  M: string;
-  time: string;
-  usage: string;
-  categoryId: string;
-}
+const emit = defineEmits(['update:spellbook']);
 
 const spellCategories = [
   { id: 'cantrips', name: '戏法', level: 0 },
@@ -88,7 +118,10 @@ const spellCategories = [
 const alwaysPreparedSpells = props.computedStats.alwaysPreparedSpells;
 
 // 虚拟数据
-const mockSpells: Spell[] = [];
+const spellbook = ref(props.character.spellbook || []);
+watch(()=>spellbook.value,()=>{
+  emit('update:spellbook', spellbook.value)
+})
 
 const spellsByCategory = computed(() => {
   const result = new Map();
@@ -96,14 +129,14 @@ const spellsByCategory = computed(() => {
   spellCategories.forEach(category => {
     result.set(
       category.id,
-      mockSpells.filter(spell => spell.categoryId === category.id)
+      spellbook.value.filter(spell => spell.categoryId === category.id)
     );
   });
   
   return result;
 });
 
-const getSpellsByCategory = (categoryId: string) => {
+const getSpellsByCategory = computed(() => (categoryId: string) => {
   const spells = spellsByCategory.value.get(categoryId) || [];
   const categoryLevel = spellCategories.find(c => c.id === categoryId)?.level || 0;
   
@@ -145,7 +178,7 @@ const getSpellsByCategory = (categoryId: string) => {
   }
 
   return spells;
-};
+});
 
 // 获取指定环级的法术位数量
 const getSpellSlots = (level: number): number => {
@@ -172,6 +205,42 @@ classList.forEach(item => {
   }
 })
 
+// 添加法术
+const addSpell = async (categoryId: string) => {
+  const newSpell = {
+    name: '',
+    VnS: '',
+    M: '',
+    time: '',
+    usage: '',
+    categoryId: categoryId
+  };
+  
+  spellbook.value = [...spellbook.value, newSpell];
+};
+
+// 删除法术
+const deleteSpell = (spell: Spell) => {
+  const index = spellbook.value.findIndex(s => s.id === spell.id);
+  if (index !== -1) {
+    spellbook.value.splice(index, 1);
+  }
+};
+
+const updateSpell = (event: FocusEvent, spell: Spell, key: string) => {
+  const target = event.target as HTMLElement;
+  const value = target.textContent || null;
+
+  const targetSpell = spellbook.value.find(i => i.name === spell.name && i.categoryId === spell.categoryId);
+
+  if (targetSpell) {
+    targetSpell[key] = value;
+    // 强制更新数组以触发响应式
+    spellbook.value = [...spellbook.value];
+  }
+  // 更新显示格式
+  target.textContent = value;
+};
 </script>
 
 <style scoped>
@@ -187,7 +256,7 @@ classList.forEach(item => {
 
 .column-headers {
   display: grid;
-  grid-template-columns: 1fr auto auto 100px 100px;
+  grid-template-columns: 1fr auto auto 100px 100px auto;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8rem;
@@ -202,7 +271,7 @@ classList.forEach(item => {
 
 .spell-row {
   display: grid;
-  grid-template-columns: 1fr auto auto 100px 100px;
+  grid-template-columns: 1fr auto auto 100px 100px auto;
   gap: 0.5rem;
   padding: 0.5rem;
   font-size: 0.9rem;
@@ -292,4 +361,17 @@ classList.forEach(item => {
 .prepared-spells {
   color: var(--color-text-soft);
 }
+
+.header-actions {
+  text-align: center;
+  min-width: 20px;
+}
+
+.spell-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 </style>

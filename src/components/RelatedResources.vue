@@ -86,7 +86,7 @@
           </div>
           
           <!-- 图片类型note -->
-          <div class="gallery-grid">
+          <div v-if="galleryTypeNotes.length" class="gallery-grid">
             <div 
               v-for="entity in galleryTypeNotes" 
               :key="`${props.currentTool}_${entity.type}_${entity.id}`"
@@ -125,9 +125,9 @@ import { computed } from 'vue'
 import { characters } from '@/constants/entities'
 import { useEntityGraphStore } from '@/stores/entityGraph'
 import { CONTENT_TYPES } from '@/constants/types'
-import CharacterAvatarList from './CharacterAvatarList.vue'
+import CharacterAvatarList from '@/widgets/CharacterAvatarList.vue'
 import { getStaticPath } from '@/utils/assets'
-import DocumentItem from '@/components/DocumentItem.vue'
+import DocumentItem from '@/widgets/DocumentItem.vue'
 import { useImagePreviewStore } from '@/stores/imagePreviewStore'
 
 const props = defineProps<{
@@ -288,7 +288,7 @@ const galleryTypeNotes = computed(() => {
 
 <style scoped>
 .slide-detail-avatar{
-  padding-top: 0.5rem;
+  padding-top: 0.5rem !important;
   background: var(--color-background);
   
   box-shadow: 0 -2px rgba(var(--color-background-highlight-rgb), 0.8), /*上阴影*/

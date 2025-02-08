@@ -1,4 +1,5 @@
 // dnd5e人物卡模板v1.81β
+// abandoned
 import type { OptionalCharacter } from "@/types/dnd5e";
 
 export const CHARACTER_TEMPLATE: Map<number, OptionalCharacter> = new Map([

@@ -19,19 +19,29 @@ const isMobile = computed(() => window.innerWidth <= 768)
 /**
  * 获取预览组件
  * @param {Object} entity - 实体对象
+ * @param {boolean} isEditing - 编辑状态
  * @returns {VNode} Vue 组件虚拟节点
  */
-export const getPreviewComponent = (entity) => {
+export const getPreviewComponent = (entity, isEditing = false) => {
   if (!entity) return h(EmptyPreview)
   
   const type = entity.displayType ?? entity.type
   switch (type) {
     case 'document':
-      return h(MarkdownPreview, { filePath: getStaticPath(entity.path) })
+      return h(MarkdownPreview, { 
+        filePath: getStaticPath(entity.path),
+        isEditing 
+      })
     case 'chat':
-      return h(DialogPreview, { filePath: getStaticPath(entity.path) })
+      return h(DialogPreview, { 
+        filePath: getStaticPath(entity.path),
+        isEditing 
+      })
     case 'character':
-      return h(CharacterPreview, { characterId: entity.referenceId })
+      return h(CharacterPreview, { 
+        characterId: entity.referenceId,
+        isEditing 
+      })
     default:
       return h(EmptyPreview)
   }
@@ -40,7 +50,8 @@ export const getPreviewComponent = (entity) => {
 const getModalProps = (entity) => {
   const type = entity.displayType ?? entity.type
   const baseProps = {
-    minWidth: 200
+    minWidth: 200,
+    isEditing: false
   }
 
   switch (type) {
@@ -89,16 +100,17 @@ export const openEntityPreviewModal = (entity, options = {}) => {
   }
 
   const modalId = `${entity.type}-${entity.id}`
+  
   const defaultOptions = {
     title: entity.title,
     entityId: entity.id,
     entityType: entity.type,
-    content: getPreviewComponent(entity),
+    content: getPreviewComponent(entity, false),
     props: getModalProps(entity)
   }
 
   const mergedOptions = { ...defaultOptions, ...options }
-  
+
   ModalManager.getInstance().create(modalId, mergedOptions)
   ModalManager.getInstance().activateModal(modalId)
 } 

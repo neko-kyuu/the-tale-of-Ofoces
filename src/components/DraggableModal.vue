@@ -23,7 +23,15 @@
         <div class="modal-title">{{ title }}</div>
         <div class="modal-controls">
           <button 
-            class="control-button" 
+            v-if="isElectron"
+            class="shadow-button" 
+            @click="toggleEdit"
+            title="isEditing ? '保存' : '编辑'"
+          >
+            <i :class="isEditing ? 'fi fi-rr-disk' : 'fi fi-rr-edit'"></i>
+          </button>
+          <button 
+            class="shadow-button" 
             @click="closeModal"
             title="关闭"
           >
@@ -37,7 +45,7 @@
         class="modal-content"
         :style="{ display: isCollapsed ? 'none' : '' }"
       >
-        <slot></slot>
+        <slot :isEditing="isEditing"></slot>
       </div>
 
       <!-- 关联实体滑窗 -->
@@ -91,31 +99,6 @@
 .modal-controls {
   display: flex;
   gap: 0.5rem;
-}
-
-.control-button {
-  background: var(--color-danger-bg);
-  color: var(--vt-c-white);
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: inset 0 -2px var(--color-background-mute);
-}
-
-.control-button:hover {
-  background-color: var(--color-danger-bg);
-}
-
-.control-button i {
-  font-size: 0.6rem;
 }
 
 .modal-content {
@@ -195,11 +178,13 @@
 </style>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick, h } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import RelatedPanel from '@/components/RelatedPanel.vue';
 import { useCharacterDetailStore } from '@/stores/characterDetail'
 import { openEntityPreviewModal } from '@/utils/modalHelper'
+
+const isElectron = !!window.electronAPI
 
 const store = useCharacterDetailStore()
 
@@ -243,6 +228,10 @@ const props = defineProps({
   initialZIndex: {
     type: Number,
     default: 2000
+  },
+  isEditing: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -254,7 +243,16 @@ const handleFileOpen = (file) => {
   openEntityPreviewModal(file)
 }
 
-const emit = defineEmits(['close', 'update:visible', 'activate'])
+const emit = defineEmits(['close', 'activate', 'update:isEditing'])
+
+const isEditing = ref(props.isEditing)
+const toggleEdit = () => {
+  emit('update:isEditing', !isEditing.value)
+}
+
+watch(() => isEditing.value, (newValue) => {
+  console.log('isEditing changed:', newValue)
+})
 
 const { width: windowWidth } = useWindowSize()
 const isMobile = computed(() => windowWidth.value <= 768)
@@ -391,11 +389,16 @@ const updateZIndex = (newZIndex) => {
   currentZIndex.value = newZIndex
 }
 
+const updateEditing = (newVal) => {
+  isEditing.value = newVal
+}
+
 // 确保在组件挂载后暴露方法
 const exposed = {
   triggerClose: () => isClosing.value = true,
   updateZIndex,
-  expand
+  expand,
+  updateEditing
 }
 
 defineExpose(exposed)

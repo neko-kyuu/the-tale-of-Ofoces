@@ -6,13 +6,23 @@
         :key="category.id" 
         class="inventory-category"
       >
-        <div class="column-headers">
+        <div class="column-headers"> 
           <div class="header-name">
+            <button 
+              v-if="isElectron"
+              class="shadow-button" 
+              :class="{ 'disabled': !isEditing }"
+              @click="addItem(category.id)"
+              title="添加物品"
+            >
+              <i class="fi fi-rr-plus"></i>
+            </button>
             {{ category.name }} ({{ getItemCount(category.id) }})
           </div>
           <div class="header-weight">重量</div>
           <div class="header-usage">用法</div>
           <div class="header-quantity">数量</div>
+          <div class="header-actions"></div>
         </div>
         <div class="item-list">
           <div 
@@ -28,11 +38,35 @@
                 @click="showItemImage(item)"
               ></i>
               <span v-else class="item-icon-placeholder"></span>
-              {{ item.name }}
+              <span 
+                :contenteditable="isEditing" 
+                @blur="updateItem($event, item, 'name')"
+              >{{ item.name }}</span>
             </div>
-            <div class="item-weight">{{ item.weight ? `${item.weight} lb` : '-' }}</div>
-            <div class="item-usage">{{ item.usage }}</div>
-            <div class="item-quantity">{{ item.quantity }}</div>
+            <div 
+              class="item-weight" 
+              :contenteditable="isEditing"
+              @blur="updateItem($event, item, 'weight')"
+            >{{ item.weight ? `${item.weight} lb` : '-' }}</div>
+            <div 
+              class="item-usage" 
+              :contenteditable="isEditing" 
+              @blur="updateItem($event, item, 'usage')">
+            {{ item.usage }}</div>
+            <div class="item-quantity" 
+              :contenteditable="isEditing" 
+              @blur="updateItem($event, item, 'quantity')">
+            {{ item.quantity }}</div>
+            <div class="item-actions">
+              <button 
+                v-if="isElectron && isEditing"
+                class="shadow-button" 
+                @click="deleteItem(item)"
+                title="删除物品"
+              >
+                <i class="fi fi-rr-minus"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -77,16 +111,20 @@
 
 <script setup lang="ts">
 import { OptionalCharacter, OptionalComputedStats } from '@/types/dnd5e';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { WEAPONS } from '@/constants/dnd5e';
 import type { InventoryItem } from '@/types/dnd5e';
 import { getStaticPath } from '@/utils/assets';
-import ImagePreview from '@/components/ImagePreview.vue';
+import ImagePreview from '@/widgets/ImagePreview.vue';
+
+const isElectron = !!window.electronAPI
 
 const props = defineProps<{
   character: OptionalCharacter;
   computedStats: OptionalComputedStats;
+  isEditing: boolean;
 }>();
+const emit = defineEmits(['update:inventoryItem']);
 
 const inventoryCategories = [
   { id: 'weapons', name: '武器' },
@@ -97,8 +135,11 @@ const inventoryCategories = [
   { id: 'valuables', name: '贵重品' }
 ];
 
-const inventoryItem = props.character.inventoryItem || [];
-console.log(inventoryItem);
+const inventoryItem = ref(props.character.inventoryItem || []);
+
+watch(()=>inventoryItem.value,()=>{
+  emit('update:inventoryItem', inventoryItem.value)
+})
 
 const itemsByCategory = computed(() => {
   const result = new Map();
@@ -106,28 +147,33 @@ const itemsByCategory = computed(() => {
   // 先处理普通物品
   inventoryCategories.forEach(category => {
     if (category.id !== 'tools') {
-      const items = inventoryItem.filter(item => item.categoryId === category.id)
-        .map(item => {
+      const items = inventoryItem.value.filter(item => item.categoryId === category.id)
+        .map((item, index) => {
           // 如果是武器类别，获取武器详情
-          if (category.id === 'weapons' && item.weaponType) {
+          if (category.id === 'weapons') {
             const weaponInfo = WEAPONS.get(item.weaponType);
             return {
               ...item,
+              id: index + 1,
               // 修改组合武器名称的逻辑
-              name: `${item.name} - ${item.subType || item.weaponType}${weaponInfo?.properties ? ` - ${weaponInfo.properties}` : ''}`,
+              name: `${item.name || ''} - ${item.subType || item.weaponType}${weaponInfo?.properties ? ` - ${weaponInfo?.properties}` : ' - '}`,
               // 从武器信息中获取重量
-              weight: weaponInfo?.weight || null
+              weight: item.weight || weaponInfo?.weight || null
             };
           }
-          return item;
+          return {
+            ...item,
+            id: index + 1
+          };
         });
+      
       result.set(category.id, items);
     }
   });
   
   // 特殊处理工具类别
   const computedTools = (props.computedStats?.statusDetails?.TOOLS || []);
-  const inventoryTools = inventoryItem
+  const inventoryTools = inventoryItem.value
     .filter(item => item.categoryId === 'tools')
     .map(item => item.name);
   
@@ -140,18 +186,44 @@ const itemsByCategory = computed(() => {
     quantity: 1,
     categoryId: 'tools'
   })));
-  
+
   return result;
 });
+
+const addItem = (categoryId: string) => {
+  const newItem = categoryId === 'weapons' ? {
+    weaponType: "",
+    subType: "",
+    usage: "",
+    quantity: 1,
+    categoryId: "weapons",
+    image: "",
+    weight: null
+  } : {
+    name: "",
+    weight: null,
+    usage: "-",
+    quantity: 1,
+    categoryId: categoryId
+  };
+  
+  inventoryItem.value = [...inventoryItem.value, newItem];
+}
+
+const deleteItem = (item: InventoryItem) => {
+  const name = item.categoryId === 'weapons' ? item.name.split(' - ')[0] : item.name;
+  inventoryItem.value = inventoryItem.value.filter(i => 
+    !(i.name === name && i.categoryId === item.categoryId)
+  );
+};
 
 const getItemCount = (categoryId: string): number => {
   return itemsByCategory.value.get(categoryId)?.length || 0;
 };
 
-const getItemsByCategory = (categoryId: string) => {
+const getItemsByCategory = computed(() => (categoryId: string) => {
   return itemsByCategory.value.get(categoryId) || [];
-};
-
+});
 
 const currentWeight = computed(() => {
   let total = 0;
@@ -205,6 +277,36 @@ const showItemImage = (item: InventoryItem) => {
     showPreview.value = true;
   }
 };
+
+const updateItem = (event: FocusEvent, item: InventoryItem, key: string) => {
+  const target = event.target as HTMLElement;
+  const newValue = target.textContent || null;
+
+  const formatValue = (value: string) => {
+    if (key === 'weight') return parseFloat(value.replace(/[^\d.]/g, ''));
+    if (key === 'usage') return value;
+    if (key === 'quantity') return parseInt(value);
+    return value;
+  }
+  const formatDisplay = (value: string | number) => {
+    if (key === 'weight') return value ? `${value} lb` : '-';
+    if (key === 'usage') return `${value}`;
+    if (key === 'quantity') return `${value}`;
+    return `${value}`;
+  }
+
+  const value = formatValue(newValue);
+  const name = item.categoryId === 'weapons' ? item.name.split(' - ')[0] : item.name;
+  const targetItem = inventoryItem.value.find(i => i.name === name && i.categoryId === item.categoryId);
+
+  if (targetItem) {
+    targetItem[key] = value;
+    // 强制更新数组以触发响应式
+    inventoryItem.value = [...inventoryItem.value];
+  }
+  // 更新显示格式
+  target.textContent = formatDisplay(value);
+};
 </script>
 
 <style scoped>
@@ -232,7 +334,7 @@ const showItemImage = (item: InventoryItem) => {
 
 .item-row {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   gap: 0.5rem;
   padding: 0.5rem;
   font-size: 0.9rem;
@@ -255,11 +357,13 @@ const showItemImage = (item: InventoryItem) => {
 }
 
 .item-name {
-  color: var(--color-text);
-  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.item-name span {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 .item-usage {
@@ -273,7 +377,7 @@ const showItemImage = (item: InventoryItem) => {
 
 .column-headers {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: 1fr auto auto auto auto;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.8rem;
@@ -284,7 +388,8 @@ const showItemImage = (item: InventoryItem) => {
 
 .header-weight,
 .header-usage,
-.header-quantity {
+.header-quantity,
+.header-actions {
   text-align: left;
 }
 
@@ -301,6 +406,17 @@ const showItemImage = (item: InventoryItem) => {
 .header-quantity,
 .item-quantity {
   min-width: 3rem;
+}
+
+.header-actions {
+  text-align: center;
+  min-width: 20px;
+}
+
+.item-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .inventory-status-bar {
@@ -359,6 +475,7 @@ const showItemImage = (item: InventoryItem) => {
 .header-name {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .item-icon {

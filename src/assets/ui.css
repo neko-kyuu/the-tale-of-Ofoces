@@ -1,0 +1,111 @@
+/* 按钮样式 */
+.shadow-button {
+  background: var(--color-danger-bg);
+  color: var(--vt-c-white);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 -2px var(--color-background-mute);
+}
+
+.adaptive-shadow-button {
+  width: auto;
+  padding: 0.25rem 0.35rem;
+  background-color: var(--color-background-soft);
+  font-weight: bold;
+  box-shadow: inset 0 -2px var(--color-background-mute);
+  transform: translateY(2px);
+  border: 1px solid var(--color-background-highlight);
+  color: var(--color-background-highlight);
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  border-radius: var(--vt-rem-2);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.shadow-button i {
+  font-size: 0.6rem;
+}
+
+.shadow-button.disabled {
+  background-color: var(--color-background-mute);
+  cursor: not-allowed;
+}
+
+.plain-button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--color-text);
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.plain-button:hover {
+  background: var(--color-background-mute);
+}
+
+.plain-button:hover {
+  background: var(--color-background-soft);
+}
+
+.plain-button i {
+  font-size: 1rem;
+  height: 1rem;
+}
+
+.toggle-button {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: none;
+  background: var(--color-background-soft);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: all 0.2s;
+}
+
+.toggle-button.active {
+  background: var(--color-background-mute);
+  color: var(--color-primary);
+}
+
+/* 单选组样式 */
+.radio-group-box {
+  display: flex;
+  gap: 8px;
+  background: var(--color-background-soft);
+  padding: 4px;
+  border-radius: 8px;
+}
+.radio-group-box button {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 8px;
+  background: var(--color-background);
+  border: none;
+}
+.radio-group-box button.active {
+  background: var(--color-background-mute);
+  border: 1px solid var(--color-background-highlight);
+}
